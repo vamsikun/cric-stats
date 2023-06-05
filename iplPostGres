@@ -1,0 +1,16 @@
+select tab1.bowler as bowler, wickets, runs from (select bowler,count(*) as wickets from (select season,match_id,over,ball_no,bowler from outs
+		where bowler_wicket=1
+		group by season,match_id,over, ball_no, bowler) as bowl_w
+where season='2023'
+group by bowler
+order by wickets desc) as tab1
+
+left join
+
+(select bowler,sum(batter_runs)+sum(wide)+sum(noball) as runs from ball_by_ball
+where season='2023'
+group by bowler
+order by runs desc) as tab2
+
+on tab1.bowler=tab2.bowler
+order by wickets desc

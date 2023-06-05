@@ -1,0 +1,24 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": true
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "render",
+            "connectString": "postgres://vamsi:ugU88haAXsyw88heyS8WK8fsWcHkwTrO@dpg-chsrh3qk728ud3l6cui0-a.oregon-postgres.render.com/dummydb_fkx0"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "vamsi",
+            "database": "ipl",
+            "username": "vamsi"
+        }
+    ]
+}
