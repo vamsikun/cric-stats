@@ -31,6 +31,26 @@ const projectDeliveries = {
   },
 };
 
+const boundariesCond = {
+  $cond: {
+    if: {
+      $and: [
+        {
+          $eq: [{ $type: "$overs.deliveries.runs.non_boundary" }, "missing"],
+        },
+        {
+          $or: [
+            { $eq: ["$overs.deliveries.runs.batter", 4] },
+            { $eq: ["$overs.deliveries.runs.batter", 6] },
+          ],
+        },
+      ],
+    },
+    then: "$overs.deliveries.runs.batter",
+    else: 0,
+  },
+};
+
 const setBallNo = {
   $set: {
     overs: {
@@ -71,7 +91,7 @@ const unwindDeliveries = { $unwind: "$overs.deliveries" };
 
 const projectEachBall = {
   $project: {
-    matchID: "$matchID",
+    matchID: { $toString: "$matchID" },
     innings: "$innings",
     over: "$overs.over",
     ballNo: "$overs.deliveries.ballNo",
@@ -294,7 +314,7 @@ db.partnershipData.aggregate([
   {
     $project: {
       _id: 0,
-      matchID: "$_id.matchID",
+      matchID: { $toString: "$_id.matchID" },
       innings: "$_id.innings",
       firstBatter: { $arrayElemAt: ["$_id.batsmen", 0] },
       secondBatter: { $arrayElemAt: ["$_id.batsmen", 1] },
@@ -303,7 +323,7 @@ db.partnershipData.aggregate([
       firstBatterBallsFaced: "$individualPartnershipData.firstBatterBallsFaced",
       secondBatterBallsFaced:
         "$individualPartnershipData.secondBatterBallsFaced",
-      parternship: "$partnership",
+      partnership: "$partnership",
       totalBallsFaced: "$ballsFaced",
       wicket: "$wicket",
       fours: "$fours",
@@ -316,6 +336,9 @@ db.partnershipData.aggregate([
   },
   { $out: "partnerships" },
 ]);
+
+// NOTE: using explain we got the execution time of the query to be around 900-950ms
+// TODO: think of using primary keys??
 
 db.partnershipData.drop();
 db.individualPartershipData.drop();

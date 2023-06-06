@@ -185,7 +185,7 @@ const setTeamScores = [
 const projectMatches = {
   $project: {
     _id: 0,
-    matchID: "$_id",
+    matchID: { $toString: "$_id" },
     matchNumber: 1,
     season: "$info.season",
     matchStartDate: 1,
@@ -196,7 +196,7 @@ const projectMatches = {
     team1: { $arrayElemAt: ["$info.teams", 0] },
     // batting second
     team2: { $arrayElemAt: ["$info.teams", 1] },
-    teamWon: "$info.outcome.winner",
+    teamWon: { $ifNull: ["$info.outcome.winner", "$info.outcome.eliminator"] },
     wonByWickets: "$info.outcome.by.wickets",
     wonByRuns: "$info.outcome.by.runs",
     team1Score: 1,
@@ -209,8 +209,89 @@ const projectMatches = {
     team1Sixes: 1,
     team2Fours: 1,
     team2Sixes: 1,
-    playerOfMatch: "$info.player_of_match",
+    playerOfMatch: { $arrayElemAt: ["$info.player_of_match", 0] },
     isSuperOver: 1,
+  },
+};
+
+const renameTeams = {
+  $set: {
+    team1: {
+      $switch: {
+        branches: [
+          {
+            case: { $eq: ["$team1", "Punjab Kings"] },
+            then: "Kings XI Punjab",
+          },
+          {
+            case: { $eq: ["$team1", "Rising Pune Supergiant"] },
+            then: "Rising Pune Supergiants",
+          },
+          {
+            case: { $eq: ["$team1", "Delhi Daredevils"] },
+            then: "Delhi Capitals",
+          },
+        ],
+        default: "$team1",
+      },
+    },
+    team2: {
+      $switch: {
+        branches: [
+          {
+            case: { $eq: ["$team2", "Punjab Kings"] },
+            then: "Kings XI Punjab",
+          },
+          {
+            case: { $eq: ["$team2", "Rising Pune Supergiant"] },
+            then: "Rising Pune Supergiants",
+          },
+          {
+            case: { $eq: ["$team2", "Delhi Daredevils"] },
+            then: "Delhi Capitals",
+          },
+        ],
+        default: "$team2",
+      },
+    },
+    teamWon: {
+      $switch: {
+        branches: [
+          {
+            case: { $eq: ["$teamWon", "Punjab Kings"] },
+            then: "Kings XI Punjab",
+          },
+          {
+            case: { $eq: ["$teamWon", "Rising Pune Supergiant"] },
+            then: "Rising Pune Supergiants",
+          },
+          {
+            case: { $eq: ["$teamWon", "Delhi Daredevils"] },
+            then: "Delhi Capitals",
+          },
+        ],
+        default: "$teamWon",
+      },
+    },
+    tossWon: {
+      $switch: {
+        branches: [
+          {
+            case: { $eq: ["$tossWon", "Punjab Kings"] },
+            then: "Kings XI Punjab",
+          },
+          {
+            case: { $eq: ["$tossWon", "Rising Pune Supergiant"] },
+            then: "Rising Pune Supergiants",
+          },
+          {
+            case: { $eq: ["$tossWon", "Delhi Daredevils"] },
+            then: "Delhi Capitals",
+          },
+        ],
+        default: "$tossWon",
+      },
+    },
   },
 };
 
@@ -219,5 +300,8 @@ db.matches.aggregate([
   setSuperOver,
   setMatchNumberAndDate,
   projectMatches,
+  renameTeams,
   { $out: "eachMatch" },
 ]);
+
+// NOTE: using explain the query is taking 350-400ms to execute

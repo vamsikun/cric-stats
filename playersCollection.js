@@ -72,7 +72,6 @@ db.matches.aggregate([
   {
     $unwind: {
       path: "$team",
-      preserveNullAndEmptyArrays: true,
     },
   },
   {
@@ -83,7 +82,7 @@ db.matches.aggregate([
   },
   {
     $project: {
-      matchID: "$_id.matchID",
+      matchID: { $toString: "$_id.matchID" },
       player: "$_id.player",
       team: 1,
       playerID: 1,
@@ -92,6 +91,7 @@ db.matches.aggregate([
   },
   { $match: { $expr: { $ne: [{ $type: "$team" }, "missing"] } } },
   { $out: "players" },
-  // { $match: { "_id.player": "S Dhawan", "_id.season": "2009/10" } },
   //TODO: Not working correctly check dhoni's and kohli's number
 ]);
+
+// NOTE: using explain the query is taking around 220-250ms to execute
