@@ -221,7 +221,7 @@ db.matches.aggregate([
     },
   },
   unwindWickets,
-  unwindFielders,
+  // unwindFielders,
   projectOuts,
   setBowlerWicket,
   renameTeams,

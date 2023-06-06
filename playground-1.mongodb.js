@@ -12,6 +12,10 @@
 // Select the database to use.
 use("ipl");
 
+db.matches.updateMany({ "info.season": { $type: 16 } }, [
+  { $set: { "info.season": { $toString: "$info.season" } } },
+]);
+
 // db.matches.aggregate([
 //   {$match: {
 //     _id:"6464f7b0dfd4c66ea8f58933"
@@ -491,103 +495,102 @@ const setBowlerWicket = {
   },
 };
 
-db.matches.find();
-
-db.matches.aggregate([
-  {
-    $facet: {
-      teamPlayer: [
-        {
-          $project: {
-            players: { $objectToArray: "$info.players" },
-            matchID: "$_id",
-            _id: 0,
-          },
-        },
-        { $unwind: "$players" },
-        { $unwind: "$players.v" },
-        {
-          $project: {
-            matchID: 1,
-            team: "$players.k",
-            player: "$players.v",
-          },
-        },
-      ],
-      playerID: [
-        {
-          $project: {
-            playerIDs: { $objectToArray: "$info.registry.people" },
-            matchID: "$_id",
-            _id: 0,
-          },
-        },
-        { $unwind: "$playerIDs" },
-        {
-          $project: {
-            matchID: 1,
-            player: "$playerIDs.k",
-            playerID: "$playerIDs.v",
-          },
-        },
-      ],
-    },
-  },
-  {
-    $project: {
-      teamPlayerIDs: { $setUnion: ["$teamPlayer", "$playerID"] },
-    },
-  },
-  { $unwind: "$teamPlayerIDs" },
-  {
-    $project: {
-      matchID: "$teamPlayerIDs.matchID",
-      team: "$teamPlayerIDs.team",
-      player: "$teamPlayerIDs.player",
-      playerID: "$teamPlayerIDs.playerID",
-    },
-  },
-  {
-    $group: {
-      _id: { matchID: "$matchID", player: "$player" },
-      team: { $addToSet: "$team" },
-      playerID: { $addToSet: "$playerID" },
-    },
-  },
-  {
-    $unwind: {
-      path: "$team",
-      preserveNullAndEmptyArrays: true,
-    },
-  },
-  {
-    $unwind: {
-      path: "$playerID",
-      preserveNullAndEmptyArrays: true,
-    },
-  },
-  {
-    $project: {
-      matchID: "$_id.matchID",
-      player: "$_id.player",
-      team: 1,
-      playerID: 1,
-      _id: 0,
-    },
-  },
-  {
-    $group: {
-      _id: "$playerID",
-      matches: { $count: {} },
-    },
-  },
-  {
-    $sort: {
-      matches: -1,
-    },
-  },
-  //TODO: Not working correctly check dhoni's and kohli's numbers
-]);
+// -------------- Players Collection with player IDs -------------------//
+// db.matches.aggregate([
+//   {
+//     $facet: {
+//       teamPlayer: [
+//         {
+//           $project: {
+//             players: { $objectToArray: "$info.players" },
+//             matchID: "$_id",
+//             season: "$info.season",
+//             _id: 0,
+//           },
+//         },
+//         { $unwind: "$players" },
+//         { $unwind: "$players.v" },
+//         {
+//           $project: {
+//             matchID: 1,
+//             season: 1,
+//             teams: 1,
+//             date: 1,
+//             team: "$players.k",
+//             player: "$players.v",
+//           },
+//         },
+//       ],
+//       playerID: [
+//         {
+//           $project: {
+//             playerIDs: { $objectToArray: "$info.registry.people" },
+//             matchID: "$_id",
+//             season: "$info.season",
+//             _id: 0,
+//           },
+//         },
+//         { $unwind: "$playerIDs" },
+//         {
+//           $project: {
+//             matchID: 1,
+//             player: "$playerIDs.k",
+//             playerID: "$playerIDs.v",
+//             season: 1,
+//             teams: 1,
+//             date: 1,
+//           },
+//         },
+//       ],
+//     },
+//   },
+//   {
+//     $project: {
+//       teamPlayerIDs: { $setUnion: ["$teamPlayer", "$playerID"] },
+//     },
+//   },
+//   { $unwind: "$teamPlayerIDs" },
+//   {
+//     $project: {
+//       matchID: "$teamPlayerIDs.matchID",
+//       team: "$teamPlayerIDs.team",
+//       player: "$teamPlayerIDs.player",
+//       playerID: "$teamPlayerIDs.playerID",
+//     },
+//   },
+//   {
+//     $group: {
+//       _id: { matchID: "$matchID", player: "$player" },
+//       team: { $addToSet: "$team" },
+//       playerID: { $addToSet: "$playerID" },
+//     },
+//   },
+//   {
+//     $unwind: {
+//       path: "$team",
+//       preserveNullAndEmptyArrays: true,
+//     },
+//   },
+//   {
+//     $unwind: {
+//       path: "$playerID",
+//       preserveNullAndEmptyArrays: true,
+//     },
+//   },
+//   {
+//     $project: {
+//       matchID: "$_id.matchID",
+//       player: "$_id.player",
+//       team: 1,
+//       playerID: 1,
+//       _id: 0,
+//     },
+//   },
+//   { $match: { $expr: { $ne: [{ $type: "$team" }, "missing"] } } },
+//  // { $match: { "_id.player": "S Dhawan", "_id.season": "2009/10" } },
+//  //TODO: Not working correctly check dhoni's and kohli's number
+// ]);
+// -----------------------------------------------------//
 
 //------------ Creates Runs Collection -----------------//
 
@@ -651,6 +654,16 @@ db.matches.aggregate([
 //       ballsFaced: {
 //         $sum: "$ballsFaced",
 //       },
+//       fours: {
+//         $sum: {
+//           $cond: [{ $eq: ["$boundaries", 4] }, 1, 0],
+//         },
+//       },
+//       sixes: {
+//         $sum: {
+//           $cond: [{ $eq: ["$boundaries", 6] }, 1, 0],
+//         },
+//       },
 //     },
 //   },
 //   {
@@ -702,6 +715,16 @@ db.matches.aggregate([
 //       ballsFaced: {
 //         $sum: "$ballsFaced",
 //       },
+//       batterFours: {
+//         $sum: {
+//           $cond: [{ $eq: ["$boundaries", 4] }, 1, 0],
+//         },
+//       },
+//       batterSixes: {
+//         $sum: {
+//           $cond: [{ $eq: ["$boundaries", 6] }, 1, 0],
+//         },
+//       },
 //     },
 //   },
 //   {
@@ -724,6 +747,8 @@ db.matches.aggregate([
 //           $set: {
 //             batter1Runs: "$batterRuns",
 //             batter1BallsFaced: "$ballsFaced",
+//             batter1Fours: "$batterFours",
+//             batter1Sixes: "$batterSixes",
 //           },
 //         },
 //       ],
@@ -739,6 +764,8 @@ db.matches.aggregate([
 //           $set: {
 //             batter2Runs: "$batterRuns",
 //             batter2BallsFaced: "$ballsFaced",
+//             batter2Fours: "$batterFours",
+//             batter2Sixes: "$batterSixes",
 //           },
 //         },
 //       ],
@@ -760,6 +787,10 @@ db.matches.aggregate([
 //       secondBatterRuns: { $sum: "$activity.batter2Runs" },
 //       firstBatterBallsFaced: { $sum: "$activity.batter1BallsFaced" },
 //       secondBatterBallsFaced: { $sum: "$activity.batter2BallsFaced" },
+//       firstBatterFours: { $sum: "$activity.batter1Fours" },
+//       firstBatterSixes: { $sum: "$activity.batter1Sixes" },
+//       secondBatterFours: { $sum: "$activity.batter2Fours" },
+//       secondBatterSixes: { $sum: "$activity.batter2Sixes" },
 //     },
 //   },
 //   {
@@ -795,6 +826,12 @@ db.matches.aggregate([
 //       parternship: "$partnership",
 //       totalBallsFaced: "$ballsFaced",
 //       wicket: "$wicket",
+//       fours: "$fours",
+//       sixes: "$sixes",
+//       firstBatterFours: "$individualPartnershipData.firstBatterFours",
+//       firstBatterSixes: "$individualPartnershipData.firstBatterSixes",
+//       secondBatterFours: "$individualPartnershipData.secondBatterFours",
+//       secondBatterSixes: "$individualPartnershipData.secondBatterSixes",
 //     },
 //   },
 // ]);
@@ -809,7 +846,7 @@ db.matches.aggregate([
 //   projectInnings,
 //   unwindInnings,
 //   projectDeliveries,
-//   setBallNo;
+//   setBallNo,
 //   unwindOvers,
 //   unwindDeliveries,
 //   {
@@ -818,11 +855,11 @@ db.matches.aggregate([
 //     },
 //   },
 //   unwindWickets,
-//   unwindFielders,
+//   // unwindFielders,
 //   projectOuts,
 //   setBowlerWicket,
 //   renameTeams,
-//   { $out: "outs" },
+//   // { $out: "outs" },
 // ]);
 
 //------------------------------------------------------//

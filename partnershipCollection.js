@@ -131,6 +131,16 @@ const groupPartnersAndBallsFaced = {
     ballsFaced: {
       $sum: "$ballsFaced",
     },
+    fours: {
+      $sum: {
+        $cond: [{ $eq: ["$boundaries", 4] }, 1, 0],
+      },
+    },
+    sixes: {
+      $sum: {
+        $cond: [{ $eq: ["$boundaries", 6] }, 1, 0],
+      },
+    },
   },
 };
 
@@ -147,6 +157,16 @@ const groupPartnerWithBatter = {
     },
     ballsFaced: {
       $sum: "$ballsFaced",
+    },
+    batterFours: {
+      $sum: {
+        $cond: [{ $eq: ["$boundaries", 4] }, 1, 0],
+      },
+    },
+    batterSixes: {
+      $sum: {
+        $cond: [{ $eq: ["$boundaries", 6] }, 1, 0],
+      },
     },
   },
 };
@@ -173,6 +193,8 @@ const getFirstAndSecondBatterRuns = [
           $set: {
             batter1Runs: "$batterRuns",
             batter1BallsFaced: "$ballsFaced",
+            batter1Fours: "$batterFours",
+            batter1Sixes: "$batterSixes",
           },
         },
       ],
@@ -188,6 +210,8 @@ const getFirstAndSecondBatterRuns = [
           $set: {
             batter2Runs: "$batterRuns",
             batter2BallsFaced: "$ballsFaced",
+            batter2Fours: "$batterFours",
+            batter2Sixes: "$batterSixes",
           },
         },
       ],
@@ -209,6 +233,10 @@ const getFirstAndSecondBatterRuns = [
       secondBatterRuns: { $sum: "$activity.batter2Runs" },
       firstBatterBallsFaced: { $sum: "$activity.batter1BallsFaced" },
       secondBatterBallsFaced: { $sum: "$activity.batter2BallsFaced" },
+      firstBatterFours: { $sum: "$activity.batter1Fours" },
+      firstBatterSixes: { $sum: "$activity.batter1Sixes" },
+      secondBatterFours: { $sum: "$activity.batter2Fours" },
+      secondBatterSixes: { $sum: "$activity.batter2Sixes" },
     },
   },
 ];
@@ -278,6 +306,12 @@ db.partnershipData.aggregate([
       parternship: "$partnership",
       totalBallsFaced: "$ballsFaced",
       wicket: "$wicket",
+      fours: "$fours",
+      sixes: "$sixes",
+      firstBatterFours: "$individualPartnershipData.firstBatterFours",
+      firstBatterSixes: "$individualPartnershipData.firstBatterSixes",
+      secondBatterFours: "$individualPartnershipData.secondBatterFours",
+      secondBatterSixes: "$individualPartnershipData.secondBatterSixes",
     },
   },
   { $out: "partnerships" },
