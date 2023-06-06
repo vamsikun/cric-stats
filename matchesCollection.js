@@ -219,4 +219,5 @@ db.matches.aggregate([
   setSuperOver,
   setMatchNumberAndDate,
   projectMatches,
+  { $out: "eachMatch" },
 ]);

@@ -1,4 +1,17 @@
 use("ipl");
+
+const unwindInnings = { $unwind: "$innings" };
+const unwindOvers = { $unwind: "$overs" };
+const unwindDeliveries = { $unwind: "$overs.deliveries" };
+const unwindWickets = { $unwind: "$overs.deliveries.wickets" };
+// NOTE: preserving null arrays is important here
+const unwindFielders = {
+  $unwind: {
+    path: "$overs.deliveries.wickets.fielders",
+    preserveNullAndEmptyArrays: true,
+  },
+};
+
 const projectInnings = {
   $project: {
     innings: {
@@ -13,20 +26,10 @@ const projectInnings = {
   },
 };
 
-const unwindInnings = { $unwind: "$innings" };
-
 const projectDeliveries = {
   $project: {
     matchID: "$_id",
     overs: "$innings.overs",
-    // battingTeam: "$innings.team",
-    // bowlingTeam: {
-    //   $cond: {
-    //     if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
-    //     then: { $arrayElemAt: ["$info.teams", 1] },
-    //     else: { $arrayElemAt: ["$info.teams", 0] },
-    //   },
-    // },
     innings: {
       $cond: {
         if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
@@ -34,7 +37,6 @@ const projectDeliveries = {
         else: 2,
       },
     },
-    // season: "$info.season",
     _id: 0,
   },
 };
@@ -58,8 +60,6 @@ const boundariesCond = {
     else: 0,
   },
 };
-
-const unwindOvers = { $unwind: "$overs" };
 
 const setBallNo = {
   $set: {
@@ -94,8 +94,6 @@ const setBallNo = {
     },
   },
 };
-
-const unwindDeliveries = { $unwind: "$overs.deliveries" };
 
 const renameTeams = {
   $set: {
@@ -137,15 +135,6 @@ const renameTeams = {
         default: "$bowlingTeam",
       },
     },
-  },
-};
-
-const unwindWickets = { $unwind: "$overs.deliveries.wickets" };
-// NOTE: preserving null arrays is important here
-const unwindFielders = {
-  $unwind: {
-    path: "$overs.deliveries.wickets.fielders",
-    preserveNullAndEmptyArrays: true,
   },
 };
 
@@ -212,12 +201,9 @@ db.matches.aggregate([
   unwindOvers,
   unwindDeliveries,
   projectEachBall,
-  sortSeason,
   renameTeams,
   { $out: "runs" },
 ]);
-
-// db.matches.find();
 
 // Different types of outs given in the data:
 // stumped, lbw, run out, caught, caught and bowled, bowled

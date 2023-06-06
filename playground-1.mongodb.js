@@ -306,14 +306,6 @@ const projectDeliveries = {
   $project: {
     matchID: "$_id",
     overs: "$innings.overs",
-    // battingTeam: "$innings.team",
-    // bowlingTeam: {
-    //   $cond: {
-    //     if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
-    //     then: { $arrayElemAt: ["$info.teams", 1] },
-    //     else: { $arrayElemAt: ["$info.teams", 0] },
-    //   },
-    // },
     innings: {
       $cond: {
         if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
@@ -321,7 +313,6 @@ const projectDeliveries = {
         else: 2,
       },
     },
-    // season: "$info.season",
     _id: 0,
   },
 };
@@ -455,6 +446,15 @@ const projectEachBall = {
     extraRuns: "$overs.deliveries.runs.extras",
     wide: { $ifNull: ["$overs.deliveries.extras.wides", 0] },
     noball: { $ifNull: ["$overs.deliveries.extras.noballs", 0] },
+    wicket: {
+      $cond: {
+        if: {
+          $gt: ["$overs.deliveries.wickets", null],
+        },
+        then: 1,
+        else: 0,
+      },
+    },
     boundaries: boundariesCond,
   },
 };
@@ -491,45 +491,343 @@ const setBowlerWicket = {
   },
 };
 
+db.matches.find();
+
 db.matches.aggregate([
-  projectInnings,
-  unwindInnings,
-  projectDeliveries,
-  setBallNo,
-  unwindOvers,
-  unwindDeliveries,
-  projectEachBall,
-  sortSeason,
-  renameTeams,
-  { $out: "runs" },
+  {
+    $facet: {
+      teamPlayer: [
+        {
+          $project: {
+            players: { $objectToArray: "$info.players" },
+            matchID: "$_id",
+            _id: 0,
+          },
+        },
+        { $unwind: "$players" },
+        { $unwind: "$players.v" },
+        {
+          $project: {
+            matchID: 1,
+            team: "$players.k",
+            player: "$players.v",
+          },
+        },
+      ],
+      playerID: [
+        {
+          $project: {
+            playerIDs: { $objectToArray: "$info.registry.people" },
+            matchID: "$_id",
+            _id: 0,
+          },
+        },
+        { $unwind: "$playerIDs" },
+        {
+          $project: {
+            matchID: 1,
+            player: "$playerIDs.k",
+            playerID: "$playerIDs.v",
+          },
+        },
+      ],
+    },
+  },
+  {
+    $project: {
+      teamPlayerIDs: { $setUnion: ["$teamPlayer", "$playerID"] },
+    },
+  },
+  { $unwind: "$teamPlayerIDs" },
+  {
+    $project: {
+      matchID: "$teamPlayerIDs.matchID",
+      team: "$teamPlayerIDs.team",
+      player: "$teamPlayerIDs.player",
+      playerID: "$teamPlayerIDs.playerID",
+    },
+  },
+  {
+    $group: {
+      _id: { matchID: "$matchID", player: "$player" },
+      team: { $addToSet: "$team" },
+      playerID: { $addToSet: "$playerID" },
+    },
+  },
+  {
+    $unwind: {
+      path: "$team",
+      preserveNullAndEmptyArrays: true,
+    },
+  },
+  {
+    $unwind: {
+      path: "$playerID",
+      preserveNullAndEmptyArrays: true,
+    },
+  },
+  {
+    $project: {
+      matchID: "$_id.matchID",
+      player: "$_id.player",
+      team: 1,
+      playerID: 1,
+      _id: 0,
+    },
+  },
+  {
+    $group: {
+      _id: "$playerID",
+      matches: { $count: {} },
+    },
+  },
+  {
+    $sort: {
+      matches: -1,
+    },
+  },
+  //TODO: Not working correctly check dhoni's and kohli's numbers
 ]);
 
-// db.matches.find();
+//------------ Creates Runs Collection -----------------//
 
+// db.matches.aggregate([
+//   projectInnings,
+//   unwindInnings,
+//   projectDeliveries,
+//   setBallNo,
+//   unwindOvers,
+//   unwindDeliveries,
+//   projectEachBall,
+//   sortSeason,
+//   renameTeams,
+//   // { $out: "runs" },
+// ]);
+
+//------------------------------------------------------//
+
+//------------ Creates Partnership Collection -----------------//
+
+// db.matches.aggregate([
+//   projectInnings,
+//   unwindInnings,
+//   projectDeliveries,
+//   setBallNo,
+//   unwindOvers,
+//   unwindDeliveries,
+//   projectEachBall,
+//   {
+//     $set: {
+//       batsmen: {
+//         $sortArray: {
+//           input: ["$batter", "$nonStriker"],
+//           sortBy: 1,
+//         },
+//       },
+//       ballsFaced: {
+//         $cond: {
+//           if: {
+//             $eq: ["$wide", 0],
+//           },
+//           then: 1,
+//           else: 0,
+//         },
+//       },
+//     },
+//   },
+//   {
+//     $group: {
+//       _id: {
+//         matchID: "$matchID",
+//         innings: "$innings",
+//         batsmen: "$batsmen",
+//       },
+//       partnership: {
+//         $sum: { $add: ["$batterRuns", "$extraRuns"] },
+//       },
+//       wicket: {
+//         $sum: "$wicket",
+//       },
+//       ballsFaced: {
+//         $sum: "$ballsFaced",
+//       },
+//     },
+//   },
+//   {
+//     $sort: {
+//       partnership: -1,
+//     },
+//   },
+//   { $out: "partnershipData" },
+// ]);
+
+// db.matches.aggregate([
+//   projectInnings,
+//   unwindInnings,
+//   projectDeliveries,
+//   setBallNo,
+//   unwindOvers,
+//   unwindDeliveries,
+//   projectEachBall,
+//   {
+//     $set: {
+//       batsmen: {
+//         $sortArray: {
+//           input: ["$batter", "$nonStriker"],
+//           sortBy: 1,
+//         },
+//       },
+//       ballsFaced: {
+//         $cond: {
+//           if: {
+//             $eq: ["$wide", 0],
+//           },
+//           then: 1,
+//           else: 0,
+//         },
+//       },
+//     },
+//   },
+//   {
+//     $group: {
+//       _id: {
+//         matchID: "$matchID",
+//         innings: "$innings",
+//         batsmen: "$batsmen",
+//         batter: "$batter",
+//       },
+//       batterRuns: {
+//         $sum: "$batterRuns",
+//       },
+//       ballsFaced: {
+//         $sum: "$ballsFaced",
+//       },
+//     },
+//   },
+//   {
+//     $set: {
+//       firstBatter: { $arrayElemAt: ["$_id.batsmen", 0] },
+//       secondBatter: { $arrayElemAt: ["$_id.batsmen", 1] },
+//     },
+//   },
+//   {
+//     $facet: {
+//       firstBatterRuns: [
+//         {
+//           $match: {
+//             $expr: {
+//               $eq: ["$firstBatter", "$_id.batter"],
+//             },
+//           },
+//         },
+//         {
+//           $set: {
+//             batter1Runs: "$batterRuns",
+//             batter1BallsFaced: "$ballsFaced",
+//           },
+//         },
+//       ],
+//       secondBatterRuns: [
+//         {
+//           $match: {
+//             $expr: {
+//               $eq: ["$secondBatter", "$_id.batter"],
+//             },
+//           },
+//         },
+//         {
+//           $set: {
+//             batter2Runs: "$batterRuns",
+//             batter2BallsFaced: "$ballsFaced",
+//           },
+//         },
+//       ],
+//     },
+//   },
+//   {
+//     $project: {
+//       activity: {
+//         $setUnion: ["$firstBatterRuns", "$secondBatterRuns"],
+//       },
+//     },
+//   },
+//   { $unwind: "$activity" },
+//   { $unset: "activity._id.batter" },
+//   {
+//     $group: {
+//       _id: "$activity._id",
+//       firstBatterRuns: { $sum: "$activity.batter1Runs" },
+//       secondBatterRuns: { $sum: "$activity.batter2Runs" },
+//       firstBatterBallsFaced: { $sum: "$activity.batter1BallsFaced" },
+//       secondBatterBallsFaced: { $sum: "$activity.batter2BallsFaced" },
+//     },
+//   },
+//   {
+//     $sort: {
+//       firstBatterRuns: -1,
+//     },
+//   },
+//   { $out: "individualPartershipData" },
+// ]);
+
+// db.partnershipData.aggregate([
+//   {
+//     $lookup: {
+//       from: "individualPartershipData",
+//       localField: "_id",
+//       foreignField: "_id",
+//       as: "individualPartnershipData",
+//     },
+//   },
+//   { $unwind: "$individualPartnershipData" },
+//   {
+//     $project: {
+//       _id: 0,
+//       matchID: "$_id.matchID",
+//       innings: "$_id.innings",
+//       firstBatter: { $arrayElemAt: ["$_id.batsmen", 0] },
+//       secondBatter: { $arrayElemAt: ["$_id.batsmen", 1] },
+//       firstBatterRuns: "$individualPartnershipData.firstBatterRuns",
+//       secondBatterRuns: "$individualPartnershipData.secondBatterRuns",
+//       firstBatterBallsFaced: "$individualPartnershipData.firstBatterBallsFaced",
+//       secondBatterBallsFaced:
+//         "$individualPartnershipData.secondBatterBallsFaced",
+//       parternship: "$partnership",
+//       totalBallsFaced: "$ballsFaced",
+//       wicket: "$wicket",
+//     },
+//   },
+// ]);
+
+//------------------------------------------------------//
+
+//------------ Creates Outs Collection -----------------//
 // Different types of outs given in the data:
 // stumped, lbw, run out, caught, caught and bowled, bowled
 
-db.matches.aggregate([
-  projectInnings,
-  unwindInnings,
-  projectDeliveries,
-  setBallNo,
-  unwindOvers,
-  unwindDeliveries,
-  {
-    $match: {
-      "overs.deliveries.wickets": { $ne: null },
-    },
-  },
-  unwindWickets,
-  unwindFielders,
-  projectOuts,
-  setBowlerWicket,
-  renameTeams,
-  { $out: "outs" },
-]);
+// db.matches.aggregate([
+//   projectInnings,
+//   unwindInnings,
+//   projectDeliveries,
+//   setBallNo;
+//   unwindOvers,
+//   unwindDeliveries,
+//   {
+//     $match: {
+//       "overs.deliveries.wickets": { $ne: null },
+//     },
+//   },
+//   unwindWickets,
+//   unwindFielders,
+//   projectOuts,
+//   setBowlerWicket,
+//   renameTeams,
+//   { $out: "outs" },
+// ]);
 
-// //------------ Creates Matches Collection -----------------//
+//------------------------------------------------------//
+
+//------------ Creates Matches Collection -----------------//
 // const setMatchNumberAndDate = {
 //   $set: {
 //     matchNumber: {
