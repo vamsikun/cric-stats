@@ -29,6 +29,14 @@ const projectDeliveries = {
     },
     _id: 0,
     season: "$info.season",
+    battingTeam: "$innings.team",
+    bowlingTeam: {
+      $cond: {
+        if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
+        then: { $arrayElemAt: ["$info.teams", 1] },
+        else: { $arrayElemAt: ["$info.teams", 0] },
+      },
+    },
   },
 };
 
@@ -94,6 +102,8 @@ const projectEachBall = {
   $project: {
     matchID: { $toString: "$matchID" },
     season: 1,
+    battingTeam: 1,
+    bowlingTeam: 1,
     innings: "$innings",
     over: "$overs.over",
     ballNo: "$overs.deliveries.ballNo",
@@ -144,6 +154,8 @@ const groupPartnersAndBallsFaced = {
       innings: "$innings",
       batsmen: "$batsmen",
       season: "$season",
+      battingTeam: "$battingTeam",
+      bowlingTeam: "$bowlingTeam",
     },
     partnership: {
       $sum: { $add: ["$batterRuns", "$extraRuns"] },
@@ -175,6 +187,8 @@ const groupPartnerWithBatter = {
       batsmen: "$batsmen",
       batter: "$batter",
       season: "$season",
+      battingTeam: "$battingTeam",
+      bowlingTeam: "$bowlingTeam",
     },
     batterRuns: {
       $sum: "$batterRuns",
@@ -326,6 +340,8 @@ db.partnershipData.aggregate([
       matchID: { $toString: "$_id.matchID" },
       season: "$_id.season",
       innings: "$_id.innings",
+      battingTeam: "$_id.battingTeam",
+      bowlingTeam: "$_id.bowlingTeam",
       firstBatter: { $arrayElemAt: ["$_id.batsmen", 0] },
       secondBatter: { $arrayElemAt: ["$_id.batsmen", 1] },
       firstBatterRuns: "$individualPartnershipData.firstBatterRuns",
@@ -344,11 +360,11 @@ db.partnershipData.aggregate([
       secondBatterSixes: "$individualPartnershipData.secondBatterSixes",
     },
   },
-  { $out: "partnerships" },
+  // { $out: "partnerships" },
 ]);
 
 // TODO: think of using primary keys??
 // NOTE: added season column
 
-db.partnershipData.drop();
-db.individualPartershipData.drop();
+// db.partnershipData.drop();
+// db.individualPartershipData.drop();
