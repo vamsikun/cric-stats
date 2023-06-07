@@ -33,6 +33,7 @@ const projectDeliveries = {
       },
     },
     _id: 0,
+    season: "$info.season",
   },
 };
 
@@ -73,6 +74,7 @@ const setBallNo = {
 const projectOuts = {
   $project: {
     matchID: { $toString: "$matchID" },
+    season: 1,
     over: "$overs.over",
     ballNo: "$overs.deliveries.ballNo",
     innings: 1,
@@ -106,6 +108,10 @@ const setBowlerWicket = {
 // Different types of outs given in the data:
 // stumped, lbw, run out, caught, caught and bowled, bowled
 
+db.matches.updateMany({ "info.season": { $type: 16 } }, [
+  { $set: { "info.season": { $toString: "$info.season" } } },
+]);
+
 db.matches.aggregate([
   projectInnings,
   unwindInnings,
@@ -119,4 +125,4 @@ db.matches.aggregate([
   { $out: "outs" },
 ]);
 
-// NOTE: using explain we got the execution time of this query to be around 400-450ms
+// NOTE: added season column

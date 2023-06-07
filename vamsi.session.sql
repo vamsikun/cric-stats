@@ -1,0 +1,18 @@
+-- add season column in runs table from matches table
+--ALTER TABLE runs ADD COLUMN season VARCHAR;
+--UPDATE runs SET season= (SELECT season FROM matches WHERE matches.match_id = runs.match_id);
+-- add season column in outs tables from matches table
+-- ALTER TABLE outs ADD COLUMN season VARCHAR;
+-- UPDATE outs SET season = (
+--         SELECT season
+--         FROM matches
+--         WHERE matches.match_id = outs.match_id
+--     );
+-- -- add season column in partnerships table from matches table
+-- ALTER TABLE partnerships ADD COLUMN season VARCHAR;
+-- UPDATE partnerships SET season = (
+--         SELECT season
+--         FROM matches
+--         WHERE matches.match_id = partnerships.match_id
+--     );
+select pg_database_size('ipl');

@@ -46,14 +46,14 @@ fieldsForMatchesCollection=("$fieldsForMatchesCollection","team1Score","team1Wic
 fieldsForMatchesCollection=("$fieldsForMatchesCollection","team2Score","team2Wickets","team2Fours","team2Sixes","team2Extras")
 
 # fields for runs collection;names should be same as the one in collection
-fieldsForRunsCollection=("matchID","over","ballNo","innings","batter","nonStriker","bowler")
+fieldsForRunsCollection=("matchID","season","over","ballNo","innings","batter","nonStriker","bowler")
 fieldsForRunsCollection=("$fieldsForRunsCollection","batterRuns","extraRuns","wide","noball","wicket","boundaries")
 
 # fields for outs collection;names should be same as the one in collection
-fieldsForOutsCollection=("matchID","over","ballNo","innings","bowler","playerOut","outType","fieldersInvolved")
+fieldsForOutsCollection=("matchID","season","over","ballNo","innings","bowler","playerOut","outType","fieldersInvolved")
 
 # fields for partnership collection; names should be same as the one in collection
-fieldsForPartnershipCollection=("matchID","innings","firstBatter","secondBatter","partnership","totalBallsFaced","fours","sixes","wicket")
+fieldsForPartnershipCollection=("matchID","season","innings","firstBatter","secondBatter","partnership","totalBallsFaced","fours","sixes","wicket")
 fieldsForPartnershipCollection=("$fieldsForPartnershipCollection","firstBatterRuns","firstBatterBallsFaced","firstBatterFours","firstBatterSixes")
 fieldsForPartnershipCollection=("$fieldsForPartnershipCollection","secondBatterRuns","secondBatterBallsFaced","secondBatterFours","secondBatterSixes")
 
@@ -124,6 +124,7 @@ CREATE TABLE players(
 psql -d "ipl" -c "
 CREATE TABLE runs(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
+    season VARCHAR,
     over SMALLINT,
     ball_no SMALLINT,
     innings SMALLINT,
@@ -142,6 +143,7 @@ CREATE TABLE runs(
 psql -d "ipl" -c "
 CREATE TABLE outs(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
+    season VARCHAR,
     over SMALLINT,
     ball_no SMALLINT,
     innings SMALLINT,
@@ -155,6 +157,7 @@ CREATE TABLE outs(
 psql -d "ipl" -c "
 CREATE TABLE partnerships(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
+    season VARCHAR,
     innings SMALLINT,
     first_batter VARCHAR,
     second_batter VARCHAR,
@@ -213,6 +216,7 @@ psql -d "ipl" -c "\COPY players(
 
 psql -d "ipl" -c "\COPY runs(
     match_id,
+    season,
     over,
     ball_no,
     innings,
@@ -229,6 +233,7 @@ psql -d "ipl" -c "\COPY runs(
 
 psql -d "ipl" -c "\COPY outs(
     match_id,
+    season,
     over,
     ball_no,
     innings,
@@ -240,6 +245,7 @@ psql -d "ipl" -c "\COPY outs(
 
 psql -d "ipl" -c "\COPY partnerships(
     match_id,
+    season,
     innings,
     first_batter,
     second_batter,
