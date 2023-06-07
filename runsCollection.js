@@ -31,14 +31,6 @@ const projectDeliveries = {
     },
     _id: 0,
     season: "$info.season",
-    battingTeam: "$innings.team",
-    bowlingTeam: {
-      $cond: {
-        if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
-        then: { $arrayElemAt: ["$info.teams", 1] },
-        else: { $arrayElemAt: ["$info.teams", 0] },
-      },
-    },
   },
 };
 
@@ -102,8 +94,6 @@ const projectEachBall = {
     season: "$season",
     innings: "$innings",
     over: "$overs.over",
-    battingTeam: "$battingTeam",
-    bowlingTeam: "$bowlingTeam",
     ballNo: "$overs.deliveries.ballNo",
     batter: "$overs.deliveries.batter",
     nonStriker: "$overs.deliveries.non_striker",
@@ -133,4 +123,4 @@ db.matches.aggregate([
   { $out: "runs" },
 ]);
 
-// NOTE: added bowling and batting team columns
+// NOTE: removed bowling and batting team columns

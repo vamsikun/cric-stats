@@ -34,14 +34,6 @@ const projectDeliveries = {
     },
     _id: 0,
     season: "$info.season",
-    battingTeam: "$innings.team",
-    bowlingTeam: {
-      $cond: {
-        if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
-        then: { $arrayElemAt: ["$info.teams", 1] },
-        else: { $arrayElemAt: ["$info.teams", 0] },
-      },
-    },
   },
 };
 
@@ -83,8 +75,6 @@ const projectOuts = {
   $project: {
     matchID: { $toString: "$matchID" },
     season: 1,
-    battingTeam: 1,
-    bowlingTeam: 1,
     over: "$overs.over",
     ballNo: "$overs.deliveries.ballNo",
     innings: 1,
