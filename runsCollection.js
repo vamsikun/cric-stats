@@ -101,9 +101,64 @@ const projectEachBall = {
     batterRuns: "$overs.deliveries.runs.batter",
     extraRuns: "$overs.deliveries.runs.extras",
     wicket: { $arrayElemAt: ["$overs.deliveries.wickets.player_out", 0] },
+    outType: { $arrayElemAt: ["$overs.deliveries.wickets.kind", 0] },
+    fieldersInvolved: {
+      $arrayElemAt: ["$overs.deliveries.wickets.fielders.name", 0],
+    },
     wide: { $ifNull: ["$overs.deliveries.extras.wides", 0] },
     noball: { $ifNull: ["$overs.deliveries.extras.noballs", 0] },
     boundaries: boundariesCond,
+  },
+};
+
+const setBowlerWicket = {
+  $set: {
+    bowlerWicket: {
+      $cond: {
+        if: {
+          $or: [
+            { $eq: ["$outType", "caught"] },
+            { $eq: ["$outType", "caught and bowled"] },
+            { $eq: ["$outType", "bowled"] },
+            { $eq: ["$outType", "lbw"] },
+            { $eq: ["$outType", "stumped"] },
+          ],
+        },
+        then: 1,
+        else: 0,
+      },
+    },
+  },
+};
+
+const setFieldersInvolved = {
+  $set: {
+    fieldersInvolved: {
+      $cond: {
+        if: {
+          $and: [
+            { $ne: [{ $type: "$fieldersInvolved" }, "missing"] },
+            { $ne: ["$fieldersInvolved", null] },
+            { $ne: [{ $size: "$fieldersInvolved" }, 0] },
+          ],
+        },
+        then: {
+          $cond: {
+            if: { $eq: [{ $size: "$fieldersInvolved" }, 1] },
+            then: { $arrayElemAt: ["$fieldersInvolved", 0] },
+            else: {
+              $reduce: {
+                input: "$fieldersInvolved",
+                initialValue: "",
+                // TODO: + is being added as the first char
+                in: { $concat: ["$$value", "+", "$$this"] },
+              },
+            },
+          },
+        },
+        else: null,
+      },
+    },
   },
 };
 
@@ -120,7 +175,9 @@ db.matches.aggregate([
   unwindOvers,
   unwindDeliveries,
   projectEachBall,
+  setBowlerWicket,
+  setFieldersInvolved,
   { $out: "runs" },
 ]);
 
-// NOTE: removed bowling and batting team columns
+// NOTE: added outs information

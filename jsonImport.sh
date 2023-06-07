@@ -47,10 +47,10 @@ fieldsForMatchesCollection=("$fieldsForMatchesCollection","team2Score","team2Wic
 
 # fields for runs collection;names should be same as the one in collection
 fieldsForRunsCollection=("matchID","season","battingTeam","bowlingTeam","over","ballNo","innings","batter","nonStriker","bowler")
-fieldsForRunsCollection=("$fieldsForRunsCollection","batterRuns","extraRuns","wide","noball","wicket","boundaries")
+fieldsForRunsCollection=("$fieldsForRunsCollection","batterRuns","extraRuns","wide","noball","wicket","outType","fieldersInvolved","bowlerWicket","boundaries")
 
 # fields for outs collection;names should be same as the one in collection
-fieldsForOutsCollection=("matchID","season","battingTeam","bowlingTeam","over","ballNo","innings","bowler","playerOut","outType","fieldersInvolved")
+# fieldsForOutsCollection=("matchID","season","battingTeam","bowlingTeam","over","ballNo","innings","bowler","playerOut","outType","fieldersInvolved")
 
 # fields for partnership collection; names should be same as the one in collection
 fieldsForPartnershipCollection=("matchID","season","battingTeam","bowlingTeam","innings","firstBatter","secondBatter","partnership","totalBallsFaced","fours","sixes","wicket")
@@ -67,7 +67,7 @@ mongoexport -d ipl -c eachMatch --type=csv --fields "$fieldsForMatchesCollection
 mongoexport -d ipl -c runs --type=csv --fields "$fieldsForRunsCollection" --out=runs.csv
 
 # outs data
-mongoexport -d ipl -c outs --type=csv --fields "$fieldsForOutsCollection" --out=outs.csv
+# mongoexport -d ipl -c outs --type=csv --fields "$fieldsForOutsCollection" --out=outs.csv
 
 # partnership data
 mongoexport -d ipl -c partnerships --type=csv --fields "$fieldsForPartnershipCollection" --out=partnership.csv
@@ -138,25 +138,28 @@ CREATE TABLE runs(
     wide SMALLINT,
     noball SMALLINT,
     wicket VARCHAR,
+    out_type VARCHAR,
+    fielders_involved VARCHAR,
+    bowler_wicket SMALLINT,
     boundaries SMALLINT
 );
 "
 
-psql -d "ipl" -c "
-CREATE TABLE outs(
-    match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
-    season VARCHAR,
-    batting_team VARCHAR,
-    bowling_team VARCHAR,
-    over SMALLINT,
-    ball_no SMALLINT,
-    innings SMALLINT,
-    bowler VARCHAR,
-    player_out VARCHAR,
-    out_type VARCHAR,
-    fielders_involved VARCHAR
-);
-"
+# psql -d "ipl" -c "
+# CREATE TABLE outs(
+#     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
+#     season VARCHAR,
+#     batting_team VARCHAR,
+#     bowling_team VARCHAR,
+#     over SMALLINT,
+#     ball_no SMALLINT,
+#     innings SMALLINT,
+#     bowler VARCHAR,
+#     player_out VARCHAR,
+#     out_type VARCHAR,
+#     fielders_involved VARCHAR
+# );
+# "
 
 psql -d "ipl" -c "
 CREATE TABLE partnerships(
@@ -236,22 +239,25 @@ psql -d "ipl" -c "\COPY runs(
     wide,
     noball,
     wicket,
+    out_type,
+    fielders_involved,
+    bowler_wicket,
     boundaries
 ) FROM $CURR_DIR/runs.csv DELIMITER ',' CSV HEADER;"
 
-psql -d "ipl" -c "\COPY outs(
-    match_id,
-    season,
-    batting_team,
-    bowling_team,
-    over,
-    ball_no,
-    innings,
-    bowler,
-    player_out,
-    out_type,
-    fielders_involved
-) FROM $CURR_DIR/outs.csv DELIMITER ',' CSV HEADER;"
+# psql -d "ipl" -c "\COPY outs(
+#     match_id,
+#     season,
+#     batting_team,
+#     bowling_team,
+#     over,
+#     ball_no,
+#     innings,
+#     bowler,
+#     player_out,
+#     out_type,
+#     fielders_involved
+# ) FROM $CURR_DIR/outs.csv DELIMITER ',' CSV HEADER;"
 
 psql -d "ipl" -c "\COPY partnerships(
     match_id,
@@ -276,6 +282,14 @@ psql -d "ipl" -c "\COPY partnerships(
     second_batter_sixes
 ) FROM $CURR_DIR/partnership.csv DELIMITER ',' CSV HEADER;"
 
+# modify the fielders_involved string
+# there is a plus sign at the start and end when there are two or more fielders involved
+# TODO: optimize the following sql
+# NOTE: here the indexing starts from 1
+psql -d "ipl" -c "update runs
+set fielders_involved=SUBSTRING(fielders_involved FROM 2)
+where fielders_involved like '+%'
+"
 # modify the matchID string
 
 # psql -d "ipl" -c "update players
