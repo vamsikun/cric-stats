@@ -1,4 +1,4 @@
-CREATE TABLE matches(
+psql -d ipl -c "CREATE TABLE matches(
     match_id VARCHAR PRIMARY KEY,
     match_number VARCHAR,
     season VARCHAR,
@@ -23,9 +23,9 @@ CREATE TABLE matches(
     team2_fours SMALLINT,
     team2_sixes SMALLINT,
     team2_extras SMALLINT
-);
+);"
 
-COPY matches(
+psql -d ipl -c "\COPY matches(
 match_id,
 match_number,
 season,
@@ -50,4 +50,4 @@ team2_wickets,
 team2_fours,
 team2_sixes,
 team2_extras
-) FROM :MATCHES_FILE DELIMITER ',' CSV HEADER;
+) FROM $1 DELIMITER ',' CSV HEADER;"

@@ -14,9 +14,9 @@ CURR_DIR=$(pwd)
 cd $DATA_DIR
 
 # imports each json file to mongo database
-# for file in *.json; do
-# 	mongoimport --db ipl --collection matches --file $file
-# done
+for file in *.json; do
+	mongoimport --db ipl --collection matches --file $file
+done
 
 # back to the home directory
 cd $CURR_DIR
@@ -26,7 +26,6 @@ cd $CURR_DIR
 mongosh <"./jsScripts/playersCollection.js"
 mongosh <"./jsScripts/matchesCollection.js"
 mongosh <"./jsScripts/runsCollection.js"
-mongosh <"./jsScripts/outsCollection.js"
 mongosh <"./jsScripts/partnershipCollection.js"
 
 # TODO: give args for database, collection and output file
@@ -55,7 +54,6 @@ fieldsForPartnershipCollection=("$fieldsForPartnershipCollection","secondBatterR
 
 # players data
 mongoexport -d ipl -c players --type=csv --fields "$fieldsForPlayersCollection" --out=players.csv
-
 # matches data
 mongoexport -d ipl -c eachMatch --type=csv --fields "$fieldsForMatchesCollection" --out=matches.csv
 
@@ -70,18 +68,18 @@ mongoexport -d ipl -c partnerships --type=csv --fields "$fieldsForPartnershipCol
 # sudo -u postgres createuser -s $(whoami); createdb $(whoami)
 
 # create database
-psql -c "CREATE DATABASE IF NOT EXISTS ipl"
+psql -c "CREATE DATABASE ipl;"
 
 # NOTE: creates tables from the csv files
 # NOTE: it's important to make use of both " and ' in the path when using shell variables due to the special characters
-psql -U vamsi -d ipl -v MATCHES_FILE="'$CURR_DIR/matches.csv'" -f "./sqlScripts/createMatches.sql"
-psql -U vamsi -d ipl -v PLAYERS_FILE="'$CURR_DIR/players.csv'" -f "./sqlScripts/createPlayers.sql"
-psql -U vamsi -d ipl -v RUNS_FILE="'$CURR_DIR/runs.csv'" -f "./sqlScripts/createRuns.sql"
-psql -U vamsi -d ipl -v PARTNERSHIPS_FILE="'$CURR_DIR/partnerships.csv'" -f "./sqlScripts/createPartnerships.sql"
-psql -U vamsi -d ipl -f "./sqlScripts/createPlayerStatsEachMatch.sql"
+
+./sqlScripts/createMatches.sh $CURR_DIR/matches.csv
+./sqlScripts/createPlayers.sh $CURR_DIR/players.csv
+./sqlScripts/createRuns.sh $CURR_DIR/runs.csv
+./sqlScripts/createPartnerships.sh $CURR_DIR/partnership.csv
+./sqlScripts/createPlayerStatsEachMatch.sh
 
 # TODO: use index
-# psql -U vamsi -d ipl -f "./sqlScripts/createIndex.sql"
 
 # remove the temporary matches.csv file
 rm $CURR_DIR/matches.csv

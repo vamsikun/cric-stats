@@ -1,3 +1,4 @@
+psql -d ipl -c "
 CREATE TABLE player_stats_each_match as
 select bs.season as season,
     bs.match_id as match_id,
@@ -107,4 +108,4 @@ from (
             team2_score
         from matches
     ) m on bs.season = m.season
-    and bs.match_id = m.match_id;
+    and bs.match_id = m.match_id;"

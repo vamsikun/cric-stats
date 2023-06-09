@@ -1,3 +1,4 @@
+psql -d ipl -c "
 CREATE TABLE runs(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
     season VARCHAR,
@@ -16,9 +17,9 @@ CREATE TABLE runs(
     fielders_involved VARCHAR,
     bowler_wicket SMALLINT,
     boundaries SMALLINT
-);
+);"
 
-COPY runs(
+psql -d ipl -c "\COPY runs(
     match_id,
     season,
     over,
@@ -36,15 +37,14 @@ COPY runs(
     fielders_involved,
     bowler_wicket,
     boundaries
-) FROM :RUNS_FILE DELIMITER ',' CSV HEADER;
+) FROM $1 DELIMITER ',' CSV HEADER;"
 
+# modify the fielders_involved string
+# there is a plus sign at the start and end when there are two or more fielders involved
+# TODO: optimize the following sql
+# NOTE: here the indexing starts from 1
 
-
--- modify the fielders_involved string
--- there is a plus sign at the start and end when there are two or more fielders involved
--- TODO: optimize the following sql
--- NOTE: here the indexing starts from 1
-
+psql -d ipl -c "
 UPDATE runs
 SET fielders_involved=SUBSTRING(fielders_involved FROM 2)
-WHERE fielders_involved LIKE '+%';
+WHERE fielders_involved LIKE '+%';"

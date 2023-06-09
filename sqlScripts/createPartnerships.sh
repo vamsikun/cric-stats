@@ -1,4 +1,4 @@
-CREATE TABLE partnerships(
+psql -d ipl -c "CREATE TABLE partnerships(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
     season VARCHAR,
     innings SMALLINT,
@@ -17,9 +17,9 @@ CREATE TABLE partnerships(
     second_batter_balls_faced SMALLINT,
     second_batter_fours SMALLINT,
     second_batter_sixes SMALLINT
-);
+);"
 
-COPY partnerships(
+psql -d ipl -c "\COPY partnerships(
     match_id,
     season,
     innings,
@@ -38,4 +38,4 @@ COPY partnerships(
     second_batter_balls_faced,
     second_batter_fours,
     second_batter_sixes
-) FROM :PARTNERSHIPS_FILE DELIMITER ',' CSV HEADER;
+) FROM $1 DELIMITER ',' CSV HEADER;"
