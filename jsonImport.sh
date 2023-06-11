@@ -44,11 +44,11 @@ fieldsForMatchesCollection=("$fieldsForMatchesCollection","team1Score","team1Wic
 fieldsForMatchesCollection=("$fieldsForMatchesCollection","team2Score","team2Wickets","team2Fours","team2Sixes","team2Extras")
 
 # fields for runs collection;names should be same as the one in collection
-fieldsForRunsCollection=("matchID","season","over","ballNo","innings","batter","nonStriker","bowler")
+fieldsForRunsCollection=("matchID","over","ballNo","innings","batter","nonStriker","bowler")
 fieldsForRunsCollection=("$fieldsForRunsCollection","batterRuns","extraRuns","wide","noball","penalty","wicket","outType","fieldersInvolved","bowlerWicket","boundaries")
 
 # fields for partnership collection; names should be same as the one in collection
-fieldsForPartnershipCollection=("matchID","season","innings","firstBatter","secondBatter","partnership","totalBallsFaced","fours","sixes","wicket")
+fieldsForPartnershipCollection=("matchID","innings","firstBatter","secondBatter","partnership","totalBallsFaced","fours","sixes","wicket")
 fieldsForPartnershipCollection=("$fieldsForPartnershipCollection","firstBatterRuns","firstBatterBallsFaced","firstBatterFours","firstBatterSixes")
 fieldsForPartnershipCollection=("$fieldsForPartnershipCollection","secondBatterRuns","secondBatterBallsFaced","secondBatterFours","secondBatterSixes")
 

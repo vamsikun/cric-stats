@@ -1,7 +1,6 @@
 psql -d ipl -c "
 CREATE TABLE runs(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
-    season VARCHAR,
     over SMALLINT,
     ball_no SMALLINT,
     innings SMALLINT,
@@ -22,7 +21,6 @@ CREATE TABLE runs(
 
 psql -d ipl -c "\COPY runs(
     match_id,
-    season,
     over,
     ball_no,
     innings,

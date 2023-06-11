@@ -21,3 +21,8 @@ where fielders_involved like '%+%' and bowler_wicket<>0
 | matches | runs | players | partnerships | batter_stats_each_match | ipl |
 |---------|------|---------|--------------|-------------------------|-----|
 | 147456  | 23347200 | 1695744 | 1376256 | 14229504 | 48562979 |
+
+### When we remove the season column from runs and partnership table, as that info is already present in match_id
+ | matches | runs | players | partnerships | batter_stats_each_match | ipl |
+ |---------|------|---------|--------------|-------------------------|-----|
+ | 147456  | 21757952 | 1728512 | 1327104 | 14262272 | 46866947 |

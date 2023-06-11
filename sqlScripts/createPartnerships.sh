@@ -1,6 +1,5 @@
 psql -d ipl -c "CREATE TABLE partnerships(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
-    season VARCHAR,
     innings SMALLINT,
     first_batter VARCHAR,
     second_batter VARCHAR,
@@ -21,7 +20,6 @@ psql -d ipl -c "CREATE TABLE partnerships(
 
 psql -d ipl -c "\COPY partnerships(
     match_id,
-    season,
     innings,
     first_batter,
     second_batter,

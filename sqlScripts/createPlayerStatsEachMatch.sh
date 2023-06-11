@@ -1,6 +1,6 @@
 psql -d ipl -c "
 CREATE TABLE batter_stats_each_match as
-select bs.season as season,
+select m.season as season,
     bs.match_id as match_id,
     bs.innings as innings,
     bs.batter as player,
@@ -41,8 +41,7 @@ select bs.season as season,
     END as toss_won,
     m.team_won as team_won
 from (
-        select season,
-            match_id,
+        select match_id,
             innings,
             batter,
             over,
@@ -79,15 +78,13 @@ from (
                 END
             ) as sixes
         FROM runs
-        GROUP BY season,
-            match_id,
+        GROUP BY match_id,
             innings,
             batter,
             over
     ) bs
     left join (
-        select season,
-            match_id,
+        select match_id,
             innings,
             wicket as player_out,
             out_type,
@@ -96,8 +93,7 @@ from (
             fielders_involved
         from runs
         where wicket is not null
-    ) bw on bs.season = bw.season
-    and bs.match_id = bw.match_id
+    ) bw on bs.match_id = bw.match_id
     and bs.innings = bw.innings
     and bs.batter = bw.player_out
     left join (
@@ -110,5 +106,4 @@ from (
             team1_score,
             team2_score
         from matches
-    ) m on bs.season = m.season
-    and bs.match_id = m.match_id;"
+    ) m on bs.match_id = m.match_id;"
