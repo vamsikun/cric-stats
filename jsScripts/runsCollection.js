@@ -50,7 +50,7 @@ const boundariesCond = {
       ],
     },
     then: "$overs.deliveries.runs.batter",
-    else: 0,
+    else: null,
   },
 };
 
@@ -99,8 +99,13 @@ const projectEachBall = {
     nonStriker: "$overs.deliveries.non_striker",
     bowler: "$overs.deliveries.bowler",
     batterRuns: "$overs.deliveries.runs.batter",
-    extraRuns: "$overs.deliveries.runs.extras",
-    // wicket: { $arrayElemAt: ["$overs.deliveries.wickets.player_out", 0] },
+    extraRuns: {
+      $cond: {
+        if: { $eq: ["$overs.deliveries.runs.extras", 0] },
+        then: null,
+        else: "$overs.deliveries.runs.extras",
+      },
+    },
     wicket: {
       $cond: {
         if: { $ne: ["$overs.deliveries.wickets.kind", ["retired hurt"]] },
@@ -112,9 +117,6 @@ const projectEachBall = {
     fieldersInvolved: {
       $arrayElemAt: ["$overs.deliveries.wickets.fielders.name", 0],
     },
-    // wide: { $ifNull: ["$overs.deliveries.extras.wides", 0] },
-    // noball: { $ifNull: ["$overs.deliveries.extras.noballs", 0] },
-    // penalty: { $ifNull: ["$overs.deliveries.extras.penalty", 0] },
     wide: "$overs.deliveries.extras.wides",
     noball: "$overs.deliveries.extras.noballs",
     penalty: "$overs.deliveries.extras.penalty",
