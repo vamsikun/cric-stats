@@ -1,111 +1,52 @@
-DROP materialized view IF EXISTS player_stats;
-CREATE materialized view player_stats as
-select bs.season as season,
-    bs.match_id as match_id,
-    bs.innings as innings,
-    bs.batter as player,
-    bs.runs as runs,
-    bs.balls_faced as balls_faced,
-    bs.singles as singles,
-    bs.doubles as doubles,
-    bs.triples as triples,
-    bs.fours as fours,
-    bs.sixes as sixes,
-    bw.out_type as out_type,
-    bw.bowler as bowler,
-    bw.bowler_wicket as bowler_wicket,
-    bw.fielders_involved as fielders_involved,
-    CASE
-        WHEN bs.innings = 1 THEN m.team1_score
-        ELSE m.team2_score
-    END as team_score,
-    CASE
-        WHEN bs.innings = 1 THEN m.team2_score
-        ELSE m.team1_score
-    END as opposition_score,
-    CASE
-        WHEN bs.innings = 1 THEN m.team1
-        ELSE m.team2
-    END as team,
-    CASE
-        WHEN bs.innings = 1 THEN m.team2
-        ELSE m.team1
-    END as opposition,
-    CASE
-        WHEN bs.innings = 1
-        AND m.toss_decision = 'bat' THEN 1
-        WHEN bs.innings = 2
-        AND m.toss_decision = 'field' THEN 1
-        ELSE 0
-    END as toss_won,
-    m.team_won as team_won
-from (
-        select season,
-            match_id,
-            innings,
-            batter,
-            sum(batter_runs) as runs,
-            count(*) as balls_faced,
-            SUM(
-                CASE
-                    WHEN batter_runs = 1 THEN 1
-                    ELSE 0
-                END
-            ) as singles,
-            SUM(
-                CASE
-                    WHEN batter_runs = 2 THEN 1
-                    ELSE 0
-                END
-            ) as doubles,
-            SUM(
-                CASE
-                    WHEN batter_runs = 3 THEN 1
-                    ELSE 0
-                END
-            ) as triples,
-            SUM(
-                CASE
-                    WHEN boundaries = 4 THEN 1
-                    ELSE 0
-                END
-            ) as fours,
-            SUM(
-                CASE
-                    WHEN boundaries = 6 THEN 1
-                    ELSE 0
-                END
-            ) as sixes
-        FROM runs
-        GROUP BY season,
-            match_id,
-            innings,
-            batter
-    ) bs
-    left join (
-        select season,
-            match_id,
-            innings,
-            wicket as player_out,
-            out_type,
-            bowler,
-            bowler_wicket,
-            fielders_involved
-        from runs
-        where wicket is not null
-    ) bw on bs.season = bw.season
-    and bs.match_id = bw.match_id
-    and bs.innings = bw.innings
-    and bs.batter = bw.player_out
-    left join (
-        select season,
-            match_id,
-            toss_decision,
-            team_won,
-            team1,
-            team2,
-            team1_score,
-            team2_score
-        from matches
-    ) m on bs.season = m.season
-    and bs.match_id = m.match_id;
+-- size of each column in runs table
+select sum(pg_column_size(match_id)) / pg_table_size('runs')::float as match_id,
+    sum(pg_column_size(season)) / pg_table_size('runs')::float as season,
+    sum(pg_column_size(over)) / pg_table_size('runs')::float as over,
+    sum(pg_column_size(ball_no)) / pg_table_size('runs')::float as ball_no,
+    sum(pg_column_size(innings)) / pg_table_size('runs')::float as innings,
+    sum(pg_column_size(batter)) / pg_table_size('runs')::float as batter,
+    sum(pg_column_size(non_striker)) / pg_table_size('runs')::float as non_striker,
+    sum(pg_column_size(bowler)) / pg_table_size('runs')::float as bowler,
+    sum(pg_column_size(batter_runs)) / pg_table_size('runs')::float as batter_runs,
+    sum(pg_column_size(extra_runs)) / pg_table_size('runs')::float as extra_runs,
+    sum(pg_column_size(wide)) / pg_table_size('runs')::float as wide,
+    sum(pg_column_size(noball)) / pg_table_size('runs')::float as noball,
+    sum(pg_column_size(penalty)) / pg_table_size('runs')::float as penalty,
+    sum(pg_column_size(wicket)) / pg_table_size('runs')::float as wicket,
+    sum(pg_column_size(out_type)) / pg_table_size('runs')::float as out_type,
+    sum(pg_column_size(fielders_involved)) / pg_table_size('runs')::float as fielders_involved,
+    sum(pg_column_size(bowler_wicket)) / pg_table_size('runs')::float as bowler_wicket,
+    sum(pg_column_size(boundaries)) / pg_table_size('runs')::float as boundaries
+from runs;
+-- size of each column in batter_stats_each_match table
+"team_won" "match_id" "innings" "team_score" "opposition_score" "team" "opposition" "toss_won" "runs" "over" "balls_faced" "singles" "doubles" "triples" "fours" "sixes" "bowler_wicket" "player" "out_type" "bowler" "season" "fielders_involved"
+select sum(pg_column_size(team_won)) / pg_table_size('batter_stats_each_match')::float as team_won,
+    sum(pg_column_size(match_id)) / pg_table_size('batter_stats_each_match')::float as match_id,
+    sum(pg_column_size(innings)) / pg_table_size('batter_stats_each_match')::float as innings,
+    sum(pg_column_size(team_score)) / pg_table_size('batter_stats_each_match')::float as team_score,
+    sum(pg_column_size(opposition_score)) / pg_table_size('batter_stats_each_match')::float as opposition_score,
+    sum(pg_column_size(team)) / pg_table_size('batter_stats_each_match')::float as team,
+    sum(pg_column_size(opposition)) / pg_table_size('batter_stats_each_match')::float as opposition,
+    sum(pg_column_size(toss_won)) / pg_table_size('batter_stats_each_match')::float as toss_won,
+    sum(pg_column_size(runs)) / pg_table_size('batter_stats_each_match')::float as runs,
+    sum(pg_column_size(over)) / pg_table_size('batter_stats_each_match')::float as over,
+    sum(pg_column_size(balls_faced)) / pg_table_size('batter_stats_each_match')::float as balls_faced,
+    sum(pg_column_size(singles)) / pg_table_size('batter_stats_each_match')::float as singles,
+    sum(pg_column_size(doubles)) / pg_table_size('batter_stats_each_match')::float as doubles,
+    sum(pg_column_size(triples)) / pg_table_size('batter_stats_each_match')::float as triples,
+    sum(pg_column_size(fours)) / pg_table_size('batter_stats_each_match')::float as fours,
+    sum(pg_column_size(sixes)) / pg_table_size('batter_stats_each_match')::float as sixes,
+    sum(pg_column_size(bowler_wicket)) / pg_table_size('batter_stats_each_match')::float as bowler_wicket,
+    sum(pg_column_size(player)) / pg_table_size('batter_stats_each_match')::float as player,
+    sum(pg_column_size(out_type)) / pg_table_size('batter_stats_each_match')::float as out_type,
+    sum(pg_column_size(bowler)) / pg_table_size('batter_stats_each_match')::float as bowler,
+    sum(pg_column_size(season)) / pg_table_size('batter_stats_each_match')::float as season,
+    sum(pg_column_size(fielders_involved)) / pg_table_size('batter_stats_each_match')::float as fielders_involved
+from batter_stats_each_match;
+-- size of each table in ipl database
+select pg_table_size('matches') as matches,
+    pg_table_size('runs') as runs,
+    pg_table_size('players') as players,
+    pg_table_size('partnerships') as partnerships,
+    pg_table_size('batter_stats_each_match') as batter_stats_each_match,
+    pg_database_size('ipl') as ipl;

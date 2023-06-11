@@ -14,19 +14,19 @@ CURR_DIR=$(pwd)
 cd $DATA_DIR
 
 # imports each json file to mongo database
-for file in *.json; do
-	mongoimport --db ipl --collection matches --file $file
-done
+# for file in *.json; do
+# 	mongoimport --db ipl --collection matches --file $file
+# done
 
 # back to the home directory
 cd $CURR_DIR
 
 # TODO: modify script to take arguments for the scripts folder
 # execute mongo script
-mongosh <"./jsScripts/playersCollection.js"
-mongosh <"./jsScripts/matchesCollection.js"
-mongosh <"./jsScripts/runsCollection.js"
-mongosh <"./jsScripts/partnershipCollection.js"
+# mongosh <"./jsScripts/playersCollection.js"
+# mongosh <"./jsScripts/matchesCollection.js"
+# mongosh <"./jsScripts/runsCollection.js"
+# mongosh <"./jsScripts/partnershipCollection.js"
 
 # TODO: give args for database, collection and output file
 # export the mongo collection to a csv file
@@ -45,7 +45,7 @@ fieldsForMatchesCollection=("$fieldsForMatchesCollection","team2Score","team2Wic
 
 # fields for runs collection;names should be same as the one in collection
 fieldsForRunsCollection=("matchID","season","over","ballNo","innings","batter","nonStriker","bowler")
-fieldsForRunsCollection=("$fieldsForRunsCollection","batterRuns","extraRuns","wide","noball","wicket","outType","fieldersInvolved","bowlerWicket","boundaries")
+fieldsForRunsCollection=("$fieldsForRunsCollection","batterRuns","extraRuns","wide","noball","penalty","wicket","outType","fieldersInvolved","bowlerWicket","boundaries")
 
 # fields for partnership collection; names should be same as the one in collection
 fieldsForPartnershipCollection=("matchID","season","innings","firstBatter","secondBatter","partnership","totalBallsFaced","fours","sixes","wicket")
@@ -70,13 +70,15 @@ mongoexport -d ipl -c partnerships --type=csv --fields "$fieldsForPartnershipCol
 # create database
 psql -c "CREATE DATABASE ipl;"
 
-# NOTE: creates tables from the csv files
+# creates tables from the csv files
 # NOTE: it's important to make use of both " and ' in the path when using shell variables due to the special characters
+# WARN: the order is important here
 
 ./sqlScripts/createMatches.sh $CURR_DIR/matches.csv
 ./sqlScripts/createPlayers.sh $CURR_DIR/players.csv
 ./sqlScripts/createRuns.sh $CURR_DIR/runs.csv
 ./sqlScripts/createPartnerships.sh $CURR_DIR/partnership.csv
+./sqlScripts/sqlHelpers.sh
 ./sqlScripts/createPlayerStatsEachMatch.sh
 
 # TODO: use index

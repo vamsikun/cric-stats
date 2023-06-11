@@ -102,12 +102,17 @@ const projectEachBall = {
     bowler: "$overs.deliveries.bowler",
     batterRuns: "$overs.deliveries.runs.batter",
     extraRuns: "$overs.deliveries.runs.extras",
-    wide: { $ifNull: ["$overs.deliveries.extras.wides", 0] },
-    noball: { $ifNull: ["$overs.deliveries.extras.noballs", 0] },
+    // wide: { $ifNull: ["$overs.deliveries.extras.wides", 0] },
+    // noball: { $ifNull: ["$overs.deliveries.extras.noballs", 0] },
+    wide: "$overs.deliveries.extras.wides",
+    noball: "$overs.deliveries.extras.noballs",
     wicket: {
       $cond: {
         if: {
-          $gt: ["$overs.deliveries.wickets", null],
+          $and: [
+            { $gt: ["$overs.deliveries.wickets", null] },
+            { $ne: ["$overs.deliveries.wickets.kind", ["retired hurt"]] },
+          ],
         },
         then: 1,
         else: 0,

@@ -1,10 +1,11 @@
 psql -d ipl -c "
-CREATE TABLE player_stats_each_match as
+CREATE TABLE batter_stats_each_match as
 select bs.season as season,
     bs.match_id as match_id,
     bs.innings as innings,
     bs.batter as player,
     bs.runs as runs,
+    bs.over as over,
     bs.balls_faced as balls_faced,
     bs.singles as singles,
     bs.doubles as doubles,
@@ -34,7 +35,7 @@ select bs.season as season,
     CASE
         WHEN bs.innings = 1
         AND m.toss_decision = 'bat' THEN 1
-        WHEN bs.innings = 2
+        WHEN bs.innings = 2 
         AND m.toss_decision = 'field' THEN 1
         ELSE 0
     END as toss_won,
@@ -44,6 +45,7 @@ from (
             match_id,
             innings,
             batter,
+            over,
             sum(batter_runs) as runs,
             count(*) as balls_faced,
             SUM(
@@ -80,7 +82,8 @@ from (
         GROUP BY season,
             match_id,
             innings,
-            batter
+            batter,
+            over
     ) bs
     left join (
         select season,

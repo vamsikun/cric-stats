@@ -19,25 +19,25 @@ select bs.season as season,
     bw.bowler_wicket as bowler_wicket,
     bw.fielders_involved as fielders_involved,
     CASE
-        WHEN bs.innings = 1 THEN m.team1_score
+        WHEN bs.innings = "f" THEN m.team1_score
         ELSE m.team2_score
     END as team_score,
     CASE
-        WHEN bs.innings = 1 THEN m.team2_score
+        WHEN bs.innings = "f" THEN m.team2_score
         ELSE m.team1_score
     END as opposition_score,
     CASE
-        WHEN bs.innings = 1 THEN m.team1
+        WHEN bs.innings = "f" THEN m.team1
         ELSE m.team2
     END as team,
     CASE
-        WHEN bs.innings = 1 THEN m.team2
+        WHEN bs.innings = "f" THEN m.team2
         ELSE m.team1
     END as opposition,
     CASE
-        WHEN bs.innings = 1
+        WHEN bs.innings = "f"
         AND m.toss_decision = 'bat' THEN 1
-        WHEN bs.innings = 2
+        WHEN bs.innings = "t"
         AND m.toss_decision = 'field' THEN 1
         ELSE 0
     END as toss_won,
@@ -116,6 +116,7 @@ from (
 
 <!-- Player Stats Summary-->
 <!-- NOTE: have added `out` column to check whether a batsman is out or notout on the highest score -->
+
 ```sql
 select player_stats_summary.*, player_stats.out_type as out from (select season, innings, player, team, opposition,
 	sum(runs) as runs,
@@ -123,7 +124,7 @@ select player_stats_summary.*, player_stats.out_type as out from (select season,
 	ROUND(sum(runs)/sum(balls_faced)*100,0) as SR,
 	max(runs) as HS,
 	sum(case when out_type is null then 0 else 1 end) as outs
-	
+
 from player_stats
 group by season, innings,team, opposition, player
 order by runs desc) player_stats_summary
@@ -139,6 +140,7 @@ order by HS desc
 
 <!-- Player Stats Summary -->
 <!-- NOTE: doesn't have `out` column for HS innings -->
+
 ```sql
 select season, innings, player, team, opposition,
 	sum(runs) as runs,
@@ -146,8 +148,18 @@ select season, innings, player, team, opposition,
 	ROUND(sum(runs)/sum(balls_faced)*100,0) as SR,
 	max(runs) as HS,
 	sum(case when out_type is null then 0 else 1 end) as outs
-	
+
 from player_stats
 group by season, innings,team, opposition, player
 order by runs desc
+```
+
+### Following is used to check the table size
+
+```sql
+select pg_table_size('matches') as matches,
+		pg_table_size('runs') as runs,
+    pg_table_size('players') as players,
+    pg_table_size('partnerships') as partnerships,
+    pg_table_size('batter_stats_each_match') as batter_stats_each_match;
 ```

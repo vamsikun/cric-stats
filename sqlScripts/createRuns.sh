@@ -12,6 +12,7 @@ CREATE TABLE runs(
     extra_runs SMALLINT,
     wide SMALLINT,
     noball SMALLINT,
+    penalty SMALLINT,
     wicket VARCHAR,
     out_type VARCHAR,
     fielders_involved VARCHAR,
@@ -32,19 +33,10 @@ psql -d ipl -c "\COPY runs(
     extra_runs,
     wide,
     noball,
+    penalty,
     wicket,
     out_type,
     fielders_involved,
     bowler_wicket,
     boundaries
 ) FROM $1 DELIMITER ',' CSV HEADER;"
-
-# modify the fielders_involved string
-# there is a plus sign at the start and end when there are two or more fielders involved
-# TODO: optimize the following sql
-# NOTE: here the indexing starts from 1
-
-psql -d ipl -c "
-UPDATE runs
-SET fielders_involved=SUBSTRING(fielders_involved FROM 2)
-WHERE fielders_involved LIKE '+%';"

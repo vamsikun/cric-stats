@@ -25,8 +25,8 @@ const projectDeliveries = {
     innings: {
       $cond: {
         if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
-        then: 1,
-        else: 2,
+        then: "f",
+        else: "t",
       },
     },
     _id: 0,
@@ -100,13 +100,24 @@ const projectEachBall = {
     bowler: "$overs.deliveries.bowler",
     batterRuns: "$overs.deliveries.runs.batter",
     extraRuns: "$overs.deliveries.runs.extras",
-    wicket: { $arrayElemAt: ["$overs.deliveries.wickets.player_out", 0] },
+    // wicket: { $arrayElemAt: ["$overs.deliveries.wickets.player_out", 0] },
+    wicket: {
+      $cond: {
+        if: { $ne: ["$overs.deliveries.wickets.kind", ["retired hurt"]] },
+        then: { $arrayElemAt: ["$overs.deliveries.wickets.player_out", 0] },
+        else: null,
+      },
+    },
     outType: { $arrayElemAt: ["$overs.deliveries.wickets.kind", 0] },
     fieldersInvolved: {
       $arrayElemAt: ["$overs.deliveries.wickets.fielders.name", 0],
     },
-    wide: { $ifNull: ["$overs.deliveries.extras.wides", 0] },
-    noball: { $ifNull: ["$overs.deliveries.extras.noballs", 0] },
+    // wide: { $ifNull: ["$overs.deliveries.extras.wides", 0] },
+    // noball: { $ifNull: ["$overs.deliveries.extras.noballs", 0] },
+    // penalty: { $ifNull: ["$overs.deliveries.extras.penalty", 0] },
+    wide: "$overs.deliveries.extras.wides",
+    noball: "$overs.deliveries.extras.noballs",
+    penalty: "$overs.deliveries.extras.penalty",
     boundaries: boundariesCond,
   },
 };
@@ -147,27 +158,12 @@ const setFieldersInvolved = {
             if: { $eq: [{ $size: "$fieldersInvolved" }, 1] },
             then: { $arrayElemAt: ["$fieldersInvolved", 0] },
             else: {
-              $substrCP: [
-                {
-                  $reduce: {
-                    input: "$fieldersInvolved",
-                    initialValue: "",
-                    // TODO: + is being added as the first char
-                    in: { $concat: ["$$this", "+", "$$value"] },
-                  },
-                },
-                1,
-                {
-                  $strLenCP: {
-                    $reduce: {
-                      input: "$fieldersInvolved",
-                      initialValue: "",
-                      // TODO: + is being added as the first char
-                      in: { $concat: ["$$this", "+", "$$value"] },
-                    },
-                  },
-                },
-              ],
+              $reduce: {
+                input: "$fieldersInvolved",
+                initialValue: "",
+                // TODO: + is being added as the first char
+                in: { $concat: ["$$value", "+", "$$this"] },
+              },
             },
           },
         },
@@ -190,8 +186,9 @@ db.matches.aggregate([
   unwindOvers,
   unwindDeliveries,
   projectEachBall,
+  setBowlerWicket,
   setFieldersInvolved,
-  { $out: "runs" },
+  // { $out: "runs" },
 ]);
 
 // NOTE: added outs information
