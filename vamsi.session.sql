@@ -19,7 +19,6 @@ select sum(pg_column_size(match_id)) / pg_table_size('runs')::float as match_id,
     sum(pg_column_size(boundaries)) / pg_table_size('runs')::float as boundaries
 from runs;
 -- size of each column in batter_stats_each_match table
-"team_won" "match_id" "innings" "team_score" "opposition_score" "team" "opposition" "toss_won" "runs" "over" "balls_faced" "singles" "doubles" "triples" "fours" "sixes" "bowler_wicket" "player" "out_type" "bowler" "season" "fielders_involved"
 select sum(pg_column_size(team_won)) / pg_table_size('batter_stats_each_match')::float as team_won,
     sum(pg_column_size(match_id)) / pg_table_size('batter_stats_each_match')::float as match_id,
     sum(pg_column_size(innings)) / pg_table_size('batter_stats_each_match')::float as innings,

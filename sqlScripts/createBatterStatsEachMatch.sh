@@ -1,87 +1,86 @@
 psql -d ipl -c "
 CREATE TABLE batter_stats_each_match as
 select m.season as season,
-    bs.match_id as match_id,
-    bs.innings as innings,
-    bs.batter as player,
-    bs.runs as runs,
-    bs.over as over,
-    bs.balls_faced as balls_faced,
-    bs.singles as singles,
-    bs.doubles as doubles,
-    bs.triples as triples,
-    bs.fours as fours,
-    bs.sixes as sixes,
-    bw.out_type as out_type,
-    bw.bowler as bowler,
-    bw.bowler_wicket as bowler_wicket,
-    bw.fielders_involved as fielders_involved,
+    bs.match_id::INTEGER as match_id,
+    bs.innings::SMALLINT as innings,
+    bs.batter::VARCHAR as player,
+    bs.runs::SMALLINT as runs,
+    bs.balls_faced::SMALLINT as balls_faced,
+    bs.singles::SMALLINT as singles,
+    bs.doubles::SMALLINT as doubles,
+    bs.triples::SMALLINT as triples,
+    bs.fours::SMALLINT as fours,
+    bs.sixes::SMALLINT as sixes,
+    bw.out_type::VARCHAR as out_type,
+    bw.bowler::VARCHAR as bowler,
+    bw.bowler_wicket::SMALLINT as bowler_wicket,
+    bw.fielders_involved::VARCHAR as fielders_involved,
     CASE
-        WHEN bs.innings = 1 THEN m.team1_score
-        ELSE m.team2_score
+        WHEN bs.innings = 1 THEN m.team1_score::SMALLINT
+        ELSE m.team2_score::SMALLINT
     END as team_score,
     CASE
-        WHEN bs.innings = 1 THEN m.team2_score
-        ELSE m.team1_score
+        WHEN bs.innings = 1 THEN m.team2_score::SMALLINT
+        ELSE m.team1_score::SMALLINT
     END as opposition_score,
     CASE
-        WHEN bs.innings = 1 THEN m.team1
-        ELSE m.team2
+        WHEN bs.innings = 1 THEN m.team1::VARCHAR
+        ELSE m.team2::VARCHAR
     END as team,
     CASE
-        WHEN bs.innings = 1 THEN m.team2
-        ELSE m.team1
+        WHEN bs.innings = 1 THEN m.team2::VARCHAR
+        ELSE m.team1::VARCHAR
     END as opposition,
     CASE
         WHEN bs.innings = 1
-        AND m.toss_decision = 'bat' THEN 1
+        AND m.toss_decision = 'bat' THEN 1::SMALLINT
         WHEN bs.innings = 2 
-        AND m.toss_decision = 'field' THEN 1
-        ELSE 0
+        AND m.toss_decision = 'field' THEN 1::SMALLINT
+        ELSE 0::SMALLINT
     END as toss_won,
-    m.team_won as team_won
+    CASE 
+      WHEN (bs.innings=1 AND m.team_won=1) OR (bs.innings=2 AND m.team_won=2)
+          THEN 1::SMALLINT ELSE 0::SMALLINT END as team_won
 from (
         select match_id,
             innings,
             batter,
-            over,
             sum(batter_runs) as runs,
             count(*) as balls_faced,
             SUM(
                 CASE
                     WHEN batter_runs = 1 THEN 1
-                    ELSE 0
+                    ELSE NULL
                 END
             ) as singles,
             SUM(
                 CASE
                     WHEN batter_runs = 2 THEN 1
-                    ELSE 0
+                    ELSE NULL
                 END
             ) as doubles,
             SUM(
                 CASE
                     WHEN batter_runs = 3 THEN 1
-                    ELSE 0
+                    ELSE NULL
                 END
             ) as triples,
             SUM(
                 CASE
                     WHEN boundaries = 4 THEN 1
-                    ELSE 0
+                    ELSE NULL
                 END
             ) as fours,
             SUM(
                 CASE
                     WHEN boundaries = 6 THEN 1
-                    ELSE 0
+                    ELSE NULL
                 END
             ) as sixes
         FROM runs
         GROUP BY match_id,
             innings,
-            batter,
-            over
+            batter
     ) bs
     left join (
         select match_id,
@@ -100,7 +99,7 @@ from (
         select season,
             match_id,
             toss_decision,
-            team_won,
+            case when team_won=team1 then 1 else 0 end as team_won,
             team1,
             team2,
             team1_score,
