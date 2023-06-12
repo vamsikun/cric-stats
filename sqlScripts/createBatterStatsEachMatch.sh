@@ -34,13 +34,21 @@ select m.season as season,
     CASE
         WHEN bs.innings = 1
         AND m.toss_decision = 'bat' THEN 1::SMALLINT
-        WHEN bs.innings = 2 
+        WHEN bs.innings = 2
         AND m.toss_decision = 'field' THEN 1::SMALLINT
         ELSE 0::SMALLINT
     END as toss_won,
-    CASE 
-      WHEN (bs.innings=1 AND m.team_won=1) OR (bs.innings=2 AND m.team_won=2)
-          THEN 1::SMALLINT ELSE 0::SMALLINT END as team_won
+    CASE
+        WHEN (
+            bs.innings = 1
+            AND m.team_won = 1
+        )
+        OR (
+            bs.innings = 2
+            AND m.team_won = 2
+        ) THEN 1::SMALLINT
+        ELSE 0::SMALLINT
+    END as team_won
 from (
         select match_id,
             innings,
@@ -99,7 +107,10 @@ from (
         select season,
             match_id,
             toss_decision,
-            case when team_won=team1 then 1 else 0 end as team_won,
+            case
+                when team_won = team1 then 1
+                else 2
+            end as team_won,
             team1,
             team2,
             team1_score,

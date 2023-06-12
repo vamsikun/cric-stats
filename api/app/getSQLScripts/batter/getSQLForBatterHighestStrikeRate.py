@@ -1,8 +1,8 @@
 from typing import Annotated
-from getSQLScripts.sqlHelper import getWherePredicate, getSelectStatement
+from getSQLScripts.batter.batterSQLHelper import getWherePredicate, getSelectStatement
 
 
-def getSQLForHighestStrikeRate(season: Annotated[str | None, 'season'] = None,
+def getSQLForBatterHighestStrikeRate(season: Annotated[str | None, 'season'] = None,
                                team: Annotated[str | None, 'team'] = None,
                                innings: Annotated[int |
                                                   None, 'innings'] = None,

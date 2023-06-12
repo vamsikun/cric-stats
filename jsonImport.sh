@@ -78,8 +78,9 @@ psql -c "CREATE DATABASE ipl;"
 ./sqlScripts/createPlayers.sh $CURR_DIR/players.csv
 ./sqlScripts/createRuns.sh $CURR_DIR/runs.csv
 ./sqlScripts/createPartnerships.sh $CURR_DIR/partnership.csv
-./sqlScripts/sqlHelpers.sh
+./sqlScripts/batterSQLHelpers.sh
 ./sqlScripts/createBatterStatsEachMatch.sh
+./sqlScripts/createBowlerStatsEachMatch.sh
 
 # TODO: use index
 

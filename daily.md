@@ -6,3 +6,6 @@ TODO: check for where clause
 # date: 2023-06-10
 - amit mishra bowled 7 legal deliveries in an over on april 28th, 2009 in dd vs rr match
 - penalty runs are not added under bowler's score
+
+# date: 2023-06-11
+- strike rate for bowler should be calculated after getting the groupby results on season, team or something else we cannot calculate strike rate for bowler in a single match and the same thing applies for average as well

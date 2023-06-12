@@ -1,8 +1,8 @@
 from typing import Annotated
-from getSQLScripts.sqlHelper import getWherePredicate, getSelectStatement
+from getSQLScripts.batter.batterSQLHelper import getWherePredicate, getSelectStatement
 
 
-def getSQLForMostFours(season: Annotated[str | None, 'season'] = None,
+def getSQLForBatterMostSixes(season: Annotated[str | None, 'season'] = None,
                        team: Annotated[str | None, 'team'] = None,
                        innings: Annotated[int |
                                           None, 'innings'] = None,
@@ -14,7 +14,7 @@ def getSQLForMostFours(season: Annotated[str | None, 'season'] = None,
     # TODO: add not out for the hs column
     # NOTE: don't worry much about the case of the sql keywords as we are using psycopg2 which is case insensitive
 
-    groupByPredicate = " GROUP BY player ORDER BY fours DESC LIMIT 10"
+    groupByPredicate = " GROUP BY player ORDER BY sixes DESC LIMIT 10"
 
     sql = getSelectStatement()
     sql += getWherePredicate(season, team, innings, opposition)

@@ -2,12 +2,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 # NOTE: ignore the import not resolved errors here; as it would be fine as we execute it from the app directory
 from database import getCursorForPGDB
-from getSQLScripts.batter.getSQLForMostRuns import getSQLForMostRuns
-from getSQLScripts.batter.getSQLForHighestStrikeRate import getSQLForHighestStrikeRate
-from getSQLScripts.batter.getSQLForHighScore import getSQLForHighScore
-from getSQLScripts.batter.getSQLForMostSixes import getSQLForMostSixes
-from getSQLScripts.batter.getSQLForMostFours import getSQLForMostFours
-from getSQLScripts.batter.getSQLForHighestAverage import getSQLForHighestAverage
+from getSQLScripts.batter.getSQLForBatterMostRuns import getSQLForBatterMostRuns
+from getSQLScripts.batter.getSQLForBatterHighestStrikeRate import getSQLForBatterHighestStrikeRate
+from getSQLScripts.batter.getSQLForBatterHighScore import getSQLForBatterHighScore
+from getSQLScripts.batter.getSQLForBatterMostSixes import getSQLForBatterMostSixes
+from getSQLScripts.batter.getSQLForBatterMostFours import getSQLForBatterMostFours
+from getSQLScripts.batter.getSQLForBatterHighestAverage import getSQLForBatterHighestAverage
 from schemas import batterSchemas
 
 batterRouter = APIRouter(prefix="/batter", tags=["batter"])
@@ -22,7 +22,7 @@ async def mostRuns(season: Annotated[str | None, 'season'] = None,
                    opposition: Annotated[str |
                                          None, 'opposition'] = None,
                    cursor=Depends(getCursorForPGDB)):
-    cursor.execute(getSQLForMostRuns(season, team, innings, opposition))
+    cursor.execute(getSQLForBatterMostRuns(season, team, innings, opposition))
     players = cursor.fetchall()
     columnNames = [desc[0] for desc in cursor.description]
     return [dict(zip(columnNames, player)) for player in players]
@@ -37,7 +37,7 @@ async def mostSixes(season: Annotated[str | None, 'season'] = None,
                     opposition: Annotated[str |
                                           None, 'opposition'] = None,
                     cursor=Depends(getCursorForPGDB)):
-    cursor.execute(getSQLForMostSixes(season, team, innings, opposition))
+    cursor.execute(getSQLForBatterMostSixes(season, team, innings, opposition))
     players = cursor.fetchall()
     columnNames = [desc[0] for desc in cursor.description]
     return [dict(zip(columnNames, player)) for player in players]
@@ -52,7 +52,7 @@ async def mostFours(season: Annotated[str | None, 'season'] = None,
                     opposition: Annotated[str |
                                           None, 'opposition'] = None,
                     cursor=Depends(getCursorForPGDB)):
-    cursor.execute(getSQLForMostSixes(season, team, innings, opposition))
+    cursor.execute(getSQLForBatterMostFours(season, team, innings, opposition))
     players = cursor.fetchall()
     columnNames = [desc[0] for desc in cursor.description]
     return [dict(zip(columnNames, player)) for player in players]
@@ -67,7 +67,7 @@ async def highScore(season: Annotated[str | None, 'season'] = None,
                     opposition: Annotated[str |
                                           None, 'opposition'] = None,
                     cursor=Depends(getCursorForPGDB)):
-    cursor.execute(getSQLForHighScore(season, team, innings, opposition))
+    cursor.execute(getSQLForBatterHighScore(season, team, innings, opposition))
     players = cursor.fetchall()
     columnNames = [desc[0] for desc in cursor.description]
     return [dict(zip(columnNames, player)) for player in players]
@@ -83,7 +83,7 @@ async def highestStrikeRate(season: Annotated[str | None, 'season'] = None,
                             opposition: Annotated[str |
                                                   None, 'opposition'] = None,
                             cursor=Depends(getCursorForPGDB)):
-    cursor.execute(getSQLForHighestStrikeRate(
+    cursor.execute(getSQLForBatterHighestStrikeRate(
         season, team, innings, opposition))
     players = cursor.fetchall()
     columnNames = [desc[0] for desc in cursor.description]
@@ -100,7 +100,7 @@ async def highestAverage(season: Annotated[str | None, 'season'] = None,
                          opposition: Annotated[str |
                                                None, 'opposition'] = None,
                          cursor=Depends(getCursorForPGDB)):
-    cursor.execute(getSQLForHighestAverage(
+    cursor.execute(getSQLForBatterHighestAverage(
         season, team, innings, opposition))
     players = cursor.fetchall()
     columnNames = [desc[0] for desc in cursor.description]
