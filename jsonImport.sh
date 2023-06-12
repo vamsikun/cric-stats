@@ -23,10 +23,10 @@ cd $CURR_DIR
 
 # TODO: modify script to take arguments for the scripts folder
 # execute mongo script
-# mongosh <"./jsScripts/playersCollection.js"
-# mongosh <"./jsScripts/matchesCollection.js"
-# mongosh <"./jsScripts/runsCollection.js"
-# mongosh <"./jsScripts/partnershipCollection.js"
+mongosh <"./jsScripts/playersCollection.js"
+mongosh <"./jsScripts/matchesCollection.js"
+mongosh <"./jsScripts/runsCollection.js"
+mongosh <"./jsScripts/partnershipCollection.js"
 
 # TODO: give args for database, collection and output file
 # export the mongo collection to a csv file
@@ -35,7 +35,7 @@ cd $CURR_DIR
 
 # fields for players collection;names should be same as the one in collection
 # doing $fields would give us matchID,playerId,player,team
-fieldsForPlayersCollection=("matchID","playerID","player","team")
+fieldsForPlayersCollection=("matchID","playerID","player","team","innings")
 
 # fields for matches collection;names should be same as the one in collection
 fieldsForMatchesCollection=("matchID","matchNumber","season","matchStartDate","city","tossWon","tossDecision","isSuperOver")
@@ -78,7 +78,7 @@ psql -c "CREATE DATABASE ipl;"
 ./sqlScripts/createPlayers.sh $CURR_DIR/players.csv
 ./sqlScripts/createRuns.sh $CURR_DIR/runs.csv
 ./sqlScripts/createPartnerships.sh $CURR_DIR/partnership.csv
-./sqlScripts/batterSQLHelpers.sh
+./sqlScripts/sqlHelpers.sh
 ./sqlScripts/createBatterStatsEachMatch.sh
 ./sqlScripts/createBowlerStatsEachMatch.sh
 

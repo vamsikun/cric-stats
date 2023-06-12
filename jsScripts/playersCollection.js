@@ -9,6 +9,7 @@ db.matches.aggregate([
             players: { $objectToArray: "$info.players" },
             matchID: "$_id",
             season: "$info.season",
+            toss: "$info.toss",
             _id: 0,
           },
         },
@@ -18,10 +19,35 @@ db.matches.aggregate([
           $project: {
             matchID: 1,
             season: 1,
-            teams: 1,
-            date: 1,
+            toss: 1,
             team: "$players.k",
             player: "$players.v",
+          },
+        },
+        {
+          $set: {
+            innings: {
+              $cond: {
+                if: {
+                  $or: [
+                    {
+                      $and: [
+                        { $eq: ["$team", "$toss.winner"] },
+                        { $eq: ["$toss.decision", "field"] },
+                      ],
+                    },
+                    {
+                      $and: [
+                        { $ne: ["$team", "$toss.winner"] },
+                        { $eq: ["$toss.decision", "bat"] },
+                      ],
+                    },
+                  ],
+                },
+                then: 2,
+                else: 1,
+              },
+            },
           },
         },
       ],
@@ -41,8 +67,6 @@ db.matches.aggregate([
             player: "$playerIDs.k",
             playerID: "$playerIDs.v",
             season: 1,
-            teams: 1,
-            date: 1,
           },
         },
       ],
@@ -60,6 +84,7 @@ db.matches.aggregate([
       team: "$teamPlayerIDs.team",
       player: "$teamPlayerIDs.player",
       playerID: "$teamPlayerIDs.playerID",
+      innings: "$teamPlayerIDs.innings",
     },
   },
   {
@@ -67,11 +92,17 @@ db.matches.aggregate([
       _id: { matchID: "$matchID", player: "$player" },
       team: { $addToSet: "$team" },
       playerID: { $addToSet: "$playerID" },
+      innings: { $addToSet: "$innings" },
     },
   },
   {
     $unwind: {
       path: "$team",
+    },
+  },
+  {
+    $unwind: {
+      path: "$innings",
     },
   },
   {
@@ -86,6 +117,7 @@ db.matches.aggregate([
       player: "$_id.player",
       team: 1,
       playerID: 1,
+      innings: 1,
       _id: 0,
     },
   },
