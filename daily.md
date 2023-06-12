@@ -9,3 +9,7 @@ TODO: check for where clause
 
 # date: 2023-06-11
 - strike rate for bowler should be calculated after getting the groupby results on season, team or something else we cannot calculate strike rate for bowler in a single match and the same thing applies for average as well
+
+# date: 2023-06-12
+<!-- TODO: -->
+- chris gayle's number of fours is not matching; somewhere we are missing one boundary in 2011 season
