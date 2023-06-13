@@ -104,7 +104,8 @@ select m.season::VARCHAR as season,
         OR (
             players.innings = 2
             AND m.team_won = 1
-        ) THEN 1::SMALLINT
+        ) THEN 1::SMALLINT -- if the match is abandoned
+        WHEN (m.team_won is NULL) THEN NULL
         ELSE 0::SMALLINT
     END as team_won
 from (
@@ -225,7 +226,15 @@ from (
             innings,
             bowler
     ) bs
-    right join players on players.match_id = bs.match_id
+    right join (
+        select match_id,
+            case
+                when innings = 2 then 1
+                else 2
+            end as innings,
+            player
+        from players
+    ) players on players.match_id = bs.match_id
     and players.player = bs.bowler
     and players.innings = bs.innings
     left join (
@@ -234,7 +243,8 @@ from (
             toss_decision,
             case
                 when team_won = team1 then 1
-                else 2
+                when team_won = team2 then 2
+                else null
             end as team_won,
             team1,
             team2,
@@ -299,7 +309,8 @@ select m.season as season,
         OR (
             players.innings = 2
             AND m.team_won = 2
-        ) THEN 1::SMALLINT
+        ) THEN 1::SMALLINT -- if the match is abandoned
+        WHEN (m.team_won is NULL) THEN NULL
         ELSE 0::SMALLINT
     END as team_won
 from (
@@ -386,7 +397,8 @@ from (
             toss_decision,
             case
                 when team_won = team1 then 1
-                else 2
+                when team_won = team2 then 2
+                else null
             end as team_won,
             team1,
             team2,
@@ -394,4 +406,3 @@ from (
             team2_score
         from matches
     ) m on m.match_id = players.match_id;
-"

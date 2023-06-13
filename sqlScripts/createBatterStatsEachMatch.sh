@@ -56,6 +56,8 @@ select m.season as season,
             players.innings = 2
             AND m.team_won = 2
         ) THEN 1::SMALLINT
+        -- if the match is abandoned
+        WHEN (m.team_won is NULL) THEN NULL
         ELSE 0::SMALLINT
     END as team_won
 from (
@@ -142,7 +144,8 @@ from (
             toss_decision,
             case
                 when team_won = team1 then 1
-                else 2
+                when team_won = team2 then 2
+                else null
             end as team_won,
             team1,
             team2,

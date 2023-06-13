@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from database import getCursorForPGDB
+from getSQLScripts.bowler.bowlerSQLHelper import getSelectStatement
 
-router = APIRouter(prefix="/bowler", tags=["bowler"])
+bowlerRouter = APIRouter(prefix="/bowler", tags=["bowler"])
 
 
-@router.get("/mostWickets")
+@bowlerRouter.get("/mostWickets")
 async def getMostWickets(cursor=Depends(getCursorForPGDB)):
-    cursor.execute("SELECT * FROM most_wickets")
+    cursor.execute(getSelectStatement())
     return cursor.fetchall()

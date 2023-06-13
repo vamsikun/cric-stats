@@ -1,3 +1,4 @@
+overCalculation = "CAST(CAST( SUM( legal_deliveries )/6 AS VARCHAR)||'.'||CAST( SUM( legal_deliveries )%6 AS VARCHAR) AS numeric)"
 def getWherePredicate(season, team, innings, opposition):
     wherePredicate = ""
     if season or team or innings or opposition:
@@ -20,10 +21,8 @@ def getSelectStatement():
 
     return f'''SELECT player,
                 COUNT(*) AS matches,
-                SUM(played_in_match) AS innings,
-                SUM(runs) AS runs,
-                {srCalculation} AS sr,
-                {avgCalculation} AS avg,
-                MAX(runs) AS hs,
-                SUM(sixes) AS sixes,
-                SUM(fours) AS fours FROM batter_stats_each_match'''
+                SUM(bowled_in_match) AS innings,
+                {overCalculation} as overs
+                FROM bowler_stats_each_match
+                GROUP BY player
+                ORDER BY overs DESC NULLS LAST'''
