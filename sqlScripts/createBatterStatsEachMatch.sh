@@ -32,12 +32,12 @@ select m.season as season,
         ELSE m.team1_score::SMALLINT
     END as opposition_score,
     CASE
-        WHEN bat_stats.innings = 1 THEN m.team1::VARCHAR
-        ELSE m.team2::VARCHAR
+        WHEN bat_stats.innings = 1 THEN m.team1::SMALLINT
+        ELSE m.team2::SMALLINT
     END as team,
     CASE
-        WHEN bat_stats.innings = 1 THEN m.team2::VARCHAR
-        ELSE m.team1::VARCHAR
+        WHEN bat_stats.innings = 1 THEN m.team2::SMALLINT
+        ELSE m.team1::SMALLINT
     END as opposition,
     CASE
         WHEN bat_stats.innings = 1

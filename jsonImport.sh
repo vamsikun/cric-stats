@@ -74,7 +74,7 @@ psql -c "CREATE DATABASE ipl;"
 # NOTE: it's important to make use of both " and ' in the path when using shell variables due to the special characters
 # WARN: the order is important here
 
-./sqlScripts/createMatches.sh $CURR_DIR/matches.csv
+./sqlScripts/createMatchesAndTeams.sh $CURR_DIR/matches.csv
 ./sqlScripts/createPlayers.sh $CURR_DIR/players.csv
 ./sqlScripts/createRuns.sh $CURR_DIR/runs.csv
 ./sqlScripts/createPartnerships.sh $CURR_DIR/partnership.csv

@@ -1,22 +1,3 @@
-psql -d ipl -c "
-CREATE TYPE team_type AS ENUM (
-'Deccan Chargers',
-'Gujarat Lions',
-'Delhi Capitals',
-'Sunrisers Hyderabad',
-'Gujarat Titans',
-'Kolkata Knight Riders',
-'Rising Pune Supergiants',
-'Pune Warriors',
-'Lucknow Super Giants',
-'Royal Challengers Bangalore',
-'Kochi Tuskers Kerala',
-'Mumbai Indians',
-'Chennai Super Kings',
-'Kings XI Punjab',
-'Rajasthan Royals'
-);
-"
 psql -d ipl -c "CREATE TABLE matches(
     match_id_new SERIAL PRIMARY KEY,
     match_id VARCHAR UNIQUE,
@@ -24,12 +5,12 @@ psql -d ipl -c "CREATE TABLE matches(
     season VARCHAR,
     match_start_date VARCHAR,
     city VARCHAR,
-    toss_won team_type,
+    toss_won VARCHAR,
     toss_decision VARCHAR,
     is_super_over SMALLINT,
-    team1 team_type,
-    team2 team_type,
-    team_won team_type,
+    team1 VARCHAR,
+    team2 VARCHAR,
+    team_won VARCHAR,
     won_by_wickets SMALLINT,
     won_by_runs SMALLINT,
     player_of_match VARCHAR,
@@ -71,3 +52,20 @@ team2_fours,
 team2_sixes,
 team2_extras
 ) FROM $1 DELIMITER ',' CSV HEADER;"
+
+psql -d ipl -c "
+create table teams as
+select distinct(team1) as team from matches
+union 
+select distinct(team2) as team from matches;
+  "
+
+psql -d ipl -c "ALTER TABLE teams ADD COLUMN team_id SERIAL PRIMARY KEY;"
+
+# modify the teams column in matches
+psql -d ipl -c "
+UPDATE matches
+SET toss_won= (SELECT team_id FROM teams WHERE matches.toss_won = teams.team),
+team1= (SELECT team_id FROM teams WHERE matches.team1 = teams.team),
+team2= (SELECT team_id FROM teams WHERE matches.team2 = teams.team),
+team_won = (SELECT team_id FROM teams WHERE matches.team_won = teams.team);"

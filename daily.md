@@ -13,3 +13,7 @@ TODO: check for where clause
 # date: 2023-06-12
 <!-- TODO: -->
 - chris gayle's number of fours is not matching; somewhere we are missing one boundary in 2011 season
+
+# date: 2023-06-13
+<!-- TODO: -->
+- should we store the match related stats in batter_stats and bowler_stats table or just do the group by when we call the api

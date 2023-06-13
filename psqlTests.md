@@ -26,3 +26,8 @@ where fielders_involved like '%+%' and bowler_wicket<>0
  | matches | runs | players | partnerships | batter_stats_each_match | ipl |
  |---------|------|---------|--------------|-------------------------|-----|
  | 147456  | 21757952 | 1728512 | 1327104 | 14262272 | 46866947 |
+
+ ### When we modify batter_stats table to include player data each match and updating team from names to integers
+| matches | runs | players | partnerships | batter_stats_each_match | ipl |
+|---------|------|---------|--------------|-------------------------|-----|
+| 172032  | 20922368 | 1777664 | 1327104 | 2334720 | 35636003 |
