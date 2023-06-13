@@ -1,6 +1,7 @@
 from typing import Annotated
 from getSQLScripts.batter.batterSQLHelper import getWherePredicate, getSelectStatement
 
+# TODO: this doesn't work as a single player might have multiple high scores
 
 def getSQLForBatterHighScore(season: Annotated[str | None, 'season'] = None,
                        team: Annotated[str | None, 'team'] = None,

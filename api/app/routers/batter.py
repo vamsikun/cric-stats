@@ -58,19 +58,19 @@ async def mostFours(season: Annotated[str | None, 'season'] = None,
     return [dict(zip(columnNames, player)) for player in players]
 
 
-@batterRouter.get("/highScore",
-                  response_model=list[batterSchemas.HighScore],
-                  description="Get the list of players with most fours")
-async def highScore(season: Annotated[str | None, 'season'] = None,
-                    team: Annotated[str | None, 'team'] = None,
-                    innings: Annotated[int | None, 'innings'] = None,
-                    opposition: Annotated[str |
-                                          None, 'opposition'] = None,
-                    cursor=Depends(getCursorForPGDB)):
-    cursor.execute(getSQLForBatterHighScore(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = [desc[0] for desc in cursor.description]
-    return [dict(zip(columnNames, player)) for player in players]
+# @batterRouter.get("/highScore",
+#                   response_model=list[batterSchemas.HighScore],
+#                   description="Get the list of players with most fours")
+# async def highScore(season: Annotated[str | None, 'season'] = None,
+#                     team: Annotated[str | None, 'team'] = None,
+#                     innings: Annotated[int | None, 'innings'] = None,
+#                     opposition: Annotated[str |
+#                                           None, 'opposition'] = None,
+#                     cursor=Depends(getCursorForPGDB)):
+#     cursor.execute(getSQLForBatterHighScore(season, team, innings, opposition))
+#     players = cursor.fetchall()
+#     columnNames = [desc[0] for desc in cursor.description]
+#     return [dict(zip(columnNames, player)) for player in players]
 
 
 @batterRouter.get("/highestStrikeRate",

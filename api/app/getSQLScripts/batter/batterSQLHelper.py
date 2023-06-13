@@ -1,5 +1,5 @@
-srCalculation = "ROUND(CAST( sum(runs) as numeric )/sum(balls_faced),4)*100 "
-avgCalculation = "ROUND( CAST( sum(runs) as numeric)/NULLIF(sum(player_out),0) ,2) " 
+srCalculation = "ROUND(CAST( SUM(runs) AS numeric )/SUM(balls_faced),4)*100 "
+avgCalculation = "ROUND( CAST( SUM(runs) AS numeric)/NULLIF(SUM(player_out),0) ,2) " 
 
 def getWherePredicate(season, team, innings, opposition):
     wherePredicate = ""
@@ -22,9 +22,11 @@ def getWherePredicate(season, team, innings, opposition):
 def getSelectStatement():
 
     return f'''SELECT player,
-                sum(runs) as runs,
-                {srCalculation} as sr,
-                {avgCalculation} as avg,
-                max(runs) as hs,
-                sum(sixes) as sixes,
-                sum(fours) as fours FROM batter_stats_each_match'''
+                COUNT(*) AS matches,
+                SUM(played_in_match) AS innings,
+                SUM(runs) AS runs,
+                {srCalculation} AS sr,
+                {avgCalculation} AS avg,
+                MAX(runs) AS hs,
+                SUM(sixes) AS sixes,
+                SUM(fours) AS fours FROM batter_stats_each_match'''

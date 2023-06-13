@@ -361,11 +361,17 @@ from (
             team2_score
         from matches
     ) m on bs.match_id = m.match_id;
+right join players on players.match_id = m.match_id
+and players.player = bs.bowler;
 -- modified batter stats
 select m.season as season,
-    bat_innings.match_id::INTEGER as match_id,
-    bat_innings.innings::SMALLINT as innings,
-    bat_innings.player::VARCHAR as player,
+    m.match_id::INTEGER as match_id,
+    players.innings::SMALLINT as innings,
+    CASE
+        WHEN bat_innings.innings IS NULL THEN 0::SMALLINT
+        ELSE 1::SMALLINT
+    END AS played_in_match,
+    players.player::VARCHAR as player,
     bat_stats.runs::SMALLINT as runs,
     bat_stats.balls_faced::SMALLINT as balls_faced,
     bat_stats.singles::SMALLINT as singles,
@@ -489,7 +495,9 @@ from (
         where wicket is not null
     ) bow_stats on bow_stats.match_id = bat_innings.match_id
     and bow_stats.innings = bat_innings.innings
-    and bow_stats.player_out = bat_innings.player
+    and bow_stats.player_out = bat_innings.player -- we are doing right join to get all the players present in the match; from here we can get number of matches
+    right join players on players.match_id = bat_innings.match_id
+    and players.player = bat_innings.player
     left join (
         -- match related stats
         select season,
@@ -504,4 +512,4 @@ from (
             team1_score,
             team2_score
         from matches
-    ) m on m.match_id = bat_innings.match_id
+    ) m on m.match_id = players.match_id

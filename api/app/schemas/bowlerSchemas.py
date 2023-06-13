@@ -3,6 +3,8 @@ from typing import Annotated
 
 class MostWickets(BaseModel):
     player: Annotated[str,'player']
+    matches: Annotated[int, 'matches']
+    innings: Annotated[int, 'innings']
     overs: Annotated[int,'overs']
     wickets: Annotated[int,'wickets']
     sr: Annotated[float,'sr']
