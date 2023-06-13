@@ -1,9 +1,13 @@
 psql -d ipl -c "
 CREATE TABLE bowler_stats_each_match AS
 select m.season::VARCHAR as season,
-    bs.match_id::INTEGER as match_id,
-    bs.innings::SMALLINT as innings,
-    bs.bowler::VARCHAR as player,
+    players.match_id::INTEGER as match_id,
+    players.player::VARCHAR as player,
+    players.innings::SMALLINT as innings,
+    CASE
+        WHEN bs.bowler IS NULL THEN 0::SMALLINT
+        ELSE 1::SMALLINT
+    END AS bowled_in_match,
     bs.legal_deliveries::SMALLINT as legal_deliveries,
     bs.dot_balls::SMALLINT as dot_balls,
     bs.runs_conceded::SMALLINT as runs_conceded,
@@ -18,35 +22,35 @@ select m.season::VARCHAR as season,
     bs.stumped_wickets::SMALLINT as stumped_wickets,
     bs.maiden_overs::SMALLINT as maiden_overs,
     CASE
-        WHEN bs.innings = 1 THEN m.team2_score::SMALLINT
+        WHEN players.innings = 1 THEN m.team2_score::SMALLINT
         ELSE m.team1_score::SMALLINT
     END as team_score,
     CASE
-        WHEN bs.innings = 1 THEN m.team1_score::SMALLINT
+        WHEN players.innings = 1 THEN m.team1_score::SMALLINT
         ELSE m.team2_score::SMALLINT
     END as opposition_score,
     CASE
-        WHEN bs.innings = 1 THEN m.team2::VARCHAR
-        ELSE m.team1::VARCHAR
+        WHEN players.innings = 1 THEN m.team2::SMALLINT
+        ELSE m.team1::SMALLINT
     END as team,
     CASE
-        WHEN bs.innings = 1 THEN m.team1::VARCHAR
-        ELSE m.team2::VARCHAR
+        WHEN players.innings = 1 THEN m.team1::SMALLINT
+        ELSE m.team2::SMALLINT
     END as opposition,
     CASE
-        WHEN bs.innings = 1
+        WHEN players.innings = 1
         AND m.toss_decision = 'field' THEN 1::SMALLINT
-        WHEN bs.innings = 2
+        WHEN players.innings = 2
         AND m.toss_decision = 'bat' THEN 1::SMALLINT
         ELSE 0::SMALLINT
     END as toss_won,
     CASE
         WHEN (
-            bs.innings = 1
+            players.innings = 1
             AND m.team_won = 2
         )
         OR (
-            bs.innings = 2
+            players.innings = 2
             AND m.team_won = 1
         ) THEN 1::SMALLINT
         ELSE 0::SMALLINT
@@ -169,6 +173,9 @@ from (
             innings,
             bowler
     ) bs
+    right join players on players.match_id = bs.match_id
+    and players.player = bs.bowler
+    and players.innings = bs.innings
     left join (
         select season,
             match_id,
@@ -182,4 +189,4 @@ from (
             team1_score,
             team2_score
         from matches
-    ) m on bs.match_id = m.match_id;"
+    ) m on players.match_id = m.match_id;"

@@ -14,3 +14,13 @@ psql -d ipl -c "\COPY players(
     team,
     innings
 ) FROM $1 DELIMITER ',' CSV HEADER;"
+
+psql -d ipl -c "
+UPDATE players
+SET team=(SELECT team_id FROM teams WHERE team=players.team);
+"
+
+psql -d ipl -c "
+ALTER TABLE players
+ALTER COLUMN team TYPE SMALLINT USING team::SMALLINT;
+"

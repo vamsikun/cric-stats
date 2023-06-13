@@ -69,3 +69,11 @@ SET toss_won= (SELECT team_id FROM teams WHERE matches.toss_won = teams.team),
 team1= (SELECT team_id FROM teams WHERE matches.team1 = teams.team),
 team2= (SELECT team_id FROM teams WHERE matches.team2 = teams.team),
 team_won = (SELECT team_id FROM teams WHERE matches.team_won = teams.team);"
+
+# modify the type of teams
+psql -d ipl -c "
+ALTER TABLE matches
+ALTER COLUMN toss_won TYPE SMALLINT USING toss_won::SMALLINT,
+ALTER COLUMN team_won TYPE SMALLINT USING team_won::SMALLINT,
+ALTER COLUMN team1 TYPE SMALLINT USING team1::SMALLINT,
+ALTER COLUMN team2 TYPE SMALLINT USING team2::SMALLINT;"

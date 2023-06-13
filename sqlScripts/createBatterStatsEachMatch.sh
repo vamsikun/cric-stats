@@ -23,36 +23,37 @@ select m.season as season,
     bow_stats.bowler::VARCHAR as bowler,
     bow_stats.bowler_wicket::SMALLINT as bowler_wicket,
     bow_stats.fielders_involved::VARCHAR as fielders_involved,
+    --- use players for the following as all the players won't be present in the bat_stats
     CASE
-        WHEN bat_stats.innings = 1 THEN m.team1_score::SMALLINT
+        WHEN players.innings = 1 THEN m.team1_score::SMALLINT
         ELSE m.team2_score::SMALLINT
     END as team_score,
     CASE
-        WHEN bat_stats.innings = 1 THEN m.team2_score::SMALLINT
+        WHEN players.innings = 1 THEN m.team2_score::SMALLINT
         ELSE m.team1_score::SMALLINT
     END as opposition_score,
     CASE
-        WHEN bat_stats.innings = 1 THEN m.team1::SMALLINT
+        WHEN players.innings = 1 THEN m.team1::SMALLINT
         ELSE m.team2::SMALLINT
     END as team,
     CASE
-        WHEN bat_stats.innings = 1 THEN m.team2::SMALLINT
+        WHEN players.innings = 1 THEN m.team2::SMALLINT
         ELSE m.team1::SMALLINT
     END as opposition,
     CASE
-        WHEN bat_stats.innings = 1
+        WHEN players.innings = 1
         AND m.toss_decision = 'bat' THEN 1::SMALLINT
-        WHEN bat_stats.innings = 2
+        WHEN players.innings = 2
         AND m.toss_decision = 'field' THEN 1::SMALLINT
         ELSE 0::SMALLINT
     END as toss_won,
     CASE
         WHEN (
-            bat_stats.innings = 1
+            players.innings = 1
             AND m.team_won = 1
         )
         OR (
-            bat_stats.innings = 2
+            players.innings = 2
             AND m.team_won = 2
         ) THEN 1::SMALLINT
         ELSE 0::SMALLINT

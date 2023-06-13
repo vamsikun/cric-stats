@@ -6,6 +6,7 @@ const unwindDeliveries = { $unwind: "$overs.deliveries" };
 
 const projectInnings = {
   $project: {
+    firstBatTeam: { $arrayElemAt: ["$innings.team", 0] },
     innings: {
       $filter: {
         input: "$innings",
@@ -24,7 +25,7 @@ const projectDeliveries = {
     overs: "$innings.overs",
     innings: {
       $cond: {
-        if: { $eq: ["$innings.team", { $arrayElemAt: ["$info.teams", 0] }] },
+        if: { $eq: ["$innings.team", "$firstBatTeam"] },
         then: 1,
         else: 2,
       },

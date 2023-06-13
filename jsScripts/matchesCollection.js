@@ -193,9 +193,20 @@ const projectMatches = {
     tossWon: "$info.toss.winner",
     tossDecision: "$info.toss.decision",
     // batting first
-    team1: { $arrayElemAt: ["$info.teams", 0] },
+    team1: { $arrayElemAt: ["$innings.team", 0] },
     // batting second
-    team2: { $arrayElemAt: ["$info.teams", 1] },
+    team2: {
+      $cond: {
+        if: {
+          $eq: [
+            { $arrayElemAt: ["$innings.team", 0] },
+            { $arrayElemAt: ["$info.teams", 0] },
+          ],
+        },
+        then: { $arrayElemAt: ["$info.teams", 1] },
+        else: { $arrayElemAt: ["$info.teams", 0] },
+      },
+    },
     teamWon: { $ifNull: ["$info.outcome.winner", "$info.outcome.eliminator"] },
     wonByWickets: "$info.outcome.by.wickets",
     wonByRuns: "$info.outcome.by.runs",
