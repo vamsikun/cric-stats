@@ -1,21 +1,12 @@
-import { useState } from "react";
-export function SummaryTable({ isBowlingSelected, seasonSelected }) {
-  let statsFor = "bowler";
-  if (!isBowlingSelected) {
-    statsFor = "bowler";
-  }
-  async function getData() {
-    const response = await fetch(
-      `http://localhost:8000/${statsFor}/mostWickets/?season=${seasonSelected.season}`
-    );
-    const json = await response.json();
-    setData(json);
-  }
-  getData();
-  return (
-    <>
-      <div>Hello World</div>
-      {console.log(data)}
-    </>
-  );
+"use client";
+import { useEffect, useState } from "react";
+
+// TODO:
+// 1. write error checks for fetch
+
+export function SummaryTable({ isBowlingSelected, selectedSeason }) {
+  const [data, setData] = useState();
+  }, [isBowlingSelected, selectedSeason]);
+
+  return <></>;
 }

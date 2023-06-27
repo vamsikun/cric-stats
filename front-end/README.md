@@ -1,5 +1,7 @@
-### Providing state in page.js
+### Made some structural changes
 
-- when bowling/batting changes then season component is also getting rendered
-- and vice versa
-- we can check it from the console logs
+- created a summary component
+- it contains double button, filters
+- api endpoints are also working
+- data is coming in json
+- haven't implement a table component that makes use of the json data
