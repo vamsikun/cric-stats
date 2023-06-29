@@ -4,10 +4,7 @@ import clsx from "clsx";
 // 1. we should change the theme of unselected button
 // 2. when hovering over the unselected button it shouldn't reflect any changes
 // 3. add focus ring
-export default function DoubleButton({
-  isBowlingSelected,
-  setIsBowlingSelected,
-}) {
+export function DoubleButton({ isBowlingSelected, setIsBowlingSelected }) {
   return (
     <div className="mt-20 p-4 flex items-center justify-center">
       {console.log("Rendering DoubleButton!!")}

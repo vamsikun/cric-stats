@@ -1,6 +1,7 @@
 "use client";
-import DoubleButton from "./DoubleButton";
+import { DoubleButton } from "./DoubleButton";
 import { Filter } from "./Filter";
+import { SummaryTable } from "./SummaryTable";
 import { useState, useEffect, useLayoutEffect } from "react";
 import { seasons, battingStats, bowlingStats } from "@/data";
 
@@ -12,7 +13,6 @@ export function Summary() {
   const [data, setData] = useState();
 
   useEffect(() => {
-    console.log(selectedStat);
     if (isBowlingSelected) {
       setStats(bowlingStats);
       setSelectedStat(bowlingStats[0]);
@@ -22,7 +22,7 @@ export function Summary() {
     }
   }, [isBowlingSelected]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let ignore = false;
     let statsFor = "bowler";
     if (!isBowlingSelected) {
@@ -36,7 +36,6 @@ export function Summary() {
       .then((result) => {
         if (!ignore) {
           setData(result);
-          console.log(result);
         }
       });
     return () => {
@@ -58,6 +57,9 @@ export function Summary() {
         setSelectedStat={setSelectedStat}
         stats={stats}
       />
+      {data === undefined ? null : (
+        <SummaryTable data={data} isBowlingSelected={isBowlingSelected} />
+      )}
     </>
   );
 }
