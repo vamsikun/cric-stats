@@ -12,7 +12,7 @@ def getSQLForBatterMostRuns(season: Annotated[str | None, 'season'] = None,
     # TODO: add not out for the hs column
     # NOTE: don't worry much about the case of the sql keywords as we are using psycopg2 which is case insensitive
 
-    groupByPredicate = " GROUP BY player ORDER BY runs DESC nulls last LIMIT 20"
+    groupByPredicate = " GROUP BY player ORDER BY runs DESC nulls last LIMIT 10"
 
     sql = getSelectStatement()
     sql += getWherePredicate(season, team, innings, opposition)

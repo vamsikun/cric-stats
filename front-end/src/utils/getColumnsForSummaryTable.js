@@ -1,40 +1,40 @@
-import { createColumnHelper } from "@tanstack/react-table";
-
 const batterColumnMaps = {
-  player: "Player",
-  matches: "Matches",
-  innings: "Innings",
-  runs: "Runs",
+  player: "PLAYER",
+  matches: "MAT",
+  innings: "INNS",
+  runs: "RUNS",
   sr: "SR",
-  avg: "Average",
-  hs: "High Score",
-  sixes: "Sixes",
-  fours: "Fours",
+  avg: "AVG",
+  hs: "HS",
+  sixes: "6S",
+  fours: "4S",
 };
 
 const bowlerColumnMaps = {
-  player: "Player",
-  matches: "Matches",
-  innings: "Innings",
-  overs: "Overs",
-  wickets: "Wickets",
-  runs: "Runs",
+  player: "PLAYER",
+  matches: "MAT",
+  innings: "INNS",
+  overs: "OV",
+  wickets: "WKTS",
+  runs: "RUNS",
   sr: "SR",
-  avg: "Average",
-  econ: "Economy",
+  avg: "AVG",
+  econ: "ECON",
 };
 
 export function getColumnsForSummaryTable({
   singleDataPoint,
   isBowlingSelected,
 }) {
-  const columnHelper = createColumnHelper();
   const columns = Object.keys(singleDataPoint);
+  console.log(columns);
   return isBowlingSelected
-    ? columns.map((column) =>
-        columnHelper.accessor(column, { header: bowlerColumnMaps[column] })
-      )
-    : columns.map((column) =>
-        columnHelper.accessor(column, { header: batterColumnMaps[column] })
-      );
+    ? {
+        apiCols: columns,
+        mappedCols: columns.map((column) => bowlerColumnMaps[column]),
+      }
+    : {
+        apiCols: columns,
+        mappedCols: columns.map((column) => batterColumnMaps[column]),
+      };
 }

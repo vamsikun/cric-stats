@@ -1,58 +1,70 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { useState } from "react";
 
-const CustomFilter = ({
-  width,
-  selectedOption,
-  setSelectedOption,
-  options,
-}) => {
+// TODO:
+// 1. add an icon for selected option
+// 2. understand how the options box hides itself when clicked on other button
+
+const CustomFilter = ({ type, selectedOption, setSelectedOption, options }) => {
+  let width;
+  type === "season"
+    ? (width = "w-[5rem] sm:w-[7rem]")
+    : (width = "w-[10rem] sm:w-[14rem]");
   return (
-    <div className={`relative w-[${width}rem] text-gray-900`}>
-      <Listbox value={selectedOption} onChange={setSelectedOption}>
-        <Listbox.Button className="py-2 pr-1 rounded-lg bg-gradient-to-r from-teal-100 to-lime-200 relative w-full flex justify-center items-center">
-          <span className="flex-grow block truncate text-lg font-semibold">
+    //sm:w-[7rem], sm:w-[12rem], w-[5rem], w-[9rem]
+    <div className={`relative z-20`}>
+      <Listbox
+        as="div"
+        value={selectedOption}
+        onChange={setSelectedOption}
+        className={"text-gray-900 "}
+      >
+        <Listbox.Button
+          className={`${width} bg-slate-100  py-1.5 sm:py-2 rounded-lg flex justify-between items-center transition-all`}
+        >
+          <span className="pl-2 sm:pl-4 text-sm sm:text-lg font-semibold truncate">
             {selectedOption.value}
           </span>
           <span>
             <ChevronUpDownIcon
-              className="h-6 w-6 text-gray-900 "
+              className="sm:h-6 sm:w-6 h-4 w-4"
               aria-hidden="true"
             />
           </span>
         </Listbox.Button>
-        <Listbox.Options className="absolute mt-0.5 w-full max-h-60 overflow-auto rounded-md bg-gradient-to-r from-teal-100 to-lime-200 py-1 text-base shadow-lg">
-          {options.map((option) => (
-            <Listbox.Option
-              key={option.id}
-              className={({ active, selected }) => {
-                return `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                  active
-                    ? "bg-gradient-to-r from-teal-200 to-lime-300"
-                    : "text-gray-900"
-                }`;
-              }}
-              value={option}
+        {/* Have used this div for hiding the scrollbar going out of the rounded border */}
+        <div className="absolute mt-0.5 w-full rounded-lg overflow-hidden shadow-2xl">
+          <Transition
+            enter="transition duration-100 ease-out"
+            enterFrom="transform scale-95 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform scale-100 opacity-100"
+            leaveTo="transform scale-95 opacity-0"
+          >
+            <Listbox.Options
+              as="ul"
+              className="max-h-52 bg-slate-100 overflow-y-auto"
             >
-              {({ selected }) => (
-                <>
-                  <span
-                    className={`block truncate ${
-                      selected ? "font-bold" : "font-normal"
-                    }`}
-                  >
-                    {option.value}
-                  </span>
-                  {selected ? (
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-teal-400">
-                      <CheckIcon className="h-4 w-4" aria-hidden="true" />
-                    </span>
-                  ) : null}
-                </>
-              )}
-            </Listbox.Option>
-          ))}
-        </Listbox.Options>
+              {options.map((option) => (
+                <Listbox.Option
+                  key={option.id}
+                  className={({ active, selected }) => {
+                    return `relative cursor-pointer py-2 pl-2 sm:pl-4 text-sm sm:text-lg ${
+                      active ? "font-semibold" : "text-gray-900"
+                    } ${selected ? "font-bold bg-gray-400 rounded-md" : null}`;
+                  }}
+                  value={option}
+                >
+                  {({ selected }) => (
+                    <span className={`block truncate`}>{option.value}</span>
+                  )}
+                </Listbox.Option>
+              ))}
+            </Listbox.Options>
+          </Transition>
+        </div>
       </Listbox>
     </div>
   );
@@ -68,15 +80,14 @@ export const Filter = ({
 }) => {
   return (
     <div className="flex gap-1 justify-center items-center ">
-      {console.log("Rendering Filter!!")}
       <CustomFilter
-        width="8"
+        type="season"
         setSelectedOption={setSelectedSeason}
         selectedOption={selectedSeason}
         options={seasons}
       />
       <CustomFilter
-        width="16"
+        type="stat"
         setSelectedOption={setSelectedStat}
         selectedOption={selectedStat}
         options={stats}

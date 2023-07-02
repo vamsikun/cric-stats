@@ -30,7 +30,7 @@ export function Summary() {
     }
 
     fetch(
-      `http://127.0.0.1:8000/${statsFor}/${selectedStat.apiValue}/?season=${selectedSeason.apiValue}`
+      `http://192.168.9.6:8000/${statsFor}/${selectedStat.apiValue}/?season=${selectedSeason.apiValue}`
     )
       .then((response) => response.json())
       .then((result) => {

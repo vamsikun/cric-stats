@@ -4,20 +4,21 @@ import clsx from "clsx";
 // 1. we should change the theme of unselected button
 // 2. when hovering over the unselected button it shouldn't reflect any changes
 // 3. add focus ring
+// 4. switch like background??
+// 5. Add shadow on hover
 export function DoubleButton({ isBowlingSelected, setIsBowlingSelected }) {
   return (
-    <div className="mt-20 p-4 flex items-center justify-center">
+    <div className="p-4 flex items-center justify-center">
       {console.log("Rendering DoubleButton!!")}
-      <div class="flex gap-0.5">
+      <div class="flex text-gray-900 gap-0.5">
         <button
           className={clsx(
-            "shadow-sm font-semibold text-gray-900 text-base sm:text-lg sm:tracking-wide",
+            "font-bold sm:text-xl py-[6px] sm:py-[9px] text-center",
             isBowlingSelected
-              ? "scale-90 bg-gradient-to-r from-teal-100 to-lime-200 text-gray-500 opacity-50"
-              : "scale-110 bg-gradient-to-r from-teal-300 to-lime-300",
+              ? "scale-90 bg-slate-400 opacity-75"
+              : "scale-110 bg-slate-100 ",
             "rounded-l-lg",
-            "py-2 text-center",
-            "w-20 sm:w-32",
+            "w-20 sm:w-28",
             "transition-all"
           )}
           onClick={() => {
@@ -28,13 +29,12 @@ export function DoubleButton({ isBowlingSelected, setIsBowlingSelected }) {
         </button>
         <button
           className={clsx(
-            "font-semibold text-gray-900 text-base sm:text-lg sm:tracking-wide",
+            "font-bold sm:text-xl py-[6px] sm:py-[9px] text-center ",
             isBowlingSelected
-              ? "scale-110 bg-gradient-to-r from-lime-300 to-teal-300"
-              : "scale-90 bg-gradient-to-r from-lime-200 to-teal-100 text-gray-500 opacity-50",
+              ? "scale-110 bg-slate-100 "
+              : "scale-90 bg-slate-400 opacity-75",
             "rounded-r-lg",
-            "py-2 text-center",
-            "w-20 sm:w-32",
+            "w-20 sm:w-28",
             "transition-all"
           )}
           onClick={() => {

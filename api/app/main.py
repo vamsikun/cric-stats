@@ -6,8 +6,9 @@ from routers.bowler import bowlerRouter
 app = FastAPI()
 
 origins = [
-    "http://localhost",
+    "http://192.168.9.6:3000",
     "http://localhost:3000",
+    "http://localhost"
     # Add more origins as needed
 ]
 
