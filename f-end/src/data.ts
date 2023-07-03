@@ -1,4 +1,10 @@
-export const seasons = [
+export type eachCellInTable = {
+  id: number;
+  value: string;
+  apiValue: string;
+};
+
+export const seasons: eachCellInTable[] = [
   { id: 1, value: "2023", apiValue: "2023" },
   { id: 2, value: "2022", apiValue: "2022" },
   { id: 3, value: "2021", apiValue: "2021" },
@@ -10,7 +16,7 @@ export const seasons = [
   { id: 9, value: "2015", apiValue: "2015" },
 ];
 
-export const battingStats = [
+export const battingStats: eachCellInTable[] = [
   { id: 1, value: "Most Runs", apiValue: "mostRuns" },
   { id: 2, value: "Most Sixes", apiValue: "mostSixes" },
   { id: 3, value: "Most Fours", apiValue: "mostFours" },
@@ -18,7 +24,7 @@ export const battingStats = [
   { id: 5, value: "Best Average", apiValue: "highestAverage" },
 ];
 
-export const bowlingStats = [
+export const bowlingStats: eachCellInTable[] = [
   { id: 1, value: "Most Wickets", apiValue: "mostWickets" },
   { id: 2, value: "Best Average", apiValue: "bestAverage" },
   { id: 3, value: "Best Economy", apiValue: "bestEconomy" },

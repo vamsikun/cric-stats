@@ -1,3 +1,42 @@
+import { createColumnHelper } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
+
+export type TBatterData = {
+  player: string;
+  matches: number;
+  innings: number;
+  runs: number;
+  sr: number;
+  avg: number;
+  hs: number;
+  sixes: number;
+  fours: number;
+};
+
+export type TBowlerData = {
+  player: string;
+  matches: number;
+  innings: number;
+  overs: number;
+  wickets: number;
+  runs: number;
+  sr: number;
+  avg: number;
+  econ: number;
+};
+
+export type TPlayerData = TBatterData | TBowlerData;
+
+export type TGetColumnsProps = {
+  singleDataPoint: TBatterData | TBowlerData;
+  isBowlingSelected: boolean;
+};
+
+export type TGetColumnsReturn = {
+  apiCols: string[];
+  mappedCols: string[];
+};
+
 const batterColumnMaps = {
   player: "PLAYER",
   matches: "MAT",
@@ -25,16 +64,14 @@ const bowlerColumnMaps = {
 export function getColumnsForSummaryTable({
   singleDataPoint,
   isBowlingSelected,
-}) {
-  const columns = Object.keys(singleDataPoint);
-  console.log(columns);
-  return isBowlingSelected
-    ? {
-        apiCols: columns,
-        mappedCols: columns.map((column) => bowlerColumnMaps[column]),
-      }
-    : {
-        apiCols: columns,
-        mappedCols: columns.map((column) => batterColumnMaps[column]),
-      };
+}: TGetColumnsProps): ColumnDef<TBatterData | TBowlerData, string | number>[] {
+  const columnHelper = createColumnHelper<TBatterData | TBowlerData>();
+  const rawColumns = Object.keys(singleDataPoint);
+  const columns = rawColumns.map((col, index) => {
+    return columnHelper.accessor(col as keyof TPlayerData, {
+      header: () =>
+        isBowlingSelected ? bowlerColumnMaps[col] : batterColumnMaps[col],
+    });
+  });
+  return columns;
 }
