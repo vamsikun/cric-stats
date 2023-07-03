@@ -34,11 +34,21 @@ export function SummaryTable({ data, isBowlingSelected }: TSummaryTableProps) {
     <div className="flex justify-center text-slate-700">
       <div className="max-h-72 sm:max-h-96 mt-4 border-2 rounded-lg overflow-x-auto ">
         <table className="table-fixed">
-          <thead>
+          <thead className="sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => (
-                  <th key={header.id}>
+                  <th
+                    key={header.id}
+                    className={clsx(
+                      "text-sm sm:text-base py-1 sm:py-1.5 bg-teal-300",
+                      index === 0
+                        ? // NOTE: here I am setting the width of this header cell through the width of the cells in this column
+                          // for the width related info look at the style of the first element in the tbody
+                          "pl-2 text-left sticky left-0 z-20 before:absolute before:-right-1 before:top-0 before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300"
+                        : "min-w-[4rem] sm:min-w-[4.5rem]"
+                    )}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -50,11 +60,22 @@ export function SummaryTable({ data, isBowlingSelected }: TSummaryTableProps) {
               </tr>
             ))}
           </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
+          <tbody className="relative z-0">
+            {table.getRowModel().rows.map((row, rowIndex) => (
               <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
+                {row.getVisibleCells().map((cell, cellIndex) => (
+                  <td
+                    key={cell.id}
+                    className={clsx(
+                      "text-sm sm:text-base py-1.5 sm:py-2",
+                      rowIndex % 2 === 0 ? "bg-teal-100" : "bg-teal-200",
+                      cellIndex === 0
+                        ? "pl-2 text-left sticky left-0 max-w-[7rem] min-w-[7rem] sm:max-w-[11rem] sm:min-w-[11rem] sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-1 before:top-0 before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300"
+                        : // NOTE: for the width of these elements look at the width of the header column
+                          // these elements min-width is being set there
+                          "text-center"
+                    )}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
