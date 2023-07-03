@@ -10,7 +10,7 @@ export function DoubleButton({ isBowlingSelected, setIsBowlingSelected }) {
   return (
     <div className="p-4 flex items-center justify-center">
       {console.log("Rendering DoubleButton!!")}
-      <div class="flex text-gray-900 gap-0.5">
+      <div className="flex text-gray-900 gap-0.5">
         <button
           className={clsx(
             "font-bold sm:text-xl py-[6px] sm:py-[9px] text-center",
