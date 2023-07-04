@@ -18,3 +18,7 @@
   - added all seasons to data.ts file
   - **TODO** : currently providing seasons manually, try to fetch them from the server
 - [] stablize the stats in api
+  - [x] batter stats
+  - [] bowler stats
+- [] add high score to the batter stats in api
+- [] add best bowling, dot-ball % to the bowler stats in api
