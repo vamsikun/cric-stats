@@ -187,7 +187,16 @@ const projectMatches = {
     _id: 0,
     matchID: { $toString: "$_id" },
     matchNumber: 1,
-    season: "$info.season",
+    season: {
+      $switch: {
+        branches: [
+          { case: { $eq: ["$info.season", "2009/10"] }, then: "2010" },
+          { case: { $eq: ["$info.season", "2007/08"] }, then: "2008" },
+          { case: { $eq: ["$info.season", "2020/21"] }, then: "2020" },
+        ],
+        default: "$info.season",
+      },
+    },
     matchStartDate: 1,
     city: "$info.city",
     tossWon: "$info.toss.winner",

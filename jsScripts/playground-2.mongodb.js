@@ -1,354 +1,327 @@
 use("ipl");
 
-const projectInnings = {
-  $project: {
-    firstBatTeam: { $arrayElemAt: ["$innings.team", 0] },
-    innings: {
-      $filter: {
-        input: "$innings",
-        as: "innings",
-        cond: { $eq: [{ $type: "$$innings.super_over" }, "missing"] },
-      },
-    },
-    _id: 1,
-    info: 1,
-  },
-};
-
-const unwindInnings = { $unwind: "$innings" };
-
-const projectDeliveries = {
-  $project: {
-    matchID: "$_id",
-    overs: "$innings.overs",
-    innings: {
-      $cond: {
-        if: { $eq: ["$innings.team", "$firstBatTeam"] },
-        then: 1,
-        else: 2,
-      },
-    },
-    _id: 0,
-    season: "$info.season",
-  },
-};
-
-const boundariesCond = {
-  $cond: {
-    if: {
-      $and: [
-        {
-          $eq: [{ $type: "$overs.deliveries.runs.non_boundary" }, "missing"],
-        },
-        {
-          $or: [
-            { $eq: ["$overs.deliveries.runs.batter", 4] },
-            { $eq: ["$overs.deliveries.runs.batter", 6] },
-          ],
-        },
-      ],
-    },
-    then: "$overs.deliveries.runs.batter",
-    else: 0,
-  },
-};
-
-const setBallNo = {
+const setMatchNumberAndDate = {
   $set: {
-    overs: {
-      $map: {
-        input: "$overs",
-        as: "over",
-        in: {
-          $mergeObjects: [
-            "$$over",
-            {
-              deliveries: {
-                $map: {
-                  input: {
-                    $range: [0, { $size: "$$over.deliveries" }],
+    matchNumber: {
+      $cond: {
+        if: { $eq: [{ $type: "$info.event.match_number" }, "missing"] },
+        then: "$info.event.stage",
+        else: "$info.event.match_number",
+      },
+    },
+    matchStartDate: {
+      $arrayElemAt: ["$info.dates", 0],
+    },
+  },
+};
+
+const setSuperOver = {
+  $set: {
+    isSuperOver: {
+      $size: {
+        $filter: {
+          input: "$innings",
+          as: "inning",
+          cond: { $eq: ["$$inning.super_over", true] },
+        },
+      },
+    },
+  },
+};
+const setTeamScores = [
+  {
+    $set: {
+      team1Innings: { $arrayElemAt: ["$innings", 0] },
+      team2Innings: { $arrayElemAt: ["$innings", 1] },
+    },
+  },
+  {
+    $set: {
+      team1Dels: {
+        $map: {
+          input: "$team1Innings.overs",
+          as: "over",
+          in: {
+            $mergeObjects: [
+              "$$over",
+              {
+                runs: { $sum: "$$over.deliveries.runs.total" },
+                extras: { $sum: "$$over.deliveries.runs.extras" },
+                wickets: {
+                  $size: {
+                    $filter: {
+                      input: "$$over.deliveries",
+                      as: "delivery",
+                      cond: { $gt: ["$$delivery.wickets", null] },
+                    },
                   },
-                  as: "deliveryIdx",
-                  in: {
-                    $mergeObjects: [
-                      {
-                        $arrayElemAt: ["$$over.deliveries", "$$deliveryIdx"],
+                },
+                fours: {
+                  $size: {
+                    $filter: {
+                      input: "$$over.deliveries",
+                      as: "delivery",
+                      cond: {
+                        $and: [
+                          {
+                            $eq: [
+                              { $type: "$$delivery.runs.non_boundary" },
+                              "missing",
+                            ],
+                          },
+                          { $eq: ["$$delivery.runs.batter", 4] },
+                        ],
                       },
-                      { ballNo: { $add: ["$$deliveryIdx", 1] } },
-                    ],
+                    },
+                  },
+                },
+                sixes: {
+                  $size: {
+                    $filter: {
+                      input: "$$over.deliveries",
+                      as: "delivery",
+                      cond: {
+                        $and: [
+                          {
+                            $eq: [
+                              { $type: "$$delivery.runs.non_boundary" },
+                              "missing",
+                            ],
+                          },
+                          { $eq: ["$$delivery.runs.batter", 6] },
+                        ],
+                      },
+                    },
                   },
                 },
               },
-            },
-          ],
-        },
-      },
-    },
-  },
-};
-
-const unwindOvers = { $unwind: "$overs" };
-
-const unwindDeliveries = { $unwind: "$overs.deliveries" };
-
-const projectEachBall = {
-  $project: {
-    matchID: { $toString: "$matchID" },
-    season: 1,
-    innings: "$innings",
-    over: "$overs.over",
-    ballNo: "$overs.deliveries.ballNo",
-    batter: "$overs.deliveries.batter",
-    nonStriker: "$overs.deliveries.non_striker",
-    bowler: "$overs.deliveries.bowler",
-    batterRuns: "$overs.deliveries.runs.batter",
-    extraRuns: "$overs.deliveries.runs.extras",
-    // wide: { $ifNull: ["$overs.deliveries.extras.wides", 0] },
-    // noball: { $ifNull: ["$overs.deliveries.extras.noballs", 0] },
-    wide: "$overs.deliveries.extras.wides",
-    noball: "$overs.deliveries.extras.noballs",
-    wicket: {
-      $cond: {
-        if: {
-          $and: [
-            { $gt: ["$overs.deliveries.wickets", null] },
-            { $ne: ["$overs.deliveries.wickets.kind", ["retired hurt"]] },
-          ],
-        },
-        then: 1,
-        else: 0,
-      },
-    },
-    boundaries: boundariesCond,
-  },
-};
-
-const setPartnersAndBallsFaced = {
-  $set: {
-    batsmen: {
-      $sortArray: {
-        input: ["$batter", "$nonStriker"],
-        sortBy: 1,
-      },
-    },
-    ballsFaced: {
-      $cond: {
-        if: {
-          $eq: ["$wide", 0],
-        },
-        then: 1,
-        else: 0,
-      },
-    },
-  },
-};
-
-const groupPartnersAndBallsFaced = {
-  $group: {
-    _id: {
-      matchID: "$matchID",
-      innings: "$innings",
-      batsmen: "$batsmen",
-      season: "$season",
-    },
-    partnership: {
-      $sum: { $add: ["$batterRuns", "$extraRuns"] },
-    },
-    wicket: {
-      $sum: "$wicket",
-    },
-    ballsFaced: {
-      $sum: "$ballsFaced",
-    },
-    fours: {
-      $sum: {
-        $cond: [{ $eq: ["$boundaries", 4] }, 1, 0],
-      },
-    },
-    sixes: {
-      $sum: {
-        $cond: [{ $eq: ["$boundaries", 6] }, 1, 0],
-      },
-    },
-  },
-};
-
-const groupPartnerWithBatter = {
-  $group: {
-    _id: {
-      matchID: "$matchID",
-      innings: "$innings",
-      batsmen: "$batsmen",
-      batter: "$batter",
-      season: "$season",
-    },
-    batterRuns: {
-      $sum: "$batterRuns",
-    },
-    ballsFaced: {
-      $sum: "$ballsFaced",
-    },
-    batterFours: {
-      $sum: {
-        $cond: [{ $eq: ["$boundaries", 4] }, 1, 0],
-      },
-    },
-    batterSixes: {
-      $sum: {
-        $cond: [{ $eq: ["$boundaries", 6] }, 1, 0],
-      },
-    },
-  },
-};
-
-const setFirstAndSecondBatter = {
-  $set: {
-    firstBatter: { $arrayElemAt: ["$_id.batsmen", 0] },
-    secondBatter: { $arrayElemAt: ["$_id.batsmen", 1] },
-  },
-};
-
-const getFirstAndSecondBatterRuns = [
-  {
-    $facet: {
-      firstBatterRuns: [
-        {
-          $match: {
-            $expr: {
-              $eq: ["$firstBatter", "$_id.batter"],
-            },
+            ],
           },
         },
-        {
-          $set: {
-            batter1Runs: "$batterRuns",
-            batter1BallsFaced: "$ballsFaced",
-            batter1Fours: "$batterFours",
-            batter1Sixes: "$batterSixes",
+      },
+      team2Dels: {
+        $map: {
+          input: "$team2Innings.overs",
+          as: "over",
+          in: {
+            $mergeObjects: [
+              "$$over",
+              {
+                runs: { $sum: "$$over.deliveries.runs.total" },
+                extras: { $sum: "$$over.deliveries.runs.extras" },
+                wickets: {
+                  $size: {
+                    $filter: {
+                      input: "$$over.deliveries",
+                      as: "delivery",
+                      cond: { $gt: ["$$delivery.wickets", null] },
+                    },
+                  },
+                },
+                fours: {
+                  $size: {
+                    $filter: {
+                      input: "$$over.deliveries",
+                      as: "delivery",
+                      cond: {
+                        $and: [
+                          {
+                            $eq: [
+                              { $type: "$$delivery.runs.non_boundary" },
+                              "missing",
+                            ],
+                          },
+                          { $eq: ["$$delivery.runs.batter", 4] },
+                        ],
+                      },
+                    },
+                  },
+                },
+                sixes: {
+                  $size: {
+                    $filter: {
+                      input: "$$over.deliveries",
+                      as: "delivery",
+                      cond: {
+                        $and: [
+                          {
+                            $eq: [
+                              { $type: "$$delivery.runs.non_boundary" },
+                              "missing",
+                            ],
+                          },
+                          { $eq: ["$$delivery.runs.batter", 6] },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            ],
           },
         },
-      ],
-      secondBatterRuns: [
-        {
-          $match: {
-            $expr: {
-              $eq: ["$secondBatter", "$_id.batter"],
-            },
-          },
-        },
-        {
-          $set: {
-            batter2Runs: "$batterRuns",
-            batter2BallsFaced: "$ballsFaced",
-            batter2Fours: "$batterFours",
-            batter2Sixes: "$batterSixes",
-          },
-        },
-      ],
+      },
     },
   },
   {
-    $project: {
-      activity: {
-        $setUnion: ["$firstBatterRuns", "$secondBatterRuns"],
-      },
+    $set: {
+      team1Score: { $sum: "$team1Dels.runs" },
+      team2Score: { $sum: "$team2Dels.runs" },
+      team1Extras: { $sum: "$team1Dels.extras" },
+      team2Extras: { $sum: "$team2Dels.extras" },
+      team1Wickets: { $sum: "$team1Dels.wickets" },
+      team2Wickets: { $sum: "$team2Dels.wickets" },
+      team1Fours: { $sum: "$team1Dels.fours" },
+      team1Sixes: { $sum: "$team1Dels.sixes" },
+      team2Fours: { $sum: "$team2Dels.fours" },
+      team2Sixes: { $sum: "$team2Dels.sixes" },
     },
   },
-  { $unwind: "$activity" },
-  { $unset: "activity._id.batter" },
   {
-    $group: {
-      _id: "$activity._id",
-      firstBatterRuns: { $sum: "$activity.batter1Runs" },
-      secondBatterRuns: { $sum: "$activity.batter2Runs" },
-      firstBatterBallsFaced: { $sum: "$activity.batter1BallsFaced" },
-      secondBatterBallsFaced: { $sum: "$activity.batter2BallsFaced" },
-      firstBatterFours: { $sum: "$activity.batter1Fours" },
-      firstBatterSixes: { $sum: "$activity.batter1Sixes" },
-      secondBatterFours: { $sum: "$activity.batter2Fours" },
-      secondBatterSixes: { $sum: "$activity.batter2Sixes" },
-    },
+    $unset: ["team2Innings", "team1Innings", "team1Dels", "team2Dels"],
   },
 ];
 
-db.matches.updateMany({ "info.season": { $type: 16 } }, [
-  { $set: { "info.season": { $toString: "$info.season" } } },
-]);
+const projectMatches = {
+  $project: {
+    _id: 0,
+    matchID: { $toString: "$_id" },
+    matchNumber: 1,
+    season: {
+      $switch: {
+        branches: [
+          { case: { $eq: ["$info.season", "2009/10"] }, then: "2010" },
+          { case: { $eq: ["$info.season", "2007/08"] }, then: "2008" },
+          { case: { $eq: ["$info.season", "2020/21"] }, then: "2020" },
+        ],
+        default: "$info.season",
+      },
+    },
+    matchStartDate: 1,
+    city: "$info.city",
+    tossWon: "$info.toss.winner",
+    tossDecision: "$info.toss.decision",
+    // batting first
+    team1: { $arrayElemAt: ["$innings.team", 0] },
+    // batting second
+    team2: {
+      $cond: {
+        if: {
+          $eq: [
+            { $arrayElemAt: ["$innings.team", 0] },
+            { $arrayElemAt: ["$info.teams", 0] },
+          ],
+        },
+        then: { $arrayElemAt: ["$info.teams", 1] },
+        else: { $arrayElemAt: ["$info.teams", 0] },
+      },
+    },
+    teamWon: { $ifNull: ["$info.outcome.winner", "$info.outcome.eliminator"] },
+    wonByWickets: "$info.outcome.by.wickets",
+    wonByRuns: "$info.outcome.by.runs",
+    team1Score: 1,
+    team2Score: 1,
+    team1Extras: 1,
+    team2Extras: 1,
+    team1Wickets: 1,
+    team2Wickets: 1,
+    team1Fours: 1,
+    team1Sixes: 1,
+    team2Fours: 1,
+    team2Sixes: 1,
+    playerOfMatch: { $arrayElemAt: ["$info.player_of_match", 0] },
+    isSuperOver: 1,
+  },
+};
 
-//------------ Creates Partnership Collection -----------------//
+const renameTeams = {
+  $set: {
+    team1: {
+      $switch: {
+        branches: [
+          {
+            case: { $eq: ["$team1", "Punjab Kings"] },
+            then: "Kings XI Punjab",
+          },
+          {
+            case: { $eq: ["$team1", "Rising Pune Supergiant"] },
+            then: "Rising Pune Supergiants",
+          },
+          {
+            case: { $eq: ["$team1", "Delhi Daredevils"] },
+            then: "Delhi Capitals",
+          },
+        ],
+        default: "$team1",
+      },
+    },
+    team2: {
+      $switch: {
+        branches: [
+          {
+            case: { $eq: ["$team2", "Punjab Kings"] },
+            then: "Kings XI Punjab",
+          },
+          {
+            case: { $eq: ["$team2", "Rising Pune Supergiant"] },
+            then: "Rising Pune Supergiants",
+          },
+          {
+            case: { $eq: ["$team2", "Delhi Daredevils"] },
+            then: "Delhi Capitals",
+          },
+        ],
+        default: "$team2",
+      },
+    },
+    teamWon: {
+      $switch: {
+        branches: [
+          {
+            case: { $eq: ["$teamWon", "Punjab Kings"] },
+            then: "Kings XI Punjab",
+          },
+          {
+            case: { $eq: ["$teamWon", "Rising Pune Supergiant"] },
+            then: "Rising Pune Supergiants",
+          },
+          {
+            case: { $eq: ["$teamWon", "Delhi Daredevils"] },
+            then: "Delhi Capitals",
+          },
+        ],
+        default: "$teamWon",
+      },
+    },
+    tossWon: {
+      $switch: {
+        branches: [
+          {
+            case: { $eq: ["$tossWon", "Punjab Kings"] },
+            then: "Kings XI Punjab",
+          },
+          {
+            case: { $eq: ["$tossWon", "Rising Pune Supergiant"] },
+            then: "Rising Pune Supergiants",
+          },
+          {
+            case: { $eq: ["$tossWon", "Delhi Daredevils"] },
+            then: "Delhi Capitals",
+          },
+        ],
+        default: "$tossWon",
+      },
+    },
+  },
+};
 
 db.matches.aggregate([
-  projectInnings,
-  unwindInnings,
-  projectDeliveries,
-  setBallNo,
-  unwindOvers,
-  unwindDeliveries,
-  projectEachBall,
-  setPartnersAndBallsFaced,
-  groupPartnersAndBallsFaced,
-  {
-    $sort: {
-      partnership: -1,
-    },
-  },
-  { $out: "partnershipData" },
+  ...setTeamScores,
+  setSuperOver,
+  setMatchNumberAndDate,
+  projectMatches,
+  renameTeams,
+  // { $out: "eachMatch" },
 ]);
 
-db.matches.aggregate([
-  projectInnings,
-  unwindInnings,
-  projectDeliveries,
-  setBallNo,
-  unwindOvers,
-  unwindDeliveries,
-  projectEachBall,
-  setPartnersAndBallsFaced,
-  groupPartnerWithBatter,
-  setFirstAndSecondBatter,
-  ...getFirstAndSecondBatterRuns,
-  {
-    $sort: {
-      firstBatterRuns: -1,
-    },
-  },
-  { $out: "individualPartershipData" },
-]);
-
-db.partnershipData.aggregate([
-  {
-    $lookup: {
-      from: "individualPartershipData",
-      // TODO: it's better to group on matchID only instead of _id
-      localField: "_id",
-      foreignField: "_id",
-      as: "individualPartnershipData",
-    },
-  },
-  { $unwind: "$individualPartnershipData" },
-  {
-    $project: {
-      _id: 0,
-      matchID: { $toString: "$_id.matchID" },
-      season: "$_id.season",
-      innings: "$_id.innings",
-      firstBatter: { $arrayElemAt: ["$_id.batsmen", 0] },
-      secondBatter: { $arrayElemAt: ["$_id.batsmen", 1] },
-      firstBatterRuns: "$individualPartnershipData.firstBatterRuns",
-      secondBatterRuns: "$individualPartnershipData.secondBatterRuns",
-      firstBatterBallsFaced: "$individualPartnershipData.firstBatterBallsFaced",
-      secondBatterBallsFaced:
-        "$individualPartnershipData.secondBatterBallsFaced",
-      partnership: "$partnership",
-      totalBallsFaced: "$ballsFaced",
-      wicket: "$wicket",
-      fours: "$fours",
-      sixes: "$sixes",
-      firstBatterFours: "$individualPartnershipData.firstBatterFours",
-      firstBatterSixes: "$individualPartnershipData.firstBatterSixes",
-      secondBatterFours: "$individualPartnershipData.secondBatterFours",
-      secondBatterSixes: "$individualPartnershipData.secondBatterSixes",
-    },
-  },
-  // { $out: "partnerships" },
-]);
+// NOTE: using explain the query is taking 350-400ms to execute

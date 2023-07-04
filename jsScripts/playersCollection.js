@@ -8,7 +8,6 @@ db.matches.aggregate([
           $project: {
             players: { $objectToArray: "$info.players" },
             matchID: "$_id",
-            season: "$info.season",
             toss: "$info.toss",
             _id: 0,
           },
@@ -18,7 +17,6 @@ db.matches.aggregate([
         {
           $project: {
             matchID: 1,
-            season: 1,
             toss: 1,
             team: "$players.k",
             player: "$players.v",
@@ -56,7 +54,6 @@ db.matches.aggregate([
           $project: {
             playerIDs: { $objectToArray: "$info.registry.people" },
             matchID: "$_id",
-            season: "$info.season",
             _id: 0,
           },
         },
@@ -66,7 +63,6 @@ db.matches.aggregate([
             matchID: 1,
             player: "$playerIDs.k",
             playerID: "$playerIDs.v",
-            season: 1,
           },
         },
       ],

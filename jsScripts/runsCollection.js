@@ -6,6 +6,7 @@ const unwindDeliveries = { $unwind: "$overs.deliveries" };
 
 const projectInnings = {
   $project: {
+    // NOTE: expects that the first batting team innings will be provided first in the data file
     firstBatTeam: { $arrayElemAt: ["$innings.team", 0] },
     innings: {
       $filter: {
@@ -31,7 +32,6 @@ const projectDeliveries = {
       },
     },
     _id: 0,
-    season: "$info.season",
   },
 };
 
@@ -92,7 +92,6 @@ const setBallNo = {
 const projectEachBall = {
   $project: {
     matchID: { $toString: "$matchID" },
-    season: "$season",
     innings: "$innings",
     over: "$overs.over",
     ballNo: "$overs.deliveries.ballNo",
@@ -178,9 +177,9 @@ const setFieldersInvolved = {
 };
 
 // TODO: this can be added as a global command
-db.matches.updateMany({ "info.season": { $type: 16 } }, [
-  { $set: { "info.season": { $toString: "$info.season" } } },
-]);
+// db.matches.updateMany({ "info.season": { $type: 16 } }, [
+//   { $set: { "info.season": { $toString: "$info.season" } } },
+// ]);
 
 db.matches.aggregate([
   projectInnings,

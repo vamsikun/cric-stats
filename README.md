@@ -13,4 +13,5 @@
   - modified the schemas to include pos column
 - [x] modify table to include position data
   - added position column to the table
+- [x] modify seasons in mongodb so that they consist of only one year (eg. 2009/10 => 2010)
 - [] include all seasons in the filter
