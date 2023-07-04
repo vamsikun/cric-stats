@@ -2,6 +2,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/react-table";
 
 export type TBatterData = {
+  pos: number;
   player: string;
   matches: number;
   innings: number;
@@ -14,6 +15,7 @@ export type TBatterData = {
 };
 
 export type TBowlerData = {
+  pos: number;
   player: string;
   matches: number;
   innings: number;
@@ -38,6 +40,7 @@ export type TGetColumnsReturn = {
 };
 
 const batterColumnMaps = {
+  pos: "POS",
   player: "PLAYER",
   matches: "MAT",
   innings: "INNS",
@@ -50,6 +53,7 @@ const batterColumnMaps = {
 };
 
 const bowlerColumnMaps = {
+  pos: "POS",
   player: "PLAYER",
   matches: "MAT",
   innings: "INNS",

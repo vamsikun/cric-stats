@@ -41,11 +41,15 @@ export function SummaryTable({ data, isBowlingSelected }: TSummaryTableProps) {
                   <th
                     key={header.id}
                     className={clsx(
+                      // NOTE: width of the columns is being set here;
+                      // these value are picked up in such a way that the width can occupy the max-length content
+                      // for small screen sizes, wrapping is allowed
                       "text-sm sm:text-base py-1 sm:py-1.5 bg-teal-300",
                       index === 0
-                        ? // NOTE: here I am setting the width of this header cell through the width of the cells in this column
-                          // for the width related info look at the style of the first element in the tbody
-                          "pl-2 text-left sticky left-0 z-20 before:absolute before:-right-1 before:top-0 before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300"
+                        ? "min-w-[2.5rem] sm:min-w-[3rem] sticky left-0 z-40"
+                        : index === 1
+                        ? // NOTE: for player name column I am also setting the max-width as the player name lengths can vary a lot so fixing this width
+                          "pl-2 text-left sticky left-[2.5rem] sm:left-[3rem] z-20 max-w-[7rem] min-w-[7rem] sm:max-w-[11rem] sm:min-w-[11rem] before:absolute before:-right-1 before:top-0 before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300"
                         : "min-w-[4rem] sm:min-w-[4.5rem]"
                     )}
                   >
@@ -67,13 +71,15 @@ export function SummaryTable({ data, isBowlingSelected }: TSummaryTableProps) {
                   <td
                     key={cell.id}
                     className={clsx(
+                      // NOTE: for the width of these elements look at the width of the header column
+                      // these elements min-width is being set there
                       "text-sm sm:text-base py-1.5 sm:py-2",
                       rowIndex % 2 === 0 ? "bg-teal-100" : "bg-teal-200",
                       cellIndex === 0
-                        ? "pl-2 text-left sticky left-0 max-w-[7rem] min-w-[7rem] sm:max-w-[11rem] sm:min-w-[11rem] sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-1 before:top-0 before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300"
-                        : // NOTE: for the width of these elements look at the width of the header column
-                          // these elements min-width is being set there
-                          "text-center"
+                        ? "text-center sticky left-0"
+                        : cellIndex === 1
+                        ? "pl-2 text-left sticky left-[2.5rem] sm:left-[3rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-1 before:top-0 before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300"
+                        : "text-center"
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
