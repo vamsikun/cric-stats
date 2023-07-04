@@ -7,5 +7,8 @@
     - border for the first column using `before` pseudo element
     - size changes when `sm:`
     - fixed the column's width issues
-- [] add position data in the api
+- [x] add position data in the api
+    - tried to include this data in the SQL query using ROW_NUMBER but was not able to do it
+    - so have included this data while returning data in the router functions
+    - modified the schemas to include pos column
 - [] modify table to include position data
