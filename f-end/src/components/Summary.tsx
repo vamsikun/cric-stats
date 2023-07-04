@@ -7,7 +7,7 @@ import { seasons, battingStats, bowlingStats } from "@/data";
 
 export function Summary() {
   const [isBowlingSelected, setIsBowlingSelected] = useState(false);
-  const [selectedSeason, setSelectedSeason] = useState(seasons[1]);
+  const [selectedSeason, setSelectedSeason] = useState(seasons[0]);
   const [stats, setStats] = useState(battingStats);
   const [selectedStat, setSelectedStat] = useState(stats[0]);
   const [data, setData] = useState();

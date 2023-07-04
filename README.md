@@ -14,4 +14,7 @@
 - [x] modify table to include position data
   - added position column to the table
 - [x] modify seasons in mongodb so that they consist of only one year (eg. 2009/10 => 2010)
-- [] include all seasons in the filter
+- [x] include all seasons in the filter
+  - added all seasons to data.ts file
+  - **TODO** : currently providing seasons manually, try to fetch them from the server
+- [] stablize the stats in api
