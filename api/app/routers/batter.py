@@ -7,7 +7,7 @@ from getSQLScripts.batter.getSQLForBatterMostRuns import getSQLForBatterMostRuns
 from getSQLScripts.batter.getSQLForBatterHighestStrikeRate import (
     getSQLForBatterHighestStrikeRate,
 )
-from getSQLScripts.batter.getSQLForBatterHighScore import getSQLForBatterHighScore
+from getSQLScripts.batter.getSQLForBatterHighScore import getSQLForBatterBestHighScore
 from getSQLScripts.batter.getSQLForBatterMostSixes import getSQLForBatterMostSixes
 from getSQLScripts.batter.getSQLForBatterMostFours import getSQLForBatterMostFours
 from getSQLScripts.batter.getSQLForBatterHighestAverage import (
@@ -81,19 +81,25 @@ async def mostFours(
     ]
 
 
-# @batterRouter.get("/highScore",
-#                   response_model=list[batterSchemas.HighScore],
-#                   description="Get the list of players with most fours")
-# async def highScore(season: Annotated[str | None, 'season'] = None,
-#                     team: Annotated[str | None, 'team'] = None,
-#                     innings: Annotated[int | None, 'innings'] = None,
-#                     opposition: Annotated[str |
-#                                           None, 'opposition'] = None,
-#                     cursor=Depends(getCursorForPGDB)):
-#     cursor.execute(getSQLForBatterHighScore(season, team, innings, opposition))
-#     players = cursor.fetchall()
-#     columnNames = [desc[0] for desc in cursor.description]
-#     return [dict(zip(columnNames, player)) for player in players]
+@batterRouter.get(
+    "/bestHighScore",
+    response_model=list[batterSchemas.HighScore],
+    description="Get the list of players who has the best high score",
+)
+async def getBestHighScore(
+    season: Annotated[str | None, "season"] = None,
+    team: Annotated[str | None, "team"] = None,
+    innings: Annotated[int | None, "innings"] = None,
+    opposition: Annotated[str | None, "opposition"] = None,
+    cursor=Depends(getCursorForPGDB),
+):
+    cursor.execute(getSQLForBatterBestHighScore(season, team, innings, opposition))
+    players = cursor.fetchall()
+    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
+    return [
+        dict(zip(columnNames, (idx + 1,) + player))
+        for idx, player in enumerate(players)
+    ]
 
 
 @batterRouter.get(

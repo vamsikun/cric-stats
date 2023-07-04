@@ -15,7 +15,6 @@ def getSQLForBatterMostRuns(
     """
     This function returns the sql query for the players with most runs
     """
-    # TODO: add not out for the hs column
     # NOTE: don't worry much about the case of the sql keywords as we are using psycopg2 which is case insensitive
 
     groupByPredicate = f" GROUP BY player ORDER BY runs DESC nulls last LIMIT {limit} "

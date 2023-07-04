@@ -20,6 +20,7 @@ export type TBowlerData = {
   matches: number;
   innings: number;
   overs: number;
+  dots_percentage: number;
   wickets: number;
   runs: number;
   sr: number;
@@ -58,6 +59,7 @@ const bowlerColumnMaps = {
   matches: "MAT",
   innings: "INNS",
   overs: "OV",
+  dots_percentage: "DOT %",
   wickets: "WKTS",
   runs: "RUNS",
   sr: "SR",

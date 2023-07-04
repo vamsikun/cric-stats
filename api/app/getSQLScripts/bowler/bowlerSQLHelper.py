@@ -1,7 +1,18 @@
 overCalculation = "CAST(CAST( SUM( legal_deliveries )/6 AS VARCHAR)||'.'||CAST( SUM( legal_deliveries )%6 AS VARCHAR) AS numeric)"
 srCalculation = "ROUND(CAST(SUM(legal_deliveries)::float/SUM(wickets) as NUMERIC),2)"
 avgCalculation = "ROUND(CAST(SUM(runs_conceded)::float/SUM(wickets) as NUMERIC),2)"
-econCalculation = "ROUND( CAST( SUM(runs_conceded)*6.0/SUM(legal_deliveries) as NUMERIC) ,2)"
+econCalculation = (
+    "ROUND( CAST( SUM(runs_conceded)*6.0/SUM(legal_deliveries) as NUMERIC) ,2)"
+)
+dotsPercentageCalculation = (
+    "ROUND(CAST(SUM(dot_balls)::float/SUM(legal_deliveries) AS NUMERIC)*100, 2)"
+)
+
+limit = 10
+# NOTE: minimum qualification for stats such as average, strikerate
+havingFilter = "HAVING SUM(legal_deliveries)>=60"
+
+
 def getWherePredicate(season, team, innings, opposition):
     wherePredicate = ""
     if season or team or innings or opposition:
@@ -21,10 +32,10 @@ def getWherePredicate(season, team, innings, opposition):
 
 
 def getSelectStatement():
-
-    return f'''SELECT player,
+    return f"""SELECT player,
                 COUNT(*) AS matches,
                 SUM(bowled_in_match) AS innings,
+                {dotsPercentageCalculation} AS dots_percentage,
                 {overCalculation} as overs,
                 SUM(wickets) as wickets,
                 SUM(runs_conceded) as runs,
@@ -32,4 +43,4 @@ def getSelectStatement():
                 {avgCalculation} as avg,
                 {econCalculation} as econ
                 FROM bowler_stats_each_match
-                '''
+                """

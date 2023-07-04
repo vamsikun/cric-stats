@@ -23,8 +23,8 @@ class MostFours(MostRuns):
     pass
 
 
-# class HighScore(MostRuns):
-#     pass
+class HighScore(MostRuns):
+    pass
 
 
 class HighestStrikeRate(MostRuns):

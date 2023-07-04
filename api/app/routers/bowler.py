@@ -9,6 +9,10 @@ from getSQLScripts.bowler.getSQLForBowlerBestStrikeRate import (
     getSQLForBowlerBestStrikeRate,
 )
 from getSQLScripts.bowler.getSQLForBowlerBestEconomy import getSQLForBowlerBestEconomy
+from getSQLScripts.bowler.getSQLForBowlerBestDotsPercentage import (
+    getSQLForBowlerBestDotsPercentage,
+)
+
 from schemas import bowlerSchemas
 
 bowlerRouter = APIRouter(prefix="/bowler", tags=["bowler"])
@@ -27,6 +31,27 @@ async def getMostWickets(
     cursor=Depends(getCursorForPGDB),
 ):
     cursor.execute(getSQLForBowlerHighestWickets(season, team, innings, opposition))
+    players = cursor.fetchall()
+    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
+    return [
+        dict(zip(columnNames, (idx + 1,) + player))
+        for idx, player in enumerate(players)
+    ]
+
+
+@bowlerRouter.get(
+    "/bestDotsPercentage",
+    response_model=list[bowlerSchemas.BestDotsPercentage],
+    description="Get the list of players with Best Dot Balls Percentage",
+)
+async def getBestDotsPercentage(
+    season: Annotated[str | None, "season"] = None,
+    team: Annotated[str | None, "team"] = None,
+    innings: Annotated[int | None, "innings"] = None,
+    opposition: Annotated[str | None, "opposition"] = None,
+    cursor=Depends(getCursorForPGDB),
+):
+    cursor.execute(getSQLForBowlerBestDotsPercentage(season, team, innings, opposition))
     players = cursor.fetchall()
     columnNames = ["pos"] + [desc[0] for desc in cursor.description]
     return [

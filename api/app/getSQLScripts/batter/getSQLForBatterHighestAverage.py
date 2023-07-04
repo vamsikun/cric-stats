@@ -3,6 +3,7 @@ from getSQLScripts.batter.batterSQLHelper import (
     getWherePredicate,
     getSelectStatement,
     limit,
+    havingFilter,
 )
 
 
@@ -19,7 +20,7 @@ def getSQLForBatterHighestAverage(
     # NOTE: don't worry much about the case of the sql keywords as we are using psycopg2 which is case insensitive
 
     groupByPredicate = (
-        f" GROUP BY player HAVING sum(runs)>100 ORDER BY avg DESC LIMIT {limit}"
+        f" GROUP BY player {havingFilter} ORDER BY avg DESC LIMIT {limit}"
     )
 
     sql = getSelectStatement()

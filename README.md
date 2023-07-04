@@ -17,8 +17,16 @@
 - [x] include all seasons in the filter
   - added all seasons to data.ts file
   - **TODO** : currently providing seasons manually, try to fetch them from the server
-- [] stablize the stats in api
+- [x] stablize the stats in api
   - [x] batter stats
-  - [] bowler stats
-- [] add high score to the batter stats in api
+    - have chosen min 100runs for some stats such as avg, sr
+    - added limit and havingFilter variables in batterSQLHelper to have a single point change for all stats
+  - [x] bowler stats
+    - have chosen min 60balls for some stats such as avg, sr, dots %
+    - added limit and havingFilter variables in batterSQLHelper to have a single point change for all stats
+- [x] add high score to the batter stats in api
 - [] add best bowling, dot-ball % to the bowler stats in api
+  - [x] add dot-ball %
+- [] add out/not-out for high score to the batter stats in api & front-end
+- [] give some visual style for the selected stat in the table
+- [] modify the filter order for the bowling selection so that it matches with batting stats

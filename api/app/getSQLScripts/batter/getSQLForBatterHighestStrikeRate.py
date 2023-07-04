@@ -3,6 +3,7 @@ from getSQLScripts.batter.batterSQLHelper import (
     getWherePredicate,
     getSelectStatement,
     limit,
+    havingFilter,
 )
 
 
@@ -18,9 +19,7 @@ def getSQLForBatterHighestStrikeRate(
     """
     # NOTE: don't worry much about the case of the sql keywords as we are using psycopg2 which is case insensitive
 
-    groupByPredicate = (
-        f" GROUP BY player HAVING sum(runs)>100 ORDER BY sr DESC LIMIT {limit}"
-    )
+    groupByPredicate = f" GROUP BY player {havingFilter} ORDER BY sr DESC LIMIT {limit}"
 
     sql = getSelectStatement()
     sql += getWherePredicate(season, team, innings, opposition)

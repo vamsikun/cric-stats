@@ -1,6 +1,8 @@
 srCalculation = "ROUND(CAST( SUM(runs) AS numeric )/SUM(balls_faced),4)*100 "
 avgCalculation = "ROUND( CAST( SUM(runs) AS numeric)/NULLIF(SUM(player_out),0) ,2) "
 limit = 10
+# NOTE: minimum qualification for stats such as average, strikerate
+havingFilter = "HAVING SUM(runs)>=100"
 
 
 def getWherePredicate(season, team, innings, opposition):
