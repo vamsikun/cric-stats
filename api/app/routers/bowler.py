@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from typing import Annotated
 from database import getCursorForPGDB
-from getSQLScripts.bowler.getSQLForBowlerHighestWickets import (
-    getSQLForBowlerHighestWickets,
+from getSQLScripts.bowler.getSQLForBowlerMostWickets import (
+    getSQLForBowlerMostWickets,
 )
 from getSQLScripts.bowler.getSQLForBowlerBestAverage import getSQLForBowlerBestAverage
 from getSQLScripts.bowler.getSQLForBowlerBestStrikeRate import (
@@ -12,15 +12,17 @@ from getSQLScripts.bowler.getSQLForBowlerBestEconomy import getSQLForBowlerBestE
 from getSQLScripts.bowler.getSQLForBowlerBestDotsPercentage import (
     getSQLForBowlerBestDotsPercentage,
 )
-
 from schemas import bowlerSchemas
+from utils.endPointMappings import bowlerApiMappings
+from utils.executeSQLQuery import executeSQLQuery
 
 bowlerRouter = APIRouter(prefix="/bowler", tags=["bowler"])
 
 
+mostWicketsEndPointMap = 'Most Wickets'
 @bowlerRouter.get(
-    "/mostWickets",
-    response_model=list[bowlerSchemas.MostWickets],
+    f"/{bowlerApiMappings[mostWicketsEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[bowlerSchemas.MostWickets]],
     description="Get the list of players with most wickets",
 )
 async def getMostWickets(
@@ -30,18 +32,14 @@ async def getMostWickets(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBowlerHighestWickets(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBowlerMostWickets(season, team, innings, opposition)
+    filterOn = bowlerApiMappings[mostWicketsEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)
 
-
+dotsPercentageEndPointMap = 'Best Dot %'
 @bowlerRouter.get(
-    "/bestDotsPercentage",
-    response_model=list[bowlerSchemas.BestDotsPercentage],
+    f"/{bowlerApiMappings[dotsPercentageEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[bowlerSchemas.BestDotsPercentage]],
     description="Get the list of players with Best Dot Balls Percentage",
 )
 async def getBestDotsPercentage(
@@ -51,18 +49,14 @@ async def getBestDotsPercentage(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBowlerBestDotsPercentage(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBowlerBestDotsPercentage(season, team, innings, opposition)
+    filterOn = bowlerApiMappings[dotsPercentageEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)
 
-
+bestAverageEndPointMap = 'Best AVG'
 @bowlerRouter.get(
-    "/bestAverage",
-    response_model=list[bowlerSchemas.BestAverage],
+    f"/{bowlerApiMappings[bestAverageEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[bowlerSchemas.BestAverage]],
     description="Get the list of players with best average",
 )
 async def getBestAverage(
@@ -72,18 +66,14 @@ async def getBestAverage(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBowlerBestAverage(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBowlerBestAverage(season, team, innings, opposition)
+    filterOn = bowlerApiMappings[bestAverageEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)
 
-
+bestEconomyEndPointMap = 'Best ECON'
 @bowlerRouter.get(
-    "/bestEconomy",
-    response_model=list[bowlerSchemas.BestEcon],
+    f"/{bowlerApiMappings[bestEconomyEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[bowlerSchemas.MostWickets]],
     description="Get the list of players with best economy",
 )
 async def getBestEconomy(
@@ -93,18 +83,14 @@ async def getBestEconomy(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBowlerBestEconomy(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBowlerBestEconomy(season, team, innings, opposition)
+    filterOn = bowlerApiMappings[bestEconomyEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)
 
-
+bestStrikeRateEndPointMap = 'Best SR'
 @bowlerRouter.get(
-    "/bestStrikeRate",
-    response_model=list[bowlerSchemas.BestStrikeRate],
+    f"/{bowlerApiMappings[bestStrikeRateEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[bowlerSchemas.BestStrikeRate]],
     description="Get the list of players with best strike rate",
 )
 async def getBestStrikeRate(
@@ -114,10 +100,6 @@ async def getBestStrikeRate(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBowlerBestStrikeRate(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBowlerBestStrikeRate(season, team, innings, opposition)
+    filterOn = bowlerApiMappings[bestStrikeRateEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)

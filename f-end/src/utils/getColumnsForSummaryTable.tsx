@@ -7,9 +7,9 @@ export type TBatterData = {
   matches: number;
   innings: number;
   runs: number;
+  hs: number;
   sr: number;
   avg: number;
-  hs: number;
   sixes: number;
   fours: number;
 };
@@ -46,9 +46,9 @@ const batterColumnMaps = {
   matches: "MAT",
   innings: "INNS",
   runs: "RUNS",
+  hs: "HS",
   sr: "SR",
   avg: "AVG",
-  hs: "HS",
   sixes: "6S",
   fours: "4S",
 };

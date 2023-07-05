@@ -28,5 +28,9 @@
 - [] add best bowling, dot-ball % to the bowler stats in api
   - [x] add dot-ball %
 - [] add out/not-out for high score to the batter stats in api & front-end
-- [] give some visual style for the selected stat in the table
-- [] modify the filter order for the bowling selection so that it matches with batting stats
+- [x] give some visual style for the selected stat in the table
+  - had to modify api to include selected column position inside table
+  - removed duplicate code in api
+  - **TODO** : functionality is ok, but the styling has to be improved
+- [x] modify the filter order for the bowling selection so that it matches with batting stats
+- [] do something to sync the order of columns betweem sqlhelper and schemas

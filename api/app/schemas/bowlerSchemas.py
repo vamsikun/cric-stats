@@ -8,13 +8,13 @@ class MostWickets(BaseModel):
     player: Annotated[str, "player"]
     matches: Annotated[int, "matches"]
     innings: Annotated[int, "innings"]
-    overs: Annotated[float, "overs"]
-    dots_percentage: Annotated[float, "dots_percentage"]
     wickets: Annotated[int | None, "wickets"] = None
-    runs: Annotated[int | None, "runs_conceded"] = None
+    dots_percentage: Annotated[float, "dots_percentage"]
+    overs: Annotated[float, "overs"]
+    econ: Annotated[float | None, "econ"] = None
     sr: Annotated[float | None, "sr"] = None
     avg: Annotated[float | None, "avg"] = None
-    econ: Annotated[float | None, "econ"] = None
+    runs: Annotated[int | None, "runs_conceded"] = None
     # bbi: Annotated[str,'best bowling in innings']
 
 

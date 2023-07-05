@@ -4,23 +4,28 @@ from fastapi import APIRouter, Depends
 # NOTE: ignore the import not resolved errors here; as it would be fine as we execute it from the app directory
 from database import getCursorForPGDB
 from getSQLScripts.batter.getSQLForBatterMostRuns import getSQLForBatterMostRuns
-from getSQLScripts.batter.getSQLForBatterHighestStrikeRate import (
-    getSQLForBatterHighestStrikeRate,
+from getSQLScripts.batter.getSQLForBatterBestStrikeRate import (
+    getSQLForBatterBestStrikeRate,
 )
-from getSQLScripts.batter.getSQLForBatterHighScore import getSQLForBatterBestHighScore
+from getSQLScripts.batter.getSQLForBatterBestHighScore import (
+    getSQLForBatterBestHighScore,
+)
 from getSQLScripts.batter.getSQLForBatterMostSixes import getSQLForBatterMostSixes
 from getSQLScripts.batter.getSQLForBatterMostFours import getSQLForBatterMostFours
-from getSQLScripts.batter.getSQLForBatterHighestAverage import (
-    getSQLForBatterHighestAverage,
+from getSQLScripts.batter.getSQLForBatterBestAverage import (
+    getSQLForBatterBestAverage,
 )
 from schemas import batterSchemas
+from utils.endPointMappings import batterApiMappings
+from utils.executeSQLQuery import executeSQLQuery
 
 batterRouter = APIRouter(prefix="/batter", tags=["batter"])
 
 
+mostRunsEndPointMap = 'Most Runs'
 @batterRouter.get(
-    "/mostRuns",
-    response_model=list[batterSchemas.MostRuns],
+    f"/{batterApiMappings[mostRunsEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[batterSchemas.MostRuns]],
     description="Get the list of players with most runs",
 )
 async def mostRuns(
@@ -30,18 +35,14 @@ async def mostRuns(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBatterMostRuns(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBatterMostRuns(season, team, innings, opposition)
+    filterOn = batterApiMappings[mostRunsEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)
 
-
+mostSixesEndPointMap = 'Most Sixes'
 @batterRouter.get(
-    "/mostSixes",
-    response_model=list[batterSchemas.MostSixes],
+    f"/{batterApiMappings[mostSixesEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[batterSchemas.MostSixes]],
     description="Get the list of players with most sixes",
 )
 async def mostSixes(
@@ -51,18 +52,14 @@ async def mostSixes(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBatterMostSixes(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBatterMostSixes(season, team, innings, opposition)
+    filterOn = batterApiMappings[mostSixesEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)
 
-
+mostFoursEndPointMap = 'Most Fours'
 @batterRouter.get(
-    "/mostFours",
-    response_model=list[batterSchemas.MostFours],
+    f"/{batterApiMappings[mostFoursEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[batterSchemas.MostFours]],
     description="Get the list of players with most fours",
 )
 async def mostFours(
@@ -72,18 +69,15 @@ async def mostFours(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBatterMostFours(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBatterMostFours(season, team, innings, opposition)
+    filterOn = batterApiMappings[mostFoursEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor,filterOn)
+    
 
-
+bestHighScoreEndPointMap = 'Best HS'
 @batterRouter.get(
-    "/bestHighScore",
-    response_model=list[batterSchemas.HighScore],
+    f"/{batterApiMappings[bestHighScoreEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[batterSchemas.BestHighScore]],
     description="Get the list of players who has the best high score",
 )
 async def getBestHighScore(
@@ -93,52 +87,40 @@ async def getBestHighScore(
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBatterBestHighScore(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBatterBestHighScore(season, team, innings, opposition)
+    filterOn = batterApiMappings[bestHighScoreEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)
 
-
+bestStrikeRateEndPointMap = 'Best SR'
 @batterRouter.get(
-    "/highestStrikeRate",
-    response_model=list[batterSchemas.HighestStrikeRate],
+    f"/{batterApiMappings[bestStrikeRateEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[batterSchemas.BestStrikeRate]],
     description="Get the list of players with highest strike rate having minimum of 100 runs",
 )
-async def highestStrikeRate(
+async def bestStrikeRate(
     season: Annotated[str | None, "season"] = None,
     team: Annotated[str | None, "team"] = None,
     innings: Annotated[int | None, "innings"] = None,
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBatterHighestStrikeRate(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBatterBestStrikeRate(season, team, innings, opposition)
+    filterOn = batterApiMappings[bestStrikeRateEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor, filterOn)
 
-
+bestAverageEndPointMap = 'Best AVG'
 @batterRouter.get(
-    "/highestAverage",
-    response_model=list[batterSchemas.HighestAverage],
+    f"/{batterApiMappings[bestAverageEndPointMap]['endPoint']}",
+    response_model=dict[str,str|list[batterSchemas.BestAverage]],
     description="Get the list of players with highest strike rate having minimum of 100 runs",
 )
-async def highestAverage(
+async def bestAverage(
     season: Annotated[str | None, "season"] = None,
     team: Annotated[str | None, "team"] = None,
     innings: Annotated[int | None, "innings"] = None,
     opposition: Annotated[str | None, "opposition"] = None,
     cursor=Depends(getCursorForPGDB),
 ):
-    cursor.execute(getSQLForBatterHighestAverage(season, team, innings, opposition))
-    players = cursor.fetchall()
-    columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-    return [
-        dict(zip(columnNames, (idx + 1,) + player))
-        for idx, player in enumerate(players)
-    ]
+    sqlQuery = getSQLForBatterBestAverage(season, team, innings, opposition)
+    filterOn = batterApiMappings[bestAverageEndPointMap]['columnName']
+    return executeSQLQuery(sqlQuery, cursor,filterOn)

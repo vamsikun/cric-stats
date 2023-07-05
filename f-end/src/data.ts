@@ -27,16 +27,16 @@ export const seasons: eachCellInTable[] = [
 export const battingStats: eachCellInTable[] = [
   { id: 1, value: "Most Runs", apiValue: "mostRuns" },
   { id: 2, value: "Best HS", apiValue: "bestHighScore" },
-  { id: 3, value: "Best Strike Rate", apiValue: "highestStrikeRate" },
-  { id: 4, value: "Best Average", apiValue: "highestAverage" },
-  { id: 5, value: "Most Sixes", apiValue: "mostSixes" },
-  { id: 6, value: "Most Fours", apiValue: "mostFours" },
+  { id: 3, value: "Best Strike Rate", apiValue: "bestStrikeRate" },
+  { id: 4, value: "Best Average", apiValue: "bestAverage" },
+  { id: 5, value: "Most Fours", apiValue: "mostFours" },
+  { id: 6, value: "Most Sixes", apiValue: "mostSixes" },
 ];
 
 export const bowlingStats: eachCellInTable[] = [
   { id: 1, value: "Most Wickets", apiValue: "mostWickets" },
-  { id: 2, value: "Best Average", apiValue: "bestAverage" },
+  { id: 2, value: "Best Dot %", apiValue: "bestDotsPercentage" },
   { id: 3, value: "Best Economy", apiValue: "bestEconomy" },
   { id: 4, value: "Best Strike Rate", apiValue: "bestStrikeRate" },
-  { id: 5, value: "Best Dot %", apiValue: "bestDotsPercentage" },
+  { id: 5, value: "Best Average", apiValue: "bestAverage" },
 ];

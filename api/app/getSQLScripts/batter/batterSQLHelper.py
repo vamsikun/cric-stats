@@ -28,8 +28,8 @@ def getSelectStatement():
                 COUNT(*) AS matches,
                 SUM(played_in_match) AS innings,
                 SUM(runs) AS runs,
+                MAX(runs) AS hs,
                 {srCalculation} AS sr,
                 {avgCalculation} AS avg,
-                MAX(runs) AS hs,
-                SUM(sixes) AS sixes,
-                SUM(fours) AS fours FROM batter_stats_each_match"""
+                SUM(fours) AS fours,
+                SUM(sixes) AS sixes FROM batter_stats_each_match"""

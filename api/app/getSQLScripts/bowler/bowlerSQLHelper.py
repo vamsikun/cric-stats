@@ -35,12 +35,12 @@ def getSelectStatement():
     return f"""SELECT player,
                 COUNT(*) AS matches,
                 SUM(bowled_in_match) AS innings,
+                SUM(wickets) as wickets,
                 {dotsPercentageCalculation} AS dots_percentage,
                 {overCalculation} as overs,
-                SUM(wickets) as wickets,
-                SUM(runs_conceded) as runs,
+                {econCalculation} as econ,
                 {srCalculation} as sr,
                 {avgCalculation} as avg,
-                {econCalculation} as econ
+                SUM(runs_conceded) as runs
                 FROM bowler_stats_each_match
                 """

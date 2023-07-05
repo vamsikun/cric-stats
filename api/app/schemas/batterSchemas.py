@@ -8,11 +8,11 @@ class MostRuns(BaseModel):
     matches: Annotated[int, "matches"]
     innings: Annotated[int, "innings"]
     runs: Annotated[int, "runs"]
+    hs: Annotated[int | None, "highest score"] = None
     sr: Annotated[float, "strike rate"]
     avg: Annotated[float | None, "average"] = None
-    hs: Annotated[int | None, "highest score"] = None
-    sixes: Annotated[int | None, "sixes"] = None
     fours: Annotated[int | None, "fours"] = None
+    sixes: Annotated[int | None, "sixes"] = None
 
 
 class MostSixes(MostRuns):
@@ -23,13 +23,13 @@ class MostFours(MostRuns):
     pass
 
 
-class HighScore(MostRuns):
+class BestHighScore(MostRuns):
     pass
 
 
-class HighestStrikeRate(MostRuns):
+class BestStrikeRate(MostRuns):
     pass
 
 
-class HighestAverage(MostRuns):
+class BestAverage(MostRuns):
     pass

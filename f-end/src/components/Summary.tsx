@@ -6,11 +6,13 @@ import { useState, useEffect, useLayoutEffect } from "react";
 import { seasons, battingStats, bowlingStats } from "@/data";
 
 export function Summary() {
+  type t = number;
   const [isBowlingSelected, setIsBowlingSelected] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(seasons[0]);
   const [stats, setStats] = useState(battingStats);
   const [selectedStat, setSelectedStat] = useState(stats[0]);
   const [data, setData] = useState();
+  const [selectedColPosition, setSelectedColPosition] = useState<t>(0);
 
   useEffect(() => {
     if (isBowlingSelected) {
@@ -35,7 +37,8 @@ export function Summary() {
       .then((response) => response.json())
       .then((result) => {
         if (!ignore) {
-          setData(result);
+          setData(result["data"]);
+          setSelectedColPosition(result["columnPosition"]);
         }
       });
     return () => {
@@ -58,7 +61,11 @@ export function Summary() {
         stats={stats}
       />
       {data === undefined ? null : (
-        <SummaryTable data={data} isBowlingSelected={isBowlingSelected} />
+        <SummaryTable
+          data={data}
+          selectedColPosition={selectedColPosition}
+          isBowlingSelected={isBowlingSelected}
+        />
       )}
     </>
   );

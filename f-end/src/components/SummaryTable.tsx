@@ -15,14 +15,21 @@ import {
 export type TData = (TBatterData | TBowlerData)[];
 export type TSummaryTableProps = {
   data: TData;
+  selectedColPosition: number;
   isBowlingSelected: boolean;
 };
 
-export function SummaryTable({ data, isBowlingSelected }: TSummaryTableProps) {
+export function SummaryTable({
+  data,
+  isBowlingSelected,
+  selectedColPosition,
+}: TSummaryTableProps) {
   const columns = getColumnsForSummaryTable({
     singleDataPoint: data[0],
     isBowlingSelected: isBowlingSelected,
   });
+
+  console.log(selectedColPosition);
 
   const table = useReactTable({
     data,
@@ -50,7 +57,9 @@ export function SummaryTable({ data, isBowlingSelected }: TSummaryTableProps) {
                         : index === 1
                         ? // NOTE: for player name column I am also setting the max-width as the player name lengths can vary a lot so fixing this width
                           "pl-2 text-left sticky left-[2.5rem] sm:left-[3rem] z-20 max-w-[7rem] min-w-[7rem] sm:max-w-[11rem] sm:min-w-[11rem] before:absolute before:-right-1 before:top-0 before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300"
-                        : "min-w-[4rem] sm:min-w-[4.5rem]"
+                        : "min-w-[4rem] sm:min-w-[4.5rem]",
+                      // TODO: why === is not working here?
+                      selectedColPosition == index ? "bg-teal-600" : null
                     )}
                   >
                     {header.isPlaceholder
@@ -74,7 +83,13 @@ export function SummaryTable({ data, isBowlingSelected }: TSummaryTableProps) {
                       // NOTE: for the width of these elements look at the width of the header column
                       // these elements min-width is being set there
                       "text-sm sm:text-base py-1.5 sm:py-2",
-                      rowIndex % 2 === 0 ? "bg-teal-100" : "bg-teal-200",
+                      rowIndex % 2 === 0
+                        ? selectedColPosition == cellIndex
+                          ? "bg-teal-200"
+                          : "bg-teal-100"
+                        : selectedColPosition == cellIndex
+                        ? "bg-teal-300"
+                        : "bg-teal-200",
                       cellIndex === 0
                         ? "text-center sticky left-0"
                         : cellIndex === 1

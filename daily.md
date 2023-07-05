@@ -30,3 +30,7 @@
 <!-- TODO: -->
 
 - we can't directly divide the legal deliveries to get the total number of overs bowled; over has to be complete to get counted as one
+
+
+# date: 2023-07-05
+- don't forget to modify the sequence of columns in both sqlhelper and schema files
