@@ -4,6 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 export type TBatterData = {
   pos: number;
   player: string;
+  team: string;
+  opposition: string;
   matches: number;
   innings: number;
   runs: number;
@@ -43,6 +45,8 @@ export type TGetColumnsReturn = {
 const batterColumnMaps = {
   pos: "POS",
   player: "PLAYER",
+  team: "TEAM",
+  opposition: "OPP",
   matches: "MAT",
   innings: "INNS",
   runs: "RUNS",
@@ -74,6 +78,15 @@ export function getColumnsForSummaryTable({
   const columnHelper = createColumnHelper<TBatterData | TBowlerData>();
   const rawColumns = Object.keys(singleDataPoint);
   const columns = rawColumns.map((col, index) => {
+    if (col == "hs") {
+      return columnHelper.accessor(col as keyof TPlayerData, {
+        header: () =>
+          isBowlingSelected ? bowlerColumnMaps[col] : batterColumnMaps[col],
+        cell: (info): string =>
+          (Math.trunc((info.getValue() as number) / 10) as string) +
+          ((info.getValue() as number) % 10 == 1 ? "*" : ""),
+      });
+    }
     return columnHelper.accessor(col as keyof TPlayerData, {
       header: () =>
         isBowlingSelected ? bowlerColumnMaps[col] : batterColumnMaps[col],

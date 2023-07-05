@@ -1,9 +1,9 @@
 from typing import Annotated
 from getSQLScripts.batter.batterSQLHelper import (
     getWherePredicate,
-    getSelectStatement,
-    limit,
+    defaultSelectConfig,
     havingFilter,
+    selectTeamDetails
 )
 
 
@@ -19,10 +19,10 @@ def getSQLForBatterBestStrikeRate(
     """
     # NOTE: don't worry much about the case of the sql keywords as we are using psycopg2 which is case insensitive
 
-    groupByPredicate = f" GROUP BY player {havingFilter} ORDER BY sr DESC LIMIT {limit}"
 
-    sql = getSelectStatement()
-    sql += getWherePredicate(season, team, innings, opposition)
-    sql += groupByPredicate
-
+    wherePredicate = getWherePredicate(season, team, innings, opposition)
+    sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],joinPredicate=selectTeamDetails['joinStatement'],wherePredicate=wherePredicate,
+                                                 groupByPredicate="player",
+                                                 havingPredicate=havingFilter,
+                                                 orderByPredicate="sr DESC")
     return sql
