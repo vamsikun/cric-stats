@@ -1,8 +1,8 @@
 from typing import Annotated
 from getSQLScripts.bowler.bowlerSQLHelper import (
-    getSelectStatement,
+    defaultSelectConfig,
+    selectTeamDetails,
     getWherePredicate,
-    limit,
     havingFilter,
 )
 
@@ -13,10 +13,13 @@ def getSQLForBowlerBestStrikeRate(
     innings: Annotated[int | None, "innings"] = None,
     opposition: Annotated[str | None, "opposition"] = None,
 ):
-    groupByPredicate = (
-        f" GROUP BY player {havingFilter} ORDER BY sr ASC NULLS LAST LIMIT {limit}"
+    wherePredicate = getWherePredicate(season, team, innings, opposition)
+    sql = defaultSelectConfig.getSelectStatement(
+        extraCols=selectTeamDetails['selectStatement'],
+        joinPredicate=selectTeamDetails['joinStatement'],
+        wherePredicate=wherePredicate,
+        groupByPredicate="player",
+        havingPredicate=havingFilter,
+        orderByPredicate="sr ASC",
     )
-    sql = getSelectStatement()
-    sql += getWherePredicate(season, team, innings, opposition)
-    sql += groupByPredicate
     return sql

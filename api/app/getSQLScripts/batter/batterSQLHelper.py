@@ -86,7 +86,8 @@ class SelectStatementConfig(BaseModel):
         # when there are extra columns from external joins
         allCols+=extraCols
         statement = f"SELECT {allCols[:-1]} FROM batter_stats_each_match "
-        if joinPredicate!={}:
+        # don't need the check for joinPredicate
+        if joinPredicate!="":
             statement+=f"{joinPredicate}"
         if wherePredicate!="":
             statement+= f"WHERE {wherePredicate} "
@@ -98,9 +99,6 @@ class SelectStatementConfig(BaseModel):
             statement+=f"ORDER BY {orderByPredicate} NULLS LAST "
         statement+= f"LIMIT {limit}"
         return statement
-    
-    def getJoinStatement(self):
-        return
     
 defaultSelectConfig:SelectStatementConfig = SelectStatementConfig(player=True, matches=True, innings=True, runs=True, hs=True, sr=True, avg=True, fours=True, sixes=True)
 # to get team details

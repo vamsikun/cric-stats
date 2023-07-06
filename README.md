@@ -30,7 +30,7 @@
 - [x] add out/not-out for high score to the batter stats in api & front-end
   - added out/not-out along with team and opponent columns for HS table
   - modified the SQL helper for batter
-- [] modify the SQL helper so that it's in sync with the style of batter
+- [x] modify the SQL helper so that it's in sync with the style of batter
 - [x] give some visual style for the selected stat in the table
   - had to modify api to include selected column position inside table
   - removed duplicate code in api

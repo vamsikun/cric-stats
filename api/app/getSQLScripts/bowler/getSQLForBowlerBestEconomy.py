@@ -1,8 +1,9 @@
 from typing import Annotated
 from getSQLScripts.bowler.bowlerSQLHelper import (
-    getSelectStatement,
+    defaultSelectConfig,
+    selectTeamDetails,
     getWherePredicate,
-    limit,
+    havingFilter
 )
 
 
@@ -12,8 +13,13 @@ def getSQLForBowlerBestEconomy(
     innings: Annotated[int | None, "innings"] = None,
     opposition: Annotated[str | None, "opposition"] = None,
 ):
-    groupByPredicate = f" GROUP BY player HAVING sum(legal_deliveries)>60 ORDER BY econ ASC NULLS LAST LIMIT {limit}"
-    sql = getSelectStatement()
-    sql += getWherePredicate(season, team, innings, opposition)
-    sql += groupByPredicate
+    wherePredicate = getWherePredicate(season, team, innings, opposition)
+    sql = defaultSelectConfig.getSelectStatement(
+        extraCols=selectTeamDetails['selectStatement'],
+        joinPredicate=selectTeamDetails['joinStatement'],
+        wherePredicate=wherePredicate,
+        groupByPredicate="player",
+        havingPredicate=havingFilter,
+        orderByPredicate="econ ASC"
+    )
     return sql
