@@ -60,7 +60,29 @@ union
 select distinct(team2) as team from matches;
   "
 
-psql -d ipl -c "ALTER TABLE teams ADD COLUMN team_id SERIAL PRIMARY KEY;"
+psql -d ipl -c "ALTER TABLE teams
+ADD COLUMN team_id SERIAL PRIMARY KEY,
+ADD COLUMN team_shortcut VARCHAR;"
+
+psql -d ipl -c "
+UPDATE teams
+SET team_shortcut = CASE WHEN team='Pune Warriors India' THEN 'PWI'
+                        WHEN team='Royal Challengers Bangalore' THEN 'RCB'
+                        WHEN team='Delhi Capitals' THEN 'DC'
+                        WHEN team='Chennai Super Kings' THEN 'CSK'
+                        WHEN team='Kolkata Knight Riders' THEN 'KKR'
+                        WHEN team='Rajasthan Royals' THEN 'RR'
+                        WHEN team='Sunrisers Hyderabad' THEN 'SRH'
+                        WHEN team='Rising Pune Supergiants' THEN 'RPS'
+                        WHEN team='Lucknow Super Giants' THEN 'LSG'
+                        WHEN team='Kings XI Punjab' THEN 'KXIP'
+                        WHEN team='Mumbai Indians' THEN 'MI'
+                        WHEN team='Gujarat Titans' THEN 'GT'
+                        WHEN team='Gujarat Lions' THEN 'GL'
+                        WHEN team='Kochi Tuskers Kerala' THEN 'KTK'
+                        WHEN team='Deccan Chargers' THEN 'DCH'
+                        END;
+"
 
 # modify the teams column in matches
 psql -d ipl -c "

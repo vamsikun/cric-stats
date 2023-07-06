@@ -1,6 +1,8 @@
+
 from pydantic import BaseModel
 from typing import Annotated
 
+# order of the columns in response data depends on these models
 
 class MostRuns(BaseModel):
     pos: Annotated[int, "position"]

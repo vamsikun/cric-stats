@@ -3,7 +3,7 @@ from pydantic import BaseModel
 # NOTE: minimum qualification for stats such as average, strikerate
 havingFilter = "SUM(legal_deliveries)>=60"
 # to get team details
-selectTeamDetails = {'selectStatement': "STRING_AGG(DISTINCT t1.team, ',') as team,",
+selectTeamDetails = {'selectStatement': "STRING_AGG(DISTINCT t1.team_shortcut, ',') as team,",
                      'joinStatement': """LEFT JOIN teams as t1 on bowler_stats_each_match.team=t1.team_id LEFT JOIN teams as t2 on bowler_stats_each_match.opposition=t2.team_id """}
 
 def getWherePredicate(season, team, innings, opposition):

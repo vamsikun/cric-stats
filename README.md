@@ -41,5 +41,8 @@
 - [] add D/L method in matches table => mongodb
 - [] add overs played in matches table => mongodb
 - [] balls_faced shouldn't be null when played_in_match is set to 1 in batter_stats table => mongodb
-- [] add shortcut team details to the summary table
+- [x] add shortcut team details to the summary table => sql
+  - replaced Pune Warriors with Pune Warriors India
+  - added team_shortcut column to teams table
+  - modified the style of batter and bowler apis
 - [] add details about the qualification for some stats such as avg,sr => react

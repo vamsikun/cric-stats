@@ -102,5 +102,5 @@ class SelectStatementConfig(BaseModel):
     
 defaultSelectConfig:SelectStatementConfig = SelectStatementConfig(player=True, matches=True, innings=True, runs=True, hs=True, sr=True, avg=True, fours=True, sixes=True)
 # to get team details
-selectTeamDetails = {'selectStatement': "STRING_AGG(DISTINCT t1.team, ',') as team,",
+selectTeamDetails = {'selectStatement': "STRING_AGG(DISTINCT t1.team_shortcut, ',') as team,",
                      'joinStatement': """LEFT JOIN teams as t1 on batter_stats_each_match.team=t1.team_id LEFT JOIN teams as t2 on batter_stats_each_match.opposition=t2.team_id """}

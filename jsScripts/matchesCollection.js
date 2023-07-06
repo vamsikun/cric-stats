@@ -251,6 +251,10 @@ const renameTeams = {
             case: { $eq: ["$team1", "Delhi Daredevils"] },
             then: "Delhi Capitals",
           },
+          {
+            case: { $eq: ["$team1", "Pune Warriors"] },
+            then: "Pune Warriors India",
+          },
         ],
         default: "$team1",
       },
@@ -269,6 +273,10 @@ const renameTeams = {
           {
             case: { $eq: ["$team2", "Delhi Daredevils"] },
             then: "Delhi Capitals",
+          },
+          {
+            case: { $eq: ["$team2", "Pune Warriors"] },
+            then: "Pune Warriors India",
           },
         ],
         default: "$team2",
@@ -289,6 +297,10 @@ const renameTeams = {
             case: { $eq: ["$teamWon", "Delhi Daredevils"] },
             then: "Delhi Capitals",
           },
+          {
+            case: { $eq: ["$teamWon", "Pune Warriors"] },
+            then: "Pune Warriors India",
+          },
         ],
         default: "$teamWon",
       },
@@ -307,6 +319,10 @@ const renameTeams = {
           {
             case: { $eq: ["$tossWon", "Delhi Daredevils"] },
             then: "Delhi Capitals",
+          },
+          {
+            case: { $eq: ["$tossWon", "Pune Warriors"] },
+            then: "Pune Warriors India",
           },
         ],
         default: "$tossWon",
