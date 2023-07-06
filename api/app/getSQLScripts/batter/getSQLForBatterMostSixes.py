@@ -11,6 +11,7 @@ def getSQLForBatterMostSixes(
     team: Annotated[str | None, "team"] = None,
     innings: Annotated[int | None, "innings"] = None,
     opposition: Annotated[str | None, "opposition"] = None,
+    havingClause: Annotated[str, "havingClause"]=""
 ):
     """
     This function returns the sql query for players
@@ -21,7 +22,10 @@ def getSQLForBatterMostSixes(
 
 
     wherePredicate = getWherePredicate(season, team, innings, opposition)
-    sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],joinPredicate=selectTeamDetails['joinStatement'],wherePredicate=wherePredicate,
+    sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],
+                                                 joinPredicate=selectTeamDetails['joinStatement'],
+                                                 wherePredicate=wherePredicate,
+                                                 havingPredicate=havingClause,
                                                  groupByPredicate="player",
                                                  orderByPredicate="sixes DESC",
                                                  )

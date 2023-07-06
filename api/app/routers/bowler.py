@@ -3,16 +3,21 @@ from fastapi import APIRouter, Depends
 
 # NOTE: ignore the import not resolved errors here; as it would be fine as we execute it from the app directory
 from database import getCursorForPGDB
-from typing import Type, Callable
-from utils.endPointMappings import bowlerApiMappings
+from utils.endPointMappings import bowlerApiMappings, havingClauseMappings
 from utils.executeSQLQuery import executeSQLQuery
 
 bowlerRouter = APIRouter(prefix="/bowler", tags=["bowler"])
 
-def generateDynamicRoute(endPoint:str, schema: Type, columnPosition:int, generateSQLQuery: Callable, description: str):
+def generateDynamicRoute(bowlerKey:str):
+    endPoint = bowlerApiMappings[bowlerKey]['endPoint']
+    schema = bowlerApiMappings[bowlerKey]['schema']
+    columnPosition = list(bowlerApiMappings[bowlerKey]['schema'].__fields__.keys()).index(bowlerApiMappings[bowlerKey]['columnName'])
+    generateSQLQuery = bowlerApiMappings[bowlerKey]['getSQLMethod']
+    havingClause = bowlerApiMappings[bowlerKey]['havingClause']
+    description = bowlerApiMappings[bowlerKey]['description']
     @bowlerRouter.get(
         f"/{endPoint}",
-        response_model=schema,
+        response_model=dict[str,dict[str,str]|list[schema]],
         description=description,
         name=endPoint
     )
@@ -23,14 +28,9 @@ def generateDynamicRoute(endPoint:str, schema: Type, columnPosition:int, generat
         opposition: Annotated[str | None, "opposition"] = None,
         cursor=Depends(getCursorForPGDB),
     ):
-        sqlQuery = generateSQLQuery(season, team, innings, opposition)
-        return executeSQLQuery(sqlQuery, cursor, columnPosition)
+        sqlQuery = generateSQLQuery(season, team, innings, opposition, havingClause)
+        return executeSQLQuery(sqlQuery, cursor, columnPosition, havingClauseMappings[havingClause])
     
 bowlerMapKeys = list(bowlerApiMappings.keys())
 for bowlerKey in bowlerMapKeys:
-    endPoint = bowlerApiMappings[bowlerKey]['endPoint']
-    schema = bowlerApiMappings[bowlerKey]['schema']
-    columnPosition = list(bowlerApiMappings[bowlerKey]['schema'].__fields__.keys()).index(bowlerApiMappings[bowlerKey]['columnName'])
-    generateSQLQuery = bowlerApiMappings[bowlerKey]['getSQLMethod']
-    description = bowlerApiMappings[bowlerKey]['description']
-    generateDynamicRoute(endPoint, dict[str,str|list[schema]], columnPosition, generateSQLQuery, description)
+    generateDynamicRoute(bowlerKey)

@@ -3,7 +3,6 @@ from getSQLScripts.bowler.bowlerSQLHelper import (
     defaultSelectConfig,
     selectTeamDetails,
     getWherePredicate,
-    havingFilter,
 )
 
 
@@ -12,6 +11,7 @@ def getSQLForBowlerBestDotsPercentage(
     team: Annotated[str | None, "team"] = None,
     innings: Annotated[int | None, "innings"] = None,
     opposition: Annotated[str | None, "opposition"] = None,
+    havingClause: Annotated[str, "havingClause"]=""
 ):
     wherePredicate = getWherePredicate(season, team, innings, opposition)
     sql = defaultSelectConfig.getSelectStatement(
@@ -19,7 +19,7 @@ def getSQLForBowlerBestDotsPercentage(
         joinPredicate=selectTeamDetails['joinStatement'],
         wherePredicate=wherePredicate,
         groupByPredicate="player",
-        havingPredicate=havingFilter,
+        havingPredicate=havingClause,
         orderByPredicate="dots_percentage DESC",
     )
     return sql

@@ -2,7 +2,6 @@ from typing import Annotated
 from getSQLScripts.batter.batterSQLHelper import (
     getWherePredicate,
     defaultSelectConfig,
-    havingFilter,
     selectTeamDetails
 )
 
@@ -12,6 +11,7 @@ def getSQLForBatterBestStrikeRate(
     team: Annotated[str | None, "team"] = None,
     innings: Annotated[int | None, "innings"] = None,
     opposition: Annotated[str | None, "opposition"] = None,
+    havingClause: Annotated[str, "havingClause"]=""
 ):
     """
     This function returns the sql query for players
@@ -21,8 +21,10 @@ def getSQLForBatterBestStrikeRate(
 
 
     wherePredicate = getWherePredicate(season, team, innings, opposition)
-    sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],joinPredicate=selectTeamDetails['joinStatement'],wherePredicate=wherePredicate,
+    sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],
+                                                 joinPredicate=selectTeamDetails['joinStatement'],
+                                                 wherePredicate=wherePredicate,
                                                  groupByPredicate="player",
-                                                 havingPredicate=havingFilter,
+                                                 havingPredicate=havingClause,
                                                  orderByPredicate="sr DESC")
     return sql

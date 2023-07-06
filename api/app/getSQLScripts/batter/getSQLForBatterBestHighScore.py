@@ -10,6 +10,7 @@ def getSQLForBatterBestHighScore(
     team: Annotated[str | None, "team"] = None,
     innings: Annotated[int | None, "innings"] = None,
     opposition: Annotated[str | None, "opposition"] = None,
+    havingClause: Annotated[str, "havingClause"]=""
 ):
     """
     This function returns the sql query for the players with most runs
@@ -24,5 +25,6 @@ def getSQLForBatterBestHighScore(
                                                         joinPredicate=joinPredicate,
                                                         wherePredicate=wherePredicate,
                                                         groupByPredicate=groupByPredicate,
+                                                        havingPredicate=havingClause,
                                                         orderByPredicate="hs DESC")
     return sqlStatement

@@ -46,3 +46,7 @@
   - added team_shortcut column to teams table
   - modified the style of batter and bowler apis
 - [] add details about the qualification for some stats such as avg,sr => react
+  - [x] added that detail to the api response
+    - modified the api styles
+  - [] have to make use of it in the front-end => react
+- [] for batter strike rate min.balls faced instead of min.runs??
