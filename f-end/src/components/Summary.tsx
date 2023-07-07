@@ -6,13 +6,12 @@ import { useState, useEffect, useLayoutEffect } from "react";
 import { seasons, battingStats, bowlingStats } from "@/data";
 
 export function Summary() {
-  type t = number;
   const [isBowlingSelected, setIsBowlingSelected] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(seasons[0]);
   const [stats, setStats] = useState(battingStats);
   const [selectedStat, setSelectedStat] = useState(stats[0]);
   const [data, setData] = useState();
-  const [selectedColPosition, setSelectedColPosition] = useState<t>(0);
+  const [metadata, setMetadata] = useState();
 
   useEffect(() => {
     if (isBowlingSelected) {
@@ -38,7 +37,7 @@ export function Summary() {
       .then((result) => {
         if (!ignore) {
           setData(result["data"]);
-          setSelectedColPosition(result["columnPosition"]);
+          setMetadata(result["metadata"]);
         }
       });
     return () => {
@@ -63,7 +62,7 @@ export function Summary() {
       {data === undefined ? null : (
         <SummaryTable
           data={data}
-          selectedColPosition={selectedColPosition}
+          metadata={metadata}
           isBowlingSelected={isBowlingSelected}
         />
       )}

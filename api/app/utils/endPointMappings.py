@@ -28,8 +28,8 @@ from getSQLScripts.bowler.getSQLForBowlerBestDotsPercentage import (
 
 havingClauseMappings: dict[str,str] = {
     "":"",
-    "SUM(runs)>=100": "minimum 100 runs scored",
-    "SUM(legal_deliveries)>=60": "minimum 60 deliveries"
+    "SUM(runs)>=100": "minimum 100 runs scored*",
+    "SUM(legal_deliveries)>=60": "minimum 60 deliveries*"
 }
 
 class ApiMapping(TypedDict):

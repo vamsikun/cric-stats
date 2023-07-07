@@ -25,7 +25,7 @@
     - have chosen min 60balls for some stats such as avg, sr, dots %
     - added limit and havingFilter variables in batterSQLHelper to have a single point change for all stats
 - [x] add high score to the batter stats in api
-- [] add best bowling, dot-ball % to the bowler stats in api
+- [ ] add best bowling, dot-ball % to the bowler stats in api
   - [x] add dot-ball %
 - [x] add out/not-out for high score to the batter stats in api & front-end
   - added out/not-out along with team and opponent columns for HS table
@@ -38,15 +38,17 @@
 - [x] modify the filter order for the bowling selection so that it matches with batting stats
 - [x] do something to sync the order of columns betweem sqlhelper and schemas
   - the order doesn't depend on the select statements, it entirely depends on schemas of response models
-- [] add D/L method in matches table => mongodb
-- [] add overs played in matches table => mongodb
-- [] balls_faced shouldn't be null when played_in_match is set to 1 in batter_stats table => mongodb
+- [ ] add D/L method in matches table => mongodb
+- [ ] add overs played in matches table => mongodb
+- [ ] balls_faced shouldn't be null when played_in_match is set to 1 in batter_stats table => mongodb
 - [x] add shortcut team details to the summary table => sql
   - replaced Pune Warriors with Pune Warriors India
   - added team_shortcut column to teams table
   - modified the style of batter and bowler apis
-- [] add details about the qualification for some stats such as avg,sr => react
+- [x] add details about the qualification for some stats such as avg,sr => react
   - [x] added that detail to the api response
     - modified the api styles
-  - [] have to make use of it in the front-end => react
-- [] for batter strike rate min.balls faced instead of min.runs??
+  - [x] have to make use of it in the front-end => react
+    - learned about some useful flex-width and overflow properties
+- [ ] for batter strike rate min.balls faced instead of min.runs??
+- [ ] add type for metadata
