@@ -45,6 +45,14 @@ const setTeamScores = [
             $mergeObjects: [
               "$$over",
               {
+                // TODO: didn't work with $add and providing minus sign to $size
+                legal_deliveries: {$subtract: [{$size: "$$over.deliveries"},{$size: {
+                  $filter: {
+                    input: "$$over.deliveries.extras",
+                    as: "extra",
+                    cond: {$or: [{$ne: [{$type: "$$extra.wides"}, "missing"]}, {$ne: [{$type: "$$extra.noballs"}, "missing"]}]}
+                  }
+                }}]},
                 runs: { $sum: "$$over.deliveries.runs.total" },
                 extras: { $sum: "$$over.deliveries.runs.extras" },
                 wickets: {
@@ -107,6 +115,13 @@ const setTeamScores = [
             $mergeObjects: [
               "$$over",
               {
+                legal_deliveries: {$subtract: [{$size: "$$over.deliveries"},{$size: {
+                  $filter: {
+                    input: "$$over.deliveries.extras",
+                    as: "extra",
+                    cond: {$or: [{$ne: [{$type: "$$extra.wides"}, "missing"]}, {$ne: [{$type: "$$extra.noballs"}, "missing"]}]}
+                  }
+                }}]},
                 runs: { $sum: "$$over.deliveries.runs.total" },
                 extras: { $sum: "$$over.deliveries.runs.extras" },
                 wickets: {
@@ -172,9 +187,12 @@ const setTeamScores = [
       team1Wickets: { $sum: "$team1Dels.wickets" },
       team2Wickets: { $sum: "$team2Dels.wickets" },
       team1Fours: { $sum: "$team1Dels.fours" },
-      team1Sixes: { $sum: "$team1Dels.sixes" },
       team2Fours: { $sum: "$team2Dels.fours" },
+      team1Sixes: { $sum: "$team1Dels.sixes" },
       team2Sixes: { $sum: "$team2Dels.sixes" },
+      team1LegalDeliveriesFaced: {$sum: "$team1Dels.legal_deliveries"},
+      team2LegalDeliveriesFaced: {$sum: "$team2Dels.legal_deliveries"},
+
     },
   },
   {
@@ -226,9 +244,11 @@ const projectMatches = {
     team1Wickets: 1,
     team2Wickets: 1,
     team1Fours: 1,
-    team1Sixes: 1,
     team2Fours: 1,
+    team1Sixes: 1,
     team2Sixes: 1,
+    team1LegalDeliveriesFaced: 1,
+    team2LegalDeliveriesFaced:1,
     playerOfMatch: { $arrayElemAt: ["$info.player_of_match", 0] },
     isSuperOver: 1,
   },
@@ -339,5 +359,3 @@ db.matches.aggregate([
   renameTeams,
   { $out: "eachMatch" },
 ]);
-
-// NOTE: using explain the query is taking 350-400ms to execute

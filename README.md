@@ -39,7 +39,8 @@
 - [x] do something to sync the order of columns betweem sqlhelper and schemas
   - the order doesn't depend on the select statements, it entirely depends on schemas of response models
 - [ ] add D/L method in matches table => mongodb
-- [ ] add overs played in matches table => mongodb
+- [x] add overs played in matches table => mongodb
+  - added number of legal deliveries faced by each team in the matches table
 - [ ] balls_faced shouldn't be null when played_in_match is set to 1 in batter_stats table => mongodb
 - [x] add shortcut team details to the summary table => sql
   - replaced Pune Warriors with Pune Warriors India

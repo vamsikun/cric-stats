@@ -151,6 +151,7 @@ const setFieldersInvolved = {
       $cond: {
         if: {
           $and: [
+            // DEBUG: why have i used three conditions here?
             { $ne: [{ $type: "$fieldersInvolved" }, "missing"] },
             { $ne: ["$fieldersInvolved", null] },
             { $ne: [{ $size: "$fieldersInvolved" }, 0] },

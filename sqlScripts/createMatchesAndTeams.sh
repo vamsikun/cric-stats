@@ -19,11 +19,13 @@ psql -d ipl -c "CREATE TABLE matches(
     team1_fours SMALLINT,
     team1_sixes SMALLINT,
     team1_extras SMALLINT,
+    team1_legal_deliveries_faced SMALLINT,
     team2_score SMALLINT,
     team2_wickets SMALLINT,
     team2_fours SMALLINT,
     team2_sixes SMALLINT,
-    team2_extras SMALLINT
+    team2_extras SMALLINT,
+    team2_legal_deliveries_faced SMALLINT
 );"
 
 psql -d ipl -c "\COPY matches(
@@ -46,11 +48,13 @@ team1_wickets,
 team1_fours,
 team1_sixes,
 team1_extras,
+team1_legal_deliveries_faced,
 team2_score,
 team2_wickets,
 team2_fours,
 team2_sixes,
-team2_extras
+team2_extras,
+team2_legal_deliveries_faced
 ) FROM $1 DELIMITER ',' CSV HEADER;"
 
 psql -d ipl -c "
