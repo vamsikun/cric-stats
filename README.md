@@ -38,7 +38,10 @@
 - [x] modify the filter order for the bowling selection so that it matches with batting stats
 - [x] do something to sync the order of columns betweem sqlhelper and schemas
   - the order doesn't depend on the select statements, it entirely depends on schemas of response models
-- [ ] add D/L method in matches table => mongodb
+- [x] add D/L in matches table => mongodb
+  - added DLS column based on the info.outcome.method key
+  - added oversReduced column if the overs are reduced before even match starts
+- [ ] add info about exclusion DLS and oversReduced matches when calculating lowest score for teams
 - [x] add overs played in matches table => mongodb
   - added number of legal deliveries faced by each team in the matches table
 - [ ] balls_faced shouldn't be null when played_in_match is set to 1 in batter_stats table => mongodb
@@ -53,3 +56,4 @@
     - learned about some useful flex-width and overflow properties
 - [ ] for batter strike rate min.balls faced instead of min.runs??
 - [ ] add type for metadata
+- [ ] try to remove $expr in mongodb commands => mongodb

@@ -12,6 +12,29 @@ const setMatchNumberAndDate = {
     matchStartDate: {
       $arrayElemAt: ["$info.dates", 0],
     },
+    DLS: {
+      // when the match started by thinking of the default number of overs
+      // but had to change the number of overs in between
+      $cond: {
+        if: {$eq: ["$info.outcome.method", "D/L"]},
+        then: 1,
+        else: 0,
+      }
+    },
+    oversReduced: {
+      // when the overs are reduced before even the match starts
+      // here I am assuming that whenever the target overs<20 
+      // and match is not D/L then the overs has to be reduced 
+      // before the match starting time
+      $cond: {
+        if: {$and: [
+          {$ne: ["$info.outcome.method","D/L"]},
+          {$ne: [{$arrayElemAt:["$innings.target.overs",0]},20]}
+        ]},
+        then: 1,
+        else: 0,
+      }
+    }
   },
 };
 
@@ -251,6 +274,8 @@ const projectMatches = {
     team2LegalDeliveriesFaced:1,
     playerOfMatch: { $arrayElemAt: ["$info.player_of_match", 0] },
     isSuperOver: 1,
+    DLS:1,
+    oversReduced:1,
   },
 };
 
