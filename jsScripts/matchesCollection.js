@@ -16,25 +16,27 @@ const setMatchNumberAndDate = {
       // when the match started by thinking of the default number of overs
       // but had to change the number of overs in between
       $cond: {
-        if: {$eq: ["$info.outcome.method", "D/L"]},
+        if: { $eq: ["$info.outcome.method", "D/L"] },
         then: 1,
         else: 0,
-      }
+      },
     },
     oversReduced: {
       // when the overs are reduced before even the match starts
-      // here I am assuming that whenever the target overs<20 
-      // and match is not D/L then the overs has to be reduced 
+      // here I am assuming that whenever the target overs<20
+      // and match is not D/L then the overs has to be reduced
       // before the match starting time
       $cond: {
-        if: {$and: [
-          {$ne: ["$info.outcome.method","D/L"]},
-          {$ne: [{$arrayElemAt:["$innings.target.overs",0]},20]}
-        ]},
+        if: {
+          $and: [
+            { $ne: ["$info.outcome.method", "D/L"] },
+            { $ne: [{ $arrayElemAt: ["$innings.target.overs", 0] }, 20] },
+          ],
+        },
         then: 1,
         else: 0,
-      }
-    }
+      },
+    },
   },
 };
 
@@ -69,13 +71,27 @@ const setTeamScores = [
               "$$over",
               {
                 // TODO: didn't work with $add and providing minus sign to $size
-                legal_deliveries: {$subtract: [{$size: "$$over.deliveries"},{$size: {
-                  $filter: {
-                    input: "$$over.deliveries.extras",
-                    as: "extra",
-                    cond: {$or: [{$ne: [{$type: "$$extra.wides"}, "missing"]}, {$ne: [{$type: "$$extra.noballs"}, "missing"]}]}
-                  }
-                }}]},
+                legal_deliveries: {
+                  $subtract: [
+                    { $size: "$$over.deliveries" },
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$$over.deliveries.extras",
+                          as: "extra",
+                          cond: {
+                            $or: [
+                              { $ne: [{ $type: "$$extra.wides" }, "missing"] },
+                              {
+                                $ne: [{ $type: "$$extra.noballs" }, "missing"],
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
                 runs: { $sum: "$$over.deliveries.runs.total" },
                 extras: { $sum: "$$over.deliveries.runs.extras" },
                 wickets: {
@@ -138,13 +154,27 @@ const setTeamScores = [
             $mergeObjects: [
               "$$over",
               {
-                legal_deliveries: {$subtract: [{$size: "$$over.deliveries"},{$size: {
-                  $filter: {
-                    input: "$$over.deliveries.extras",
-                    as: "extra",
-                    cond: {$or: [{$ne: [{$type: "$$extra.wides"}, "missing"]}, {$ne: [{$type: "$$extra.noballs"}, "missing"]}]}
-                  }
-                }}]},
+                legal_deliveries: {
+                  $subtract: [
+                    { $size: "$$over.deliveries" },
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$$over.deliveries.extras",
+                          as: "extra",
+                          cond: {
+                            $or: [
+                              { $ne: [{ $type: "$$extra.wides" }, "missing"] },
+                              {
+                                $ne: [{ $type: "$$extra.noballs" }, "missing"],
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
                 runs: { $sum: "$$over.deliveries.runs.total" },
                 extras: { $sum: "$$over.deliveries.runs.extras" },
                 wickets: {
@@ -213,9 +243,8 @@ const setTeamScores = [
       team2Fours: { $sum: "$team2Dels.fours" },
       team1Sixes: { $sum: "$team1Dels.sixes" },
       team2Sixes: { $sum: "$team2Dels.sixes" },
-      team1LegalDeliveriesFaced: {$sum: "$team1Dels.legal_deliveries"},
-      team2LegalDeliveriesFaced: {$sum: "$team2Dels.legal_deliveries"},
-
+      team1LegalDeliveriesFaced: { $sum: "$team1Dels.legal_deliveries" },
+      team2LegalDeliveriesFaced: { $sum: "$team2Dels.legal_deliveries" },
     },
   },
   {
@@ -271,11 +300,55 @@ const projectMatches = {
     team1Sixes: 1,
     team2Sixes: 1,
     team1LegalDeliveriesFaced: 1,
-    team2LegalDeliveriesFaced:1,
+    team2LegalDeliveriesFaced: 1,
     playerOfMatch: { $arrayElemAt: ["$info.player_of_match", 0] },
     isSuperOver: 1,
-    DLS:1,
-    oversReduced:1,
+    DLS: 1,
+    oversReduced: 1,
+    mTeam1Score: {
+      $concat: [
+        {
+          $toString: { $ifNull: ["$team1Score", 0] },
+        },
+        {
+          $toString: {
+            $cond: [
+              { $eq: [{ $ifNull: ["$team1Wickets", 0] }, 0] },
+              { $literal: "a" },
+              {
+                $toString: {
+                  // number of wickets are left
+                  // this becomes helpful when ordering based on high or lowest scores
+                  $subtract: [10, { $ifNull: ["$team1Wickets", 0] }],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    mTeam2Score: {
+      $concat: [
+        {
+          $toString: { $ifNull: ["$team2Score", 0] },
+        },
+        {
+          $toString: {
+            $cond: [
+              { $eq: [{ $ifNull: ["$team2Wickets", 0] }, 0] },
+              { $literal: "a" },
+              {
+                $toString: {
+                  // number of wickets are left
+                  // this becomes helpful when ordering based on high or lowest scores
+                  $subtract: [10, { $ifNull: ["$team2Wickets", 0] }],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
   },
 };
 

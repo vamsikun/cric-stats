@@ -406,3 +406,72 @@ from (
             team2_score
         from matches
     ) m on m.match_id = players.match_id;
+
+
+
+SELECT season,
+        team1,
+        MAX(
+            CASE WHEN team_won is not null and dls!=1 and overs_reduced!=1
+            THEN
+                LPAD(
+                    CAST(COALESCE(team1_score,0) AS TEXT) ||
+                    CASE WHEN COALESCE(team1_wickets,0)=0 
+                                THEN 'a' 
+                                ELSE CAST(10-COALESCE(team1_wickets,0) AS TEXT)
+                                END,
+                    6,
+                    '0'
+                )
+            ELSE '0'
+            END
+        ) AS high_score,
+        MIN(
+            CASE WHEN team_won is not null and dls!=1 and overs_reduced!=1
+            THEN
+                LPAD(
+                    CAST(COALESCE(team1_score,0) AS TEXT) ||
+                    CASE WHEN COALESCE(team1_wickets,0)=0 
+                                THEN 'a' 
+                                ELSE CAST(10-COALESCE(team1_wickets,0) AS TEXT)
+                                END,
+                    6,
+                    '0'
+                )
+            ELSE 'ffffff'
+            END
+        ) AS low_score,
+        
+        MAX(
+            CASE WHEN team_won is not null and dls!=1 and overs_reduced!=1
+            THEN
+                LPAD(
+                    CAST(COALESCE(team2_score,0) AS TEXT) ||
+                    CASE WHEN COALESCE(team2_wickets,0)=0 
+                                THEN 'a' 
+                                ELSE CAST(10-COALESCE(team2_wickets,0) AS TEXT)
+                                END,
+                    6,
+                    '0'
+                )
+            ELSE '0'
+            END
+        ) AS opp_high_score,
+        MIN(
+            CASE WHEN team_won is not null and dls!=1 and overs_reduced!=1
+            THEN
+                LPAD(
+                    CAST(COALESCE(team2_score,0) AS TEXT) ||
+                    CASE WHEN COALESCE(team2_wickets,0)=0 
+                                THEN 'a' 
+                                ELSE CAST(10-COALESCE(team2_wickets,0) AS TEXT)
+                                END,
+                    6,
+                    '0'
+                )
+            ELSE 'ffffff'
+            END
+        ) AS opp_low_score
+FROM matches
+GROUP BY season,team1
+ORDER BY opp_high_score DESC

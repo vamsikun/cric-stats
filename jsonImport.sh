@@ -41,8 +41,8 @@ fieldsForPlayersCollection=("matchID","playerID","player","team","innings")
 # don't provide any spaces in the parenthesis
 fieldsForMatchesCollection=("matchID","matchNumber","season","matchStartDate","city","tossWon","tossDecision","isSuperOver","DLS","oversReduced")
 fieldsForMatchesCollection=("$fieldsForMatchesCollection","team1","team2","teamWon","wonByWickets","wonByRuns","playerOfMatch")
-fieldsForMatchesCollection=("$fieldsForMatchesCollection","team1Score","team1Wickets","team1Fours","team1Sixes","team1Extras","team1LegalDeliveriesFaced")
-fieldsForMatchesCollection=("$fieldsForMatchesCollection","team2Score","team2Wickets","team2Fours","team2Sixes","team2Extras","team2LegalDeliveriesFaced")
+fieldsForMatchesCollection=("$fieldsForMatchesCollection","team1Score","mTeam1Score","team1Wickets","team1Fours","team1Sixes","team1Extras","team1LegalDeliveriesFaced")
+fieldsForMatchesCollection=("$fieldsForMatchesCollection","team2Score","mTeam2Score","team2Wickets","team2Fours","team2Sixes","team2Extras","team2LegalDeliveriesFaced")
 
 # fields for runs collection;names should be same as the one in collection
 fieldsForRunsCollection=("matchID","over","ballNo","innings","batter","nonStriker","bowler")

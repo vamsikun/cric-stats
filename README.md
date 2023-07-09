@@ -57,3 +57,4 @@
 - [ ] for batter strike rate min.balls faced instead of min.runs??
 - [ ] add type for metadata
 - [ ] try to remove $expr in mongodb commands => mongodb
+- [x] add modified team-score so that it becomes easy to get max, min score along with wickets => mongodb, sql
