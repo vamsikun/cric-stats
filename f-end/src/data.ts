@@ -1,7 +1,8 @@
 export type eachCellInTable = {
   id: number;
   value: string;
-  apiValue: string;
+  apiValue: string | number;
+  metadata?: string;
 };
 
 export const seasons: eachCellInTable[] = [
@@ -22,6 +23,24 @@ export const seasons: eachCellInTable[] = [
   { id: 14, value: "2010", apiValue: "2010" },
   { id: 15, value: "2009", apiValue: "2009" },
   { id: 16, value: "2008", apiValue: "2008" },
+];
+
+export const teams: eachCellInTable[] = [
+  { id: 1, value: "RCB", apiValue: 1, metadata: "Royal Challengers Bangalore" },
+  { id: 2, value: "DC", apiValue: 2, metadata: "Delhi Capitals" },
+  { id: 3, value: "CSK", apiValue: 3, metadata: "Chennai Super Kings" },
+  { id: 4, value: "KKR", apiValue: 4, metadata: "Kolkata Knight Riders" },
+  { id: 5, value: "RR", apiValue: 5, metadata: "Rajasthan Royals" },
+  { id: 6, value: "SRH", apiValue: 6, metadata: "Sunrisers Hyderabad" },
+  { id: 7, value: "PWI", apiValue: 7, metadata: "Pune Warriors India" },
+  { id: 8, value: "RPS", apiValue: 8, metadata: "Rising Pune Supergiants" },
+  { id: 9, value: "LSG", apiValue: 9, metadata: "Lucknow Super Giants" },
+  { id: 10, value: "KXIP", apiValue: 10, metadata: "Kings XI Punjab" },
+  { id: 11, value: "MI", apiValue: 11, metadata: "Mumbai Indians" },
+  { id: 12, value: "GT", apiValue: 12, metadata: "Gujarat Titans" },
+  { id: 13, value: "GL", apiValue: 13, metadata: "Gujarat Lions" },
+  { id: 14, value: "KTK", apiValue: 14, metadata: "Kochi Tuskers Kerala" },
+  { id: 15, value: "DCH", apiValue: 15, metadata: "Deccan Chargers" },
 ];
 
 export const battingStats: eachCellInTable[] = [

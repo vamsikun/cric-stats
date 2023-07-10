@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { Summary } from "@/components/Summary";
+import { PlayerSummary } from "@/components/PlayerSummary";
 
 export default function Home() {
-  return <Summary />;
+  return <PlayerSummary />;
 }

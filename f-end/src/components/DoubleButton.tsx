@@ -6,15 +6,14 @@ import clsx from "clsx";
 // 3. add focus ring
 // 4. switch like background??
 // 5. Add shadow on hover
-export function DoubleButton({ isBowlingSelected, setIsBowlingSelected }) {
+export function DoubleButton({ isRightSelected, setIsRightSelected, options }) {
   return (
     <div className="p-4 flex items-center justify-center">
-      {console.log("Rendering DoubleButton!!")}
       <div className="flex text-gray-900 gap-0.5">
         <button
           className={clsx(
             "font-bold sm:text-xl py-[6px] sm:py-[9px] text-center",
-            isBowlingSelected
+            isRightSelected
               ? "scale-90 bg-slate-400 opacity-75"
               : "scale-110 bg-slate-100 ",
             "rounded-l-lg",
@@ -22,15 +21,15 @@ export function DoubleButton({ isBowlingSelected, setIsBowlingSelected }) {
             "transition-all"
           )}
           onClick={() => {
-            setIsBowlingSelected(false);
+            setIsRightSelected(false);
           }}
         >
-          Batting
+          {options[0]}
         </button>
         <button
           className={clsx(
             "font-bold sm:text-xl py-[6px] sm:py-[9px] text-center ",
-            isBowlingSelected
+            isRightSelected
               ? "scale-110 bg-slate-100 "
               : "scale-90 bg-slate-400 opacity-75",
             "rounded-r-lg",
@@ -38,10 +37,10 @@ export function DoubleButton({ isBowlingSelected, setIsBowlingSelected }) {
             "transition-all"
           )}
           onClick={() => {
-            setIsBowlingSelected(true);
+            setIsRightSelected(true);
           }}
         >
-          Bowling
+          {options[1]}
         </button>
       </div>
     </div>
