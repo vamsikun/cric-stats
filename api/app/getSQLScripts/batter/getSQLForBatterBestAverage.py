@@ -1,9 +1,9 @@
 from typing import Annotated
 from getSQLScripts.batter.batterSQLHelper import (
-    getWherePredicate,
     defaultSelectConfig,
     selectTeamDetails
 )
+from utils.getSQLQuery import getWherePredicate
 
 def getSQLForBatterBestAverage(
     season: Annotated[str | None, "season"] = None,
@@ -18,7 +18,7 @@ def getSQLForBatterBestAverage(
     """
     # NOTE: don't worry much about the case of the sql keywords as we are using psycopg2 which is case insensitive
 
-    wherePredicate = getWherePredicate(season, team, innings, opposition)
+    wherePredicate = getWherePredicate(season=season, team=team, innings=innings, opposition=opposition)
     sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],
                                                  joinPredicate=selectTeamDetails['joinStatement'],
                                                  wherePredicate=wherePredicate,

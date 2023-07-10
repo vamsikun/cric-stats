@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.batter import batterRouter
 from routers.bowler import bowlerRouter
+from routers.match import matchRouter
 
 app = FastAPI()
 
@@ -21,3 +22,4 @@ app.add_middleware(
 )
 app.include_router(batterRouter)
 app.include_router(bowlerRouter)
+app.include_router(matchRouter)

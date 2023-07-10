@@ -4,20 +4,12 @@ from pydantic import BaseModel
 # NOTE: minimum qualification for stats such as average, strikerate
 havingFilter = "SUM(runs)>=100"
 
-
-def getWherePredicate(season, team, innings, opposition):
-    wherePredicate = ""
-    if season:
-        wherePredicate += f"season = '{season}' AND "
-    if team:
-        wherePredicate += f"team = '{team}' AND "
-    if innings:
-        wherePredicate += f"innings = {innings} AND "
-    if opposition:
-        wherePredicate += f"opposition = '{opposition}' AND "
-
-    if wherePredicate.endswith(" AND "):
-        wherePredicate = wherePredicate[:-5]
+def getWherePredicate(**kwargs):
+    filteredKwargs = []
+    for key,value in kwargs.items():
+        if value != None:
+            filteredKwargs.append((key,value))
+    wherePredicate = " AND ".join(f"{key}={value!r}" for key,value in filteredKwargs)
     return wherePredicate
 
 # NOTE: for high score, a extra number is being concatenated to the original high score 

@@ -1,10 +1,9 @@
 from typing import Annotated
 from getSQLScripts.batter.batterSQLHelper import (
     defaultSelectConfig,
-    getWherePredicate,
     selectTeamDetails
 )
-
+from utils.getSQLQuery import getWherePredicate
 
 def getSQLForBatterMostRuns(
     season: Annotated[str | None, "season"] = None,
@@ -14,7 +13,7 @@ def getSQLForBatterMostRuns(
     havingClause: Annotated[str, "havingClause"]=""
 ):
 
-    wherePredicate = getWherePredicate(season, team, innings, opposition)
+    wherePredicate = getWherePredicate(season=season, team=team, innings=innings, opposition=opposition)
     sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],
                                                  joinPredicate=selectTeamDetails['joinStatement'],
                                                  wherePredicate=wherePredicate,

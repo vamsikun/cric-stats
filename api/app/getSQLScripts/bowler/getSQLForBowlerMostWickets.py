@@ -1,10 +1,9 @@
 from typing import Annotated
 from getSQLScripts.bowler.bowlerSQLHelper import (
-    getWherePredicate,
     defaultSelectConfig,
     selectTeamDetails
 )
-
+from utils.getSQLQuery import getWherePredicate
 
 def getSQLForBowlerMostWickets(
     season: Annotated[str | None, "season"] = None,
@@ -13,7 +12,7 @@ def getSQLForBowlerMostWickets(
     opposition: Annotated[str | None, "opposition"] = None,
     havingClause: Annotated[str, "havingClause"]=""
 ):
-    wherePredicate = getWherePredicate(season, team, innings, opposition)
+    wherePredicate = getWherePredicate(season=season, team=team, innings=innings, opposition=opposition)
     sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],
                                                  joinPredicate=selectTeamDetails['joinStatement'],
                                                  wherePredicate=wherePredicate,

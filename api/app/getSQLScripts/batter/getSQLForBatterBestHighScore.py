@@ -1,9 +1,8 @@
 from typing import Annotated
 from getSQLScripts.batter.batterSQLHelper import (
     SelectStatementConfig,
-    getWherePredicate
 )
-
+from utils.getSQLQuery import getWherePredicate
 
 def getSQLForBatterBestHighScore(
     season: Annotated[str | None, "season"] = None,
@@ -16,7 +15,7 @@ def getSQLForBatterBestHighScore(
     This function returns the sql query for the players with most runs
     """
     
-    wherePredicate = getWherePredicate(season, team, innings, opposition)
+    wherePredicate = getWherePredicate(season=season, team=team, innings=innings, opposition=opposition)
     groupByPredicate = "match_id,player"
     hsStatementConfig = SelectStatementConfig(player=True, hs=True, sr=True, fours=True, sixes=True)    
     extraCols = "STRING_AGG(DISTINCT t1.team_shortcut, ',') as team,STRING_AGG(DISTINCT t2.team_shortcut,',') as opposition,"

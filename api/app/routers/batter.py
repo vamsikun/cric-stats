@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 # NOTE: ignore the import not resolved errors here; as it would be fine as we execute it from the app directory
 from database import getCursorForPGDB
 from utils.endPointMappings import batterApiMappings, havingClauseMappings
-from utils.executeSQLQuery import executeSQLQuery
+from utils.getSQLQuery import executeSQLQuery
 
 batterRouter = APIRouter(prefix="/batter", tags=["batter"])
 
