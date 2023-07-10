@@ -1,5 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/react-table";
+import { columnMaps } from "@/data";
 
 export type TBatterData = {
   pos: number;
@@ -30,11 +31,24 @@ export type TBowlerData = {
   econ: number;
 };
 
-export type TPlayerData = TBatterData | TBowlerData;
+export type TTeamSummaryData = {
+  season: string;
+  matches: number;
+  wins: number;
+  losses: number;
+  high_score: string;
+  low_score: string;
+  wickets: number;
+  fours: number;
+  sixes: number;
+  run_rate: number;
+};
+
+export type TSingleData = TBatterData | TBowlerData | TTeamSummaryData;
 
 export type TGetColumnsProps = {
-  singleDataPoint: TBatterData | TBowlerData;
-  isBowlingSelected: boolean;
+  singleDataPoint: TBatterData | TBowlerData | TTeamSummaryData;
+  columnMapIndex: number;
 };
 
 export type TGetColumnsReturn = {
@@ -42,54 +56,23 @@ export type TGetColumnsReturn = {
   mappedCols: string[];
 };
 
-const batterColumnMaps = {
-  pos: "POS",
-  player: "PLAYER",
-  team: "TEAM",
-  opposition: "OPP",
-  matches: "MAT",
-  innings: "INNS",
-  runs: "RUNS",
-  hs: "HS",
-  sr: "SR",
-  avg: "AVG",
-  sixes: "6S",
-  fours: "4S",
-};
-
-const bowlerColumnMaps = {
-  pos: "POS",
-  player: "PLAYER",
-  matches: "MAT",
-  innings: "INNS",
-  overs: "OV",
-  dots_percentage: "DOT %",
-  wickets: "WKTS",
-  runs: "RUNS",
-  sr: "SR",
-  avg: "AVG",
-  econ: "ECON",
-};
-
 export function getColumnsForSummaryTable({
   singleDataPoint,
-  isBowlingSelected,
-}: TGetColumnsProps): ColumnDef<TBatterData | TBowlerData, string | number>[] {
-  const columnHelper = createColumnHelper<TBatterData | TBowlerData>();
+  columnMapIndex,
+}: TGetColumnsProps): ColumnDef<TSingleData, string | number>[] {
+  const columnHelper = createColumnHelper<TSingleData>();
   const rawColumns = Object.keys(singleDataPoint);
   const columns = rawColumns.map((col, index) => {
     if (col == "hs") {
-      return columnHelper.accessor(col as keyof TPlayerData, {
-        header: () =>
-          isBowlingSelected ? bowlerColumnMaps[col] : batterColumnMaps[col],
+      return columnHelper.accessor(col as keyof TSingleData, {
+        header: () => columnMaps[columnMapIndex][col],
         cell: (info): string =>
           (Math.trunc((info.getValue() as number) / 10) as string) +
           ((info.getValue() as number) % 10 == 1 ? "*" : ""),
       });
     }
-    return columnHelper.accessor(col as keyof TPlayerData, {
-      header: () =>
-        isBowlingSelected ? bowlerColumnMaps[col] : batterColumnMaps[col],
+    return columnHelper.accessor(col as keyof TSingleData, {
+      header: () => columnMaps[columnMapIndex][col],
     });
   });
   return columns;

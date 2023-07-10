@@ -406,72 +406,102 @@ from (
             team2_score
         from matches
     ) m on m.match_id = players.match_id;
-
-
-
-SELECT season,
-        team1,
-        MAX(
-            CASE WHEN team_won is not null and dls!=1 and overs_reduced!=1
-            THEN
-                LPAD(
-                    CAST(COALESCE(team1_score,0) AS TEXT) ||
-                    CASE WHEN COALESCE(team1_wickets,0)=0 
-                                THEN 'a' 
-                                ELSE CAST(10-COALESCE(team1_wickets,0) AS TEXT)
-                                END,
-                    6,
-                    '0'
-                )
-            ELSE '0'
-            END
-        ) AS high_score,
-        MIN(
-            CASE WHEN team_won is not null and dls!=1 and overs_reduced!=1
-            THEN
-                LPAD(
-                    CAST(COALESCE(team1_score,0) AS TEXT) ||
-                    CASE WHEN COALESCE(team1_wickets,0)=0 
-                                THEN 'a' 
-                                ELSE CAST(10-COALESCE(team1_wickets,0) AS TEXT)
-                                END,
-                    6,
-                    '0'
-                )
-            ELSE 'ffffff'
-            END
-        ) AS low_score,
-        
-        MAX(
-            CASE WHEN team_won is not null and dls!=1 and overs_reduced!=1
-            THEN
-                LPAD(
-                    CAST(COALESCE(team2_score,0) AS TEXT) ||
-                    CASE WHEN COALESCE(team2_wickets,0)=0 
-                                THEN 'a' 
-                                ELSE CAST(10-COALESCE(team2_wickets,0) AS TEXT)
-                                END,
-                    6,
-                    '0'
-                )
-            ELSE '0'
-            END
-        ) AS opp_high_score,
-        MIN(
-            CASE WHEN team_won is not null and dls!=1 and overs_reduced!=1
-            THEN
-                LPAD(
-                    CAST(COALESCE(team2_score,0) AS TEXT) ||
-                    CASE WHEN COALESCE(team2_wickets,0)=0 
-                                THEN 'a' 
-                                ELSE CAST(10-COALESCE(team2_wickets,0) AS TEXT)
-                                END,
-                    6,
-                    '0'
-                )
-            ELSE 'ffffff'
-            END
-        ) AS opp_low_score
-FROM matches
-GROUP BY season,team1
-ORDER BY opp_high_score DESC
+select *
+FROM (
+        select season,
+            team1 as team,
+            count(*) as matches,
+            1 as innings,
+            max(lpad(m_team1_score, 6, '0')) as high_score,
+            min(
+                CASE
+                    -- low_score is not considered when dls or overs_reduced happens or no_result
+                    WHEN team_won is not null
+                    and dls != 1
+                    and overs_reduced != 1 THEN lpad(m_team1_score, 6, '0')
+                    ELSE 'ffffff'
+                END
+            ) as low_score,
+            SUM(team1_fours) as fours,
+            SUM(team1_sixes) as sixes,
+            SUM(team1_score) / SUM(team1_legal_deliveries_faced)::float as run_rate,
+            SUM(team1_wickets) as wickets,
+            max(lpad(m_team2_score, 6, '0')) as opp_high_score,
+            min(
+                CASE
+                    -- low_score is not considered when dls or overs_reduced happens or no_result
+                    WHEN team_won is not null
+                    and dls != 1
+                    and overs_reduced != 1 THEN lpad(m_team2_score, 6, '0')
+                    ELSE 'ffffff'
+                END
+            ) as opp_low_score,
+            SUM(team2_fours) as opp_fours,
+            SUM(team2_sixes) as opp_sixes,
+            SUM(team2_score) / SUM(team2_legal_deliveries_faced)::float as opp_run_rate,
+            SUM(team2_wickets) as opp_wickets,
+            SUM(
+                CASE
+                    WHEN team_won = team1 THEN 1
+                    ELSE 0
+                END
+            ) AS wins,
+            SUM(
+                CASE
+                    WHEN team_won = team2 THEN 1
+                    ELSE 0
+                END
+            ) AS losses
+        from matches
+        group by season,
+            team1
+        UNION
+        SELECT season,
+            team2 as team,
+            count(*) as matches,
+            2 as innings,
+            MAX(lpad(m_team2_score, 6, '0')) AS high_score,
+            min(
+                CASE
+                    -- low_score is not considered when dls or overs_reduced happens or no_result
+                    WHEN team_won is not null
+                    and dls != 1
+                    and overs_reduced != 1 THEN lpad(m_team2_score, 6, '0')
+                    ELSE 'ffffff'
+                END
+            ) as low_score,
+            SUM(team2_fours) as fours,
+            SUM(team2_sixes) as sixes,
+            SUM(team2_score) / SUM(team2_legal_deliveries_faced)::float as run_rate,
+            SUM(team2_wickets) as wickets,
+            MAX(lpad(m_team1_score, 6, '0')) AS opp_high_score,
+            min(
+                CASE
+                    -- low_score is not considered when dls or overs_reduced happens or no_result
+                    WHEN team_won is not null
+                    and dls != 1
+                    and overs_reduced != 1 THEN lpad(m_team1_score, 6, '0')
+                    ELSE 'ffffff'
+                END
+            ) as opp_low_score,
+            SUM(team1_fours) as opp_fours,
+            SUM(team1_sixes) as opp_sixes,
+            SUM(team1_score) / SUM(team1_legal_deliveries_faced)::float as opp_run_rate,
+            SUM(team1_wickets) as opp_wickets,
+            SUM(
+                CASE
+                    WHEN team_won = team2 THEN 1
+                    ELSE 0
+                END
+            ) AS wins,
+            SUM(
+                CASE
+                    WHEN team_won = team1 THEN 1
+                    ELSE 0
+                END
+            ) AS losses
+        FROM matches
+        GROUP BY season,
+            team2
+    ) t
+ORDER BY low_score asc

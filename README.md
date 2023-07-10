@@ -59,7 +59,7 @@
 - [ ] try to remove $expr in mongodb commands => mongodb
 - [x] add modified team-score so that it becomes easy to get max, min score along with wickets => mongodb, sql
 - [ ] remove files from gitignore
-- [ ] use reducer for maintaing multiple states connected with each other
-- [ ] reusable CustomFilter and Summary Table
-- [ ] add team summary table
-- [ ] modify high-score and low-score to readable format
+- [x] use reducer for maintaing multiple states connected with each other
+- [x] reusable CustomFilter and Summary Table
+- [x] add team summary table
+- [x] modify high-score and low-score to readable format
