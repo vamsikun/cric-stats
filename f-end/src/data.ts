@@ -157,9 +157,10 @@ export const teamSummaryTableEachColStyles = {
     "0": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[3.25rem] sm:min-w-[3.75rem] sticky left-0 z-40",
     // NOTE: for player name column I am also setting the max-width as the player name lengths can vary a lot so fixing this width
     "1": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 pl-2 sticky left-[3.25rem] sm:left-[3.75rem] z-20 min-w-[2.5rem] sm:min-w-[3rem]",
-    "2": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 pl-2 sticky left-[5.75rem] sm:left-[6.75rem] z-20 min-w-[2.5rem] sm:min-w-[3rem] before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "2": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 pl-0 sticky left-[5.75rem] sm:left-[6.75rem] z-20 min-w-[3rem] sm:min-w-[3.5rem] before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
     // to cover the extra width lost because of the pseudo element
-    "3": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4.125rem] sm:min-w-[4.75rem]",
+    "3": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[6.5rem] sm:min-w-[8.3rem] pl-4 text-center",
+    "4": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[6.3rem] sm:min-w-[8rem] pl-4 text-center",
     other:
       "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4rem] sm:min-w-[4.5rem]",
     selectedCol: "bg-teal-600",
@@ -169,7 +170,9 @@ export const teamSummaryTableEachColStyles = {
     // these elements min-width is being set there
     "0": "text-sm sm:text-base font-semibold py-1.5 sm:py-2 bg-teal-100 text-center sticky left-0",
     "1": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 pl-2 text-center sticky left-[3.25rem] sm:left-[3.75rem]  sm:overflow-ellipsis sm:whitespace-nowrap",
-    "2": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 pl-2 text-center sticky left-[5.75rem] sm:left-[6.75rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "2": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 pl-0 text-center sticky left-[5.75rem] sm:left-[6.75rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "3": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center pl-3",
+    "4": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center pl-2",
     other: "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center",
     selectedCol: "bg-teal-200",
   },

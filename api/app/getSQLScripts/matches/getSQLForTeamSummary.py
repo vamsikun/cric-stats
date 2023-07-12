@@ -6,13 +6,13 @@ def getSQLForTeamSummaryUnion():
             team1 as team,
             count(*) as matches,
             1 as innings,
-            max(lpad(m_team1_score, 6, '0')) as high_score,
+            max(lpad(m_team1_score || '-' || CAST(team2 as text), 9, '0')) as high_score,
             min(
                 CASE
                     -- low_score is not considered when dls or overs_reduced happens or no_result
                     WHEN team_won is not null
                     and dls != 1
-                    and overs_reduced != 1 THEN lpad(m_team1_score, 6, '0')
+                    and overs_reduced != 1 THEN lpad(m_team1_score || '-' || CAST(team2 as text), 9, '0')
                     ELSE 'ffffff'
                 END
             ) as low_score,
@@ -21,13 +21,13 @@ def getSQLForTeamSummaryUnion():
             SUM(team1_sixes) as sixes,
             SUM(team1_legal_deliveries_faced) as legal_deliveries_faced,
             SUM(team1_wickets) as wickets,
-            max(lpad(m_team2_score, 6, '0')) as opp_high_score,
+            max(lpad(m_team2_score || '-' || CAST(team2 as text), 9, '0')) as opp_high_score,
             min(
                 CASE
                     -- low_score is not considered when dls or overs_reduced happens or no_result
                     WHEN team_won is not null
                     and dls != 1
-                    and overs_reduced != 1 THEN lpad(m_team2_score, 6, '0')
+                    and overs_reduced != 1 THEN lpad(m_team2_score || '-' || CAST(team2 as text), 9, '0')
                     ELSE 'ffffff'
                 END
             ) as opp_low_score,
@@ -56,13 +56,13 @@ def getSQLForTeamSummaryUnion():
             team2 as team,
             count(*) as matches,
             2 as innings,
-            MAX(lpad(m_team2_score, 6, '0')) AS high_score,
+            MAX(lpad(m_team2_score || '-' || CAST(team1 as text), 9, '0')) AS high_score,
             min(
                 CASE
                     -- low_score is not considered when dls or overs_reduced happens or no_result
                     WHEN team_won is not null
                     and dls != 1
-                    and overs_reduced != 1 THEN lpad(m_team2_score, 6, '0')
+                    and overs_reduced != 1 THEN lpad(m_team2_score || '-' || CAST(team1 as text), 9, '0')
                     ELSE 'ffffff'
                 END
             ) as low_score,
@@ -71,13 +71,13 @@ def getSQLForTeamSummaryUnion():
             SUM(team2_sixes) as sixes,
             SUM(team2_legal_deliveries_faced) as legal_deliveries_faced,
             SUM(team2_wickets) as wickets,
-            MAX(lpad(m_team1_score, 6, '0')) AS opp_high_score,
+            MAX(lpad(m_team1_score || '-' || CAST(team1 as text), 9, '0')) AS opp_high_score,
             min(
                 CASE
                     -- low_score is not considered when dls or overs_reduced happens or no_result
                     WHEN team_won is not null
                     and dls != 1
-                    and overs_reduced != 1 THEN lpad(m_team1_score, 6, '0')
+                    and overs_reduced != 1 THEN lpad(m_team1_score ||'-'|| CAST(team1 as text), 9, '0')
                     ELSE 'ffffff'
                 END
             ) as opp_low_score,

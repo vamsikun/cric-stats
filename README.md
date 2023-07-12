@@ -67,3 +67,6 @@
 - [x] fix the area for table, so when the content is less, then items below won't jump to the space created by the table
 - [x] normalize the margins for filters, table
   - added only the top-margin to avoid confusion with merge overlaps
+- [x] add opponent team names for high and low scores for team summary
+  - added another character in the score's columns that specifies the opp team id
+  - modifed modifyScore function to return team info too
