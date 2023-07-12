@@ -6,9 +6,18 @@ export const PlayerSummaryFilter = ({
   selectedStat,
   setSelectedStat,
   stats,
+  selectedPlayerType,
+  setSelectedPlayerType,
+  playerTypes,
 }) => {
   return (
-    <div className="flex gap-1 justify-center items-center ">
+    <div className="mt-6 flex gap-2 justify-center items-center ">
+      <CustomFilter
+        type="small"
+        setSelectedOption={setSelectedPlayerType}
+        selectedOption={selectedPlayerType}
+        options={playerTypes}
+      />
       <CustomFilter
         type="small"
         setSelectedOption={setSelectedSeason}

@@ -49,6 +49,11 @@ export const inningsOptions: selectOption[] = [
   { id: 3, value: "Second Inns", apiValue: 2 },
 ];
 
+export const playerTypes: selectOption[] = [
+  { id: 1, value: "Batting", apiValue: "batter" },
+  { id: 2, value: "Bowling", apiValue: "bowler" },
+];
+
 export const battingStats: selectOption[] = [
   { id: 1, value: "Most Runs", apiValue: "mostRuns" },
   { id: 2, value: "Best HS", apiValue: "bestHighScore" },
@@ -64,6 +69,11 @@ export const bowlingStats: selectOption[] = [
   { id: 3, value: "Best Economy", apiValue: "bestEconomy" },
   { id: 4, value: "Best Strike Rate", apiValue: "bestStrikeRate" },
   { id: 5, value: "Best Average", apiValue: "bestAverage" },
+];
+
+export const teamTypesOptions: selectOption[] = [
+  { id: 1, value: "Self", apiValue: "self" },
+  { id: 2, value: "Opp'n", apiValue: "opp" },
 ];
 
 export const batterColumnMaps = {

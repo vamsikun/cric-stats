@@ -5,6 +5,7 @@ import { DoubleButton } from "@/components/DoubleButton";
 import {
   teamsOptions,
   inningsOptions,
+  teamTypesOptions,
   teamSummaryTableEachColStyles,
 } from "@/data";
 import { SummaryTable } from "@/components/SummaryTable";
@@ -27,7 +28,7 @@ const filterReducer = (state, action) => {
     case "teamType":
       return {
         ...state,
-        isOppSelected: action.payload,
+        teamType: action.payload,
       };
     case "team":
       return {
@@ -44,7 +45,7 @@ const filterReducer = (state, action) => {
 
 export const TeamSummary = () => {
   const [filter, filterDispatch] = useReducer(filterReducer, {
-    isOppSelected: false,
+    teamType: teamTypesOptions[0],
     team: teamsOptions[0],
     innings: inningsOptions[0],
   });
@@ -54,7 +55,7 @@ export const TeamSummary = () => {
     let ignore = false;
     let inningsQuery = "";
     let teamQuery = `team=${filter["team"].apiValue}&`;
-    let teamType = `teamType=${filter["isOppSelected"] ? "opp" : "self"}&`;
+    let teamType = `teamType=${filter["teamType"].apiValue}&`;
     if (filter["innings"].value != "Both Inns") {
       inningsQuery = `innings=${filter["innings"].apiValue}&`;
     }
@@ -72,18 +73,12 @@ export const TeamSummary = () => {
 
   return (
     <>
-      <DoubleButton
-        isRightSelected={filter["isOppSelected"]}
-        setIsRightSelected={(isOppSelected) =>
-          filterDispatch({ type: "teamType", payload: isOppSelected })
-        }
-        options={["Self", "Opp'n"]}
-      />
       <TeamSummaryFilter
         filter={filter}
         filterDispatcher={filterDispatch}
         teamOptions={teamsOptions}
         inningsOptions={inningsOptions}
+        teamTypeOptions={teamTypesOptions}
       />
       {apiResponse != undefined && (
         <SummaryTable
