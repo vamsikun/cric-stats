@@ -39,17 +39,22 @@ export function SummaryTable({
   const minRequirement = metadata["havingClause"];
   return (
     // This flex is necessary other wise the child element's table will occupy the whole width
-    <div className="flex justify-center ">
+
+    // when we specify height explicitly in the parent container,
+    // then if the margin of the child element crosses the border, then the child will go off the borders of the parent container
+    // here the height will be depended on the child elements heights, which have been fixed static
+    <div className="mt-6 mb-8 flex justify-center items-start">
       {/* If we don't have the overflow-auto on the parent container, then the parent container will always have enough width for the table in the child
       so the overflow of child table won't come into play. But when we set the overflow property to the parent, then due to the child precedence of the overflow propoerty
       we will be able to scroll the table */}
-      <div className="flex mt-4 mb-8 flex-col-reverse items-end overflow-auto justify-center text-slate-700">
-        <div className="text-white text-[0.5rem] sm:text-xs font-semibold mr-2">
+      <div className="flex flex-col-reverse items-end overflow-auto justify-center text-slate-700">
+        {/* specifying height for the metadata to keep the table container size static */}
+        <div className="text-[0.5rem] sm:text-xs mr-2 h-3 sm:h-4">
           {minRequirement}
         </div>
         {/* Combination of w-full in the child-item and items-end(flex-col) in the parent container makes the table to be fixed in a constrained space
         which allows for the scrolling of the table. */}
-        <div className="overflow-x-auto w-full max-h-72 sm:max-h-96 border-2 rounded-lg ">
+        <div className="overflow-x-auto w-full h-72 sm:h-96 border-2 rounded-lg ">
           <table className="table-fixed">
             <thead className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (

@@ -64,3 +64,4 @@
 - [x] add team summary table
 - [x] modify high-score and low-score to readable format
 - [ ] modify the font of filters and double-button, so that they don't take the attention of the real-data
+- [x] fix the area for table, so when the content is less, then items below won't jump to the space created by the table
