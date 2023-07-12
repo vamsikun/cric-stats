@@ -12,9 +12,16 @@ export const CustomFilter = ({
   options,
 }) => {
   let width;
-  type === "small"
-    ? (width = "w-[5rem] sm:w-[7rem]")
-    : (width = "w-[10rem] sm:w-[14rem]");
+  switch (type) {
+    case "small":
+      width = "w-[5rem] sm:w-[7rem]";
+      break;
+    case "medium":
+      width = "w-[7rem] sm:w-[9rem]";
+      break;
+    case "large":
+      width = "w-[9rem] sm:w-[13rem]";
+  }
   return (
     //sm:w-[7rem], sm:w-[12rem], w-[5rem], w-[9rem]
     <div className={`relative z-20`}>
