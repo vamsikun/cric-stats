@@ -23,7 +23,6 @@ export const CustomFilter = ({
       width = "w-[9rem] sm:w-[13rem]";
   }
   return (
-    //sm:w-[7rem], sm:w-[12rem], w-[5rem], w-[9rem]
     <div className={`relative z-20`}>
       <Listbox
         as="div"

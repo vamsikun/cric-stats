@@ -10,7 +10,7 @@ export const TeamSummaryFilter = ({
   const innings = filter["innings"];
   const teamType = filter["teamType"];
   return (
-    <div className="flex gap-1 justify-center items-center">
+    <div className="mt-8 flex gap-1 justify-center items-center">
       <CustomFilter
         type="small"
         selectedOption={teamType}

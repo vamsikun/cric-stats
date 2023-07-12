@@ -43,7 +43,7 @@ export function SummaryTable({
     // when we specify height explicitly in the parent container,
     // then if the margin of the child element crosses the border, then the child will go off the borders of the parent container
     // here the height will be depended on the child elements heights, which have been fixed static
-    <div className="mt-6 mb-8 flex justify-center items-start">
+    <div className="mt-6 flex justify-center items-start ">
       {/* If we don't have the overflow-auto on the parent container, then the parent container will always have enough width for the table in the child
       so the overflow of child table won't come into play. But when we set the overflow property to the parent, then due to the child precedence of the overflow propoerty
       we will be able to scroll the table */}

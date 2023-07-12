@@ -11,7 +11,7 @@ export const PlayerSummaryFilter = ({
   playerTypes,
 }) => {
   return (
-    <div className="mt-6 flex gap-2 justify-center items-center ">
+    <div className="mt-8 flex gap-2 justify-center items-center ">
       <CustomFilter
         type="small"
         setSelectedOption={setSelectedPlayerType}
