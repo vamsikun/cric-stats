@@ -63,3 +63,4 @@
 - [x] reusable CustomFilter and Summary Table
 - [x] add team summary table
 - [x] modify high-score and low-score to readable format
+- [ ] modify the font of filters and double-button, so that they don't take the attention of the real-data

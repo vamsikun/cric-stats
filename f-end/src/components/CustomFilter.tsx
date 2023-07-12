@@ -39,7 +39,7 @@ export const CustomFilter = ({
           </span>
         </Listbox.Button>
         {/* Have used this div for hiding the scrollbar going out of the rounded border */}
-        <div className="absolute mt-0.5 w-full rounded-lg overflow-hidden shadow-2xl">
+        <div className="absolute mt-0.5 w-full rounded-lg overflow-hidden shadow-lg">
           <Transition
             enter="transition duration-100 ease-out"
             enterFrom="transform scale-95 opacity-0"

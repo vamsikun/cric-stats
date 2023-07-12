@@ -12,7 +12,7 @@ export function DoubleButton({ isRightSelected, setIsRightSelected, options }) {
       <div className="flex text-gray-900 gap-0.5">
         <button
           className={clsx(
-            "font-bold sm:text-xl py-[6px] sm:py-[9px] text-center",
+            "font-semibold sm:text-xl py-[6px] sm:py-[9px] text-center",
             isRightSelected
               ? "scale-90 bg-slate-400 opacity-75"
               : "scale-110 bg-slate-100 ",
@@ -28,7 +28,7 @@ export function DoubleButton({ isRightSelected, setIsRightSelected, options }) {
         </button>
         <button
           className={clsx(
-            "font-bold sm:text-xl py-[6px] sm:py-[9px] text-center ",
+            "font-semibold sm:text-xl py-[6px] sm:py-[9px] text-center ",
             isRightSelected
               ? "scale-110 bg-slate-100 "
               : "scale-90 bg-slate-400 opacity-75",
