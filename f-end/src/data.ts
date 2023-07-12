@@ -175,4 +175,14 @@ export const teamSummaryTableEachColStyles = {
   },
 };
 
+export const skeletonSummaryTableEachColStyles = {
+  headerCols: {
+    other:
+      "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4rem] sm:min-w-[4.5rem]",
+  },
+  cellCols: {
+    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center",
+  },
+};
+
 // class = "font-"

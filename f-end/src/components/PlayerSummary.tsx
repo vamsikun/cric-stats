@@ -52,7 +52,7 @@ export function PlayerSummary() {
         setSelectedPlayerType={setSelectedPlayerType}
         playerTypes={playerTypes}
       />
-      {apiResponse != undefined && (
+      {apiResponse != undefined ? (
         <SummaryTable
           data={apiResponse["data"]}
           metadata={apiResponse["metadata"]}
@@ -60,7 +60,7 @@ export function PlayerSummary() {
           columnMapIndex={selectedPlayerType.apiValue == "bowler" ? 1 : 0}
           summaryTableColStyles={playerSummaryTableEachColStyles}
         />
-      )}
+      ) : null}
     </>
   );
 }

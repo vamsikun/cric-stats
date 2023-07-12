@@ -1,6 +1,4 @@
-import { getColumnsForSummaryTable } from "@/utils/getColumnsForSummaryTable";
 import clsx from "clsx";
-import { TSingleData } from "@/utils/getColumnsForSummaryTable";
 import {
   createColumnHelper,
   flexRender,
@@ -9,31 +7,32 @@ import {
 } from "@tanstack/react-table";
 
 // type of the input data that comes into the summary table
-export type TData = TSingleData[];
-export type TSummaryTableProps = {
-  data: TData;
-  metadata;
-  columnMapIndex: number;
-  summaryTableColStyles;
-};
 
-export function SummaryTable({
-  data,
-  columnMapIndex,
-  metadata,
-  summaryTableColStyles,
-}: TSummaryTableProps) {
-  const columns = getColumnsForSummaryTable({
-    singleDataPoint: data[0],
-    columnMapIndex: columnMapIndex,
-  });
+export function SummaryTableSkeleton({ summaryTableColStyles }) {
+  const data = Array(10).fill({});
+  const rawcolumns = Array(10).fill("c");
+
+  const columnHelper = createColumnHelper();
+  const columns = rawcolumns.map((col, index) =>
+    columnHelper.accessor(col, {
+      header: () => (
+        <div className="w-16 animate-pulse h-5 ml-2 bg-gray-400 text-gray-400 rounded-md opacity-50">
+          Hel
+        </div>
+      ),
+      cell: (info) => (
+        <div className="w-16 animate-ping h-5 ml-2 bg-gray-400 text-gray-400 rounded-md opacity-50">
+          Hel
+        </div>
+      ),
+    })
+  );
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-  const selectedColPosition = metadata["columnPosition"];
-  const minRequirement = metadata["havingClause"];
+  const selectedColPosition = undefined;
   return (
     // This flex is necessary other wise the child element's table will occupy the whole width
 
@@ -47,7 +46,7 @@ export function SummaryTable({
       <div className="flex flex-col-reverse items-end overflow-auto justify-center text-slate-700">
         {/* specifying height for the metadata to keep the table container size static */}
         <div className="text-[0.5rem] sm:text-xs mr-2 h-3 sm:h-4">
-          {minRequirement}
+          {undefined}
         </div>
         {/* Combination of w-full in the child-item and items-end(flex-col) in the parent container makes the table to be fixed in a constrained space
         which allows for the scrolling of the table. */}
