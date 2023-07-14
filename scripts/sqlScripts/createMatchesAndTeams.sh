@@ -1,4 +1,4 @@
-psql -d ipl -c "CREATE TABLE matches(
+eval "$renderPSQL  -c \"CREATE TABLE matches(
     match_id_new SERIAL PRIMARY KEY,
     match_id VARCHAR UNIQUE,
     match_number VARCHAR,
@@ -30,9 +30,9 @@ psql -d ipl -c "CREATE TABLE matches(
     team2_sixes SMALLINT,
     team2_extras SMALLINT,
     team2_legal_deliveries_faced SMALLINT
-);"
+);\""
 
-psql -d ipl -c "\COPY matches(
+eval "$renderPSQL  -c \"\COPY matches(
 match_id,
 match_number,
 season,
@@ -63,20 +63,20 @@ team2_fours,
 team2_sixes,
 team2_extras,
 team2_legal_deliveries_faced
-) FROM $1 DELIMITER ',' CSV HEADER;"
+) FROM $1 DELIMITER ',' CSV HEADER;\""
 
-psql -d ipl -c "
+eval "$renderPSQL  -c \"
 create table teams as
 select distinct(team1) as team from matches
 union 
 select distinct(team2) as team from matches;
-  "
+  \""
 
-psql -d ipl -c "ALTER TABLE teams
+eval "$renderPSQL  -c \"ALTER TABLE teams
 ADD COLUMN team_id SERIAL PRIMARY KEY,
-ADD COLUMN team_shortcut VARCHAR;"
+ADD COLUMN team_shortcut VARCHAR;\""
 
-psql -d ipl -c "
+eval "$renderPSQL  -c \"
 UPDATE teams
 SET team_shortcut = CASE WHEN team='Pune Warriors India' THEN 'PWI'
                         WHEN team='Royal Challengers Bangalore' THEN 'RCB'
@@ -93,21 +93,20 @@ SET team_shortcut = CASE WHEN team='Pune Warriors India' THEN 'PWI'
                         WHEN team='Gujarat Lions' THEN 'GL'
                         WHEN team='Kochi Tuskers Kerala' THEN 'KTK'
                         WHEN team='Deccan Chargers' THEN 'DCH'
-                        END;
-"
+                        END;\""
 
 # modify the teams column in matches
-psql -d ipl -c "
+eval "$renderPSQL  -c \"
 UPDATE matches
 SET toss_won= (SELECT team_id FROM teams WHERE matches.toss_won = teams.team),
 team1= (SELECT team_id FROM teams WHERE matches.team1 = teams.team),
 team2= (SELECT team_id FROM teams WHERE matches.team2 = teams.team),
-team_won = (SELECT team_id FROM teams WHERE matches.team_won = teams.team);"
+team_won = (SELECT team_id FROM teams WHERE matches.team_won = teams.team);\""
 
 # modify the type of teams
-psql -d ipl -c "
+eval "$renderPSQL  -c \"
 ALTER TABLE matches
 ALTER COLUMN toss_won TYPE SMALLINT USING toss_won::SMALLINT,
 ALTER COLUMN team_won TYPE SMALLINT USING team_won::SMALLINT,
 ALTER COLUMN team1 TYPE SMALLINT USING team1::SMALLINT,
-ALTER COLUMN team2 TYPE SMALLINT USING team2::SMALLINT;"
+ALTER COLUMN team2 TYPE SMALLINT USING team2::SMALLINT;\""

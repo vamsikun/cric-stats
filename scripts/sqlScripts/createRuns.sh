@@ -1,4 +1,4 @@
-psql -d ipl -c "
+eval "$renderPSQL  -c \"
 CREATE TABLE runs(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
     over SMALLINT,
@@ -17,9 +17,9 @@ CREATE TABLE runs(
     fielders_involved VARCHAR,
     bowler_wicket SMALLINT,
     boundaries SMALLINT
-);"
+);\""
 
-psql -d ipl -c "\COPY runs(
+eval "$renderPSQL  -c \"\COPY runs(
     match_id,
     over,
     ball_no,
@@ -37,4 +37,4 @@ psql -d ipl -c "\COPY runs(
     fielders_involved,
     bowler_wicket,
     boundaries
-) FROM $1 DELIMITER ',' CSV HEADER;"
+) FROM $1 DELIMITER ',' CSV HEADER;\""

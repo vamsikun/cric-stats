@@ -31,6 +31,7 @@ def generateDynamicRoute(batterKey:str):
         cursor=Depends(getCursorForPGDB),
     ):
         sqlQuery = generateSQLQuery(season, team, innings, opposition, havingClause)
+        print(executeSQLQuery(sqlQuery, cursor, columnPosition, havingClauseMappings[havingClause]))
         return executeSQLQuery(sqlQuery, cursor, columnPosition, havingClauseMappings[havingClause])
     
 batterMapKeys = list(batterApiMappings.keys())
