@@ -17,7 +17,7 @@ export const PlayerSummaryFilter = ({
         setSelectedOption={setSelectedPlayerType}
         selectedOption={selectedPlayerType}
         options={playerTypes}
-      />
+     />
       <CustomFilter
         type="small"
         setSelectedOption={setSelectedSeason}
