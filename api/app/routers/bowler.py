@@ -17,7 +17,7 @@ def generateDynamicRoute(bowlerKey:str):
     description = bowlerApiMappings[bowlerKey]['description']
     @bowlerRouter.get(
         f"/{endPoint}",
-        response_model=dict[str,dict[str,str]|list[schema]],
+        response_model=dict[str,dict[str,str|int]|list[schema]],
         description=description,
         name=endPoint
     )
