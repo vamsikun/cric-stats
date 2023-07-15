@@ -19,7 +19,7 @@ def generateDynamicRoute(batterKey:str):
     
     @batterRouter.get(
         f"/{endPoint}",
-        response_model=dict[str,dict[str,str]|list[schema]],
+        response_model=dict[str,dict[str,str|int]|list[schema]],
         description=description,
         name=endPoint
     )
