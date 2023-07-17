@@ -71,3 +71,9 @@
   - added another character in the score's columns that specifies the opp team id
   - modifed modifyScore function to return team info too
 - [ ] add shadow to filters when we hover on them
+- [x] add redis cache to fastapi
+  - had to run redis-server daemon in the docker
+  - modify dockerfile and create a separate script for running daemons
+  - issues with nested dictionaries
+  - **TODO** : optimize json.loads, json.dumps, json_encoder
+- [ ] add client-side caching in nextjs using useSWR

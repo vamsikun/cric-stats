@@ -1,6 +1,8 @@
 import psycopg2
+import redis
 import os
 
+rd = redis.Redis()
 
 def getCursorForPGDB():
     conn = None
