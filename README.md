@@ -70,3 +70,4 @@
 - [x] add opponent team names for high and low scores for team summary
   - added another character in the score's columns that specifies the opp team id
   - modifed modifyScore function to return team info too
+- [ ] add shadow to filters when we hover on them

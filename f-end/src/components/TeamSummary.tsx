@@ -69,6 +69,10 @@ export const TeamSummary = () => {
           apiResponseDispatch({ type: "SET_DATA", payload: result });
         }
       });
+
+    return () => {
+      ignore = true;
+    };
   }, [filter]);
 
   return (
