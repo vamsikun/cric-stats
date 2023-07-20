@@ -1,66 +1,65 @@
 "use client";
 import { PlayerSummaryFilter } from "./PlayerSummaryFilter";
 import { SummaryTable } from "./SummaryTable";
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useReducer } from "react";
 import { seasons, playerTypes, battingStats, bowlingStats } from "@/data";
 import { playerSummaryTableEachColStyles } from "../data";
+import useSWR from "swr";
+import { fetcher } from "@/utils/fetcherForSWR";
+
+// create a reducer function for multiple states
+function filterReducer(state, action) {
+  switch (action.type) {
+    case "setSeason":
+      return { ...state, season: action.payload["season"] };
+    case "setPlayerType":
+      if (action.payload["playerType"].apiValue == "bowler") {
+        return {
+          ...state,
+          playerType: action.payload["playerType"],
+          stats: bowlingStats,
+          selectedStat: bowlingStats[0],
+        };
+      } else {
+        return {
+          ...state,
+          playerType: action.payload["playerType"],
+          stats: battingStats,
+          selectedStat: battingStats[0],
+        };
+      }
+    case "setSelectedStat":
+      return { ...state, selectedStat: action.payload["stat"] };
+    default:
+      throw new Error();
+  }
+}
 
 export function PlayerSummary() {
-  const [selectedPlayerType, setSelectedPlayerType] = useState(playerTypes[0]);
-  const [selectedSeason, setSelectedSeason] = useState(seasons[0]);
-  const [stats, setStats] = useState(battingStats);
-  const [selectedStat, setSelectedStat] = useState(stats[0]);
-  const [apiResponse, setApiResponse] = useState();
+  const [state, dispatch] = useReducer(filterReducer, {
+    season: seasons[0],
+    playerType: playerTypes[0],
+    stats: battingStats,
+    selectedStat: battingStats[0],
+  });
 
-  useEffect(() => {
-    if (selectedPlayerType.apiValue == "bowler") {
-      setStats(bowlingStats);
-      setSelectedStat(bowlingStats[0]);
-    } else {
-      setStats(battingStats);
-      setSelectedStat(battingStats[0]);
-    }
-  }, [selectedPlayerType]);
-
-  useLayoutEffect(() => {
-    let ignore = false;
-
-    fetch(
-      `http://192.168.9.6:8000/${selectedPlayerType.apiValue}/${selectedStat.apiValue}/?season=${selectedSeason.apiValue}`
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        if (!ignore) {
-          setApiResponse(result);
-        }
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [selectedPlayerType, selectedSeason, selectedStat]);
+  const endPoint = `http://192.168.9.6:8000/${state["playerType"].apiValue}/${state["selectedStat"].apiValue}/?season=${state["season"].apiValue}`;
+  const { data, error, isLoading } = useSWR(endPoint, fetcher);
 
   return (
     <>
-      <PlayerSummaryFilter
-        selectedSeason={selectedSeason}
-        setSelectedSeason={setSelectedSeason}
-        seasons={seasons}
-        selectedStat={selectedStat}
-        setSelectedStat={setSelectedStat}
-        stats={stats}
-        selectedPlayerType={selectedPlayerType}
-        setSelectedPlayerType={setSelectedPlayerType}
-        playerTypes={playerTypes}
-      />
-      {apiResponse != undefined ? (
+      <PlayerSummaryFilter filters={state} filterDispatcher={dispatch} />
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
         <SummaryTable
-          data={apiResponse["data"]}
-          metadata={apiResponse["metadata"]}
+          data={data["data"]}
+          metadata={data["metadata"]}
           // this index is based on columnMaps array in data file
-          columnMapIndex={selectedPlayerType.apiValue == "bowler" ? 1 : 0}
+          columnMapIndex={state["playerType"].apiValue == "bowler" ? 1 : 0}
           summaryTableColStyles={playerSummaryTableEachColStyles}
         />
-      ) : null}
+      )}
     </>
   );
 }

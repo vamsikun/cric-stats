@@ -77,3 +77,7 @@
   - issues with nested dictionaries
   - **TODO** : optimize json.loads, json.dumps, json_encoder
 - [ ] add client-side caching in nextjs using useSWR
+  - [x] added useSWR to both playerSummary and teamSummary
+  - **TODO** : in the playerSummary when `useSWR` is used along with `useEffect` on `playerType` dependency, it was giving error after changing the bowling/batting filter four times; check what's happening there..
+  - [ ] add types for newly added reducers
+- [ ] create a skeleton table
