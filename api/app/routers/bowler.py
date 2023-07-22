@@ -1,8 +1,10 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
+from fastapi.encoders import jsonable_encoder
+import json
 
 # NOTE: ignore the import not resolved errors here; as it would be fine as we execute it from the app directory
-from database import getCursorForPGDB
+from database import getCursorForPGDB, rd
 from utils.endPointMappings import bowlerApiMappings, havingClauseMappings
 from utils.getSQLQuery import executeSQLQuery
 
@@ -28,8 +30,13 @@ def generateDynamicRoute(bowlerKey:str):
         opposition: Annotated[str | None, "opposition"] = None,
         cursor=Depends(getCursorForPGDB),
     ):
+        # TODO: understand how the json.dumps, json.loads and jsonable_encoder works
+        redisKey = f"bowler_{bowlerKey}_{season}_{team}_{innings}_{opposition}"
+        if rd.exists(redisKey):
+            return json.loads(rd.get(redisKey))
         sqlQuery = generateSQLQuery(season, team, innings, opposition, havingClause)
-        return executeSQLQuery(sqlQuery, cursor, columnPosition, havingClauseMappings[havingClause])
+        rd.set(redisKey, json.dumps(jsonable_encoder((executeSQLQuery(sqlQuery, cursor, columnPosition, havingClauseMappings[havingClause])))))
+        return json.loads(rd.get(redisKey))
     
 bowlerMapKeys = list(bowlerApiMappings.keys())
 for bowlerKey in bowlerMapKeys:

@@ -1,44 +1,49 @@
 "use client";
-import { useState, useLayoutEffect, useReducer } from "react";
+import { useReducer } from "react";
 import { TeamSummaryFilter } from "@/components/TeamSummaryFilter";
-import { DoubleButton } from "@/components/DoubleButton";
 import {
   teamsOptions,
   inningsOptions,
   teamTypesOptions,
   teamSummaryTableEachColStyles,
+  skeletonTableData,
+  skeletonSummaryTableEachColStyles,
 } from "@/data";
 import { SummaryTable } from "@/components/SummaryTable";
 import { modifyScore } from "../utils/modifyScore";
+import useSWR from "swr";
 
-const apiReducer = (state, action) => {
-  switch (action.type) {
-    case "SET_DATA":
-      action["payload"]["data"].forEach((element) => {
+function fetcher(apiEndPoint) {
+  return fetch(apiEndPoint)
+    .then((res) => res.json())
+    .then((result) => {
+      result["data"].forEach((element) => {
         element["high_score"] = modifyScore(element["high_score"]);
         element["low_score"] = modifyScore(element["low_score"]);
       });
-      return action.payload;
-  }
-  throw Error("Unknown action: " + action.type);
-};
+      return result;
+    });
+}
 
 const filterReducer = (state, action) => {
   switch (action.type) {
-    case "teamType":
+    case "setTeamType":
       return {
         ...state,
-        teamType: action.payload,
+        teamType: action.payload["teamType"],
+        prevData: action.payload["prevData"],
       };
-    case "team":
+    case "setTeam":
       return {
         ...state,
-        team: action.payload,
+        team: action.payload["team"],
+        prevData: action.payload["prevData"],
       };
-    case "innings":
+    case "setInnings":
       return {
         ...state,
-        innings: action.payload,
+        innings: action.payload["innings"],
+        prevData: action.payload["prevData"],
       };
   }
 };
@@ -48,48 +53,47 @@ export const TeamSummary = () => {
     teamType: teamTypesOptions[0],
     team: teamsOptions[0],
     innings: inningsOptions[0],
+    prevData: undefined,
   });
-  const [apiResponse, apiResponseDispatch] = useReducer(apiReducer, undefined);
 
-  useLayoutEffect(() => {
-    let ignore = false;
-    let inningsQuery = "";
-    let teamQuery = `team=${filter["team"].apiValue}&`;
-    let teamType = `teamType=${filter["teamType"].apiValue}&`;
-    if (filter["innings"].value != "Both Inns") {
-      inningsQuery = `innings=${filter["innings"].apiValue}&`;
-    }
-
-    fetch(
-      `http://192.168.9.6:8000/match/teamSummary/?${teamType}${teamQuery}${inningsQuery}`
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        if (!ignore) {
-          apiResponseDispatch({ type: "SET_DATA", payload: result });
-        }
-      });
-
-    return () => {
-      ignore = true;
-    };
-  }, [filter]);
+  let inningsQuery = "";
+  let teamQuery = `team=${filter["team"].apiValue}&`;
+  let teamType = `teamType=${filter["teamType"].apiValue}&`;
+  if (filter["innings"].value != "Both Inns") {
+    inningsQuery = `innings=${filter["innings"].apiValue}&`;
+  }
+  let apiEndPoint = `http://192.168.232.6:8000/match/teamSummary/?${teamType}${teamQuery}${inningsQuery}`;
+  const { data, error, isLoading } = useSWR(apiEndPoint, fetcher);
 
   return (
     <>
       <TeamSummaryFilter
+        apiData={data}
         filter={filter}
         filterDispatcher={filterDispatch}
-        teamOptions={teamsOptions}
-        inningsOptions={inningsOptions}
-        teamTypeOptions={teamTypesOptions}
       />
-      {apiResponse != undefined && (
+      {isLoading ? (
+        filter["prevData"] == undefined ? (
+          <SummaryTable
+            apiData={skeletonTableData}
+            columnMapIndex={3}
+            summaryTableColStyles={skeletonSummaryTableEachColStyles}
+            spinner={true}
+          />
+        ) : (
+          <SummaryTable
+            apiData={filter["prevData"]}
+            columnMapIndex={2}
+            summaryTableColStyles={teamSummaryTableEachColStyles}
+            spinner={true}
+          />
+        )
+      ) : (
         <SummaryTable
-          data={apiResponse["data"]}
-          metadata={apiResponse["metadata"]}
+          apiData={data}
           columnMapIndex={2}
           summaryTableColStyles={teamSummaryTableEachColStyles}
+          spinner={false}
         />
       )}
     </>

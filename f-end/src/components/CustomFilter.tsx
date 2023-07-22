@@ -46,36 +46,27 @@ export const CustomFilter = ({
         </Listbox.Button>
         {/* Have used this div for hiding the scrollbar going out of the rounded border */}
         <div className="absolute mt-0.5 w-full rounded-lg overflow-hidden shadow-lg">
-          <Transition
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
+          <Listbox.Options
+            as="ul"
+            className="max-h-52 bg-slate-100 overflow-y-auto"
           >
-            <Listbox.Options
-              as="ul"
-              className="max-h-52 bg-slate-100 overflow-y-auto"
-            >
-              {options.map((option) => (
-                <Listbox.Option
-                  key={option.id}
-                  className={({ active, selected }) => {
-                    return `relative cursor-pointer py-2 pl-2 sm:pl-4 text-sm sm:text-lg ${
-                      active ? "font-semibold" : "text-gray-900"
-                    } ${selected && "font-bold bg-gray-400 rounded-md"}`;
-                  }}
-                  // TODO: sends the selected value to onChange function??
-                  value={option}
-                >
-                  {({ selected }) => (
-                    <span className={`block truncate`}>{option.value}</span>
-                  )}
-                </Listbox.Option>
-              ))}
-            </Listbox.Options>
-          </Transition>
+            {options.map((option) => (
+              <Listbox.Option
+                key={option.id}
+                className={({ active, selected }) => {
+                  return `relative cursor-pointer py-2 pl-2 sm:pl-4 text-sm sm:text-lg ${
+                    active ? "font-semibold" : "text-gray-900"
+                  } ${selected && "font-bold bg-gray-400 rounded-md"}`;
+                }}
+                // TODO: sends the selected value to onChange function??
+                value={option}
+              >
+                {({ selected }) => (
+                  <span className={`block truncate`}>{option.value}</span>
+                )}
+              </Listbox.Option>
+            ))}
+          </Listbox.Options>
         </div>
       </Listbox>
     </div>

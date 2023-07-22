@@ -1,4 +1,4 @@
-psql -d ipl -c "
+eval "$renderPSQL -c \"
 CREATE TABLE batter_stats_each_match as
 select m.season as season,
     m.match_id::INTEGER as match_id,
@@ -152,4 +152,4 @@ from (
             team1_score,
             team2_score
         from matches
-    ) m on m.match_id = players.match_id;"
+    ) m on m.match_id = players.match_id;\""

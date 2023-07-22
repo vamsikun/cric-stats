@@ -1,4 +1,4 @@
-psql -d ipl -c "CREATE TABLE partnerships(
+eval "$renderPSQL -c \"CREATE TABLE partnerships(
     match_id VARCHAR REFERENCES matches(match_id) ON DELETE CASCADE,
     innings SMALLINT,
     first_batter VARCHAR,
@@ -16,9 +16,9 @@ psql -d ipl -c "CREATE TABLE partnerships(
     second_batter_balls_faced SMALLINT,
     second_batter_fours SMALLINT,
     second_batter_sixes SMALLINT
-);"
+);\""
 
-psql -d ipl -c "\COPY partnerships(
+eval "$renderPSQL -c \"\COPY partnerships(
     match_id,
     innings,
     first_batter,
@@ -36,4 +36,4 @@ psql -d ipl -c "\COPY partnerships(
     second_batter_balls_faced,
     second_batter_fours,
     second_batter_sixes
-) FROM $1 DELIMITER ',' CSV HEADER;"
+) FROM $1 DELIMITER ',' CSV HEADER;\""

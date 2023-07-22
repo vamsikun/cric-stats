@@ -71,3 +71,17 @@
   - added another character in the score's columns that specifies the opp team id
   - modifed modifyScore function to return team info too
 - [ ] add shadow to filters when we hover on them
+- [x] add redis cache to fastapi
+  - had to run redis-server daemon in the docker
+  - modify dockerfile and create a separate script for running daemons
+  - issues with nested dictionaries
+  - **TODO** : optimize json.loads, json.dumps, json_encoder
+- [ ] add client-side caching in nextjs using useSWR
+  - [x] added useSWR to both playerSummary and teamSummary
+  - **TODO** : in the playerSummary when `useSWR` is used along with `useEffect` on `playerType` dependency, it was giving error after changing the bowling/batting filter four times; check what's happening there..
+  - [ ] add types for newly added reducers
+- [x] create a skeleton table
+  - [x] add skeleton table for initial loading
+  - [x] modify opacity and add loading ui for table
+  - **TODO** : can we make use of nextjs loading ui for this??
+- [ ] add some space around the table for small sizes

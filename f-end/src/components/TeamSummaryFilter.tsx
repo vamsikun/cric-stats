@@ -1,11 +1,6 @@
 import { CustomFilter } from "@/components/CustomFilter";
-export const TeamSummaryFilter = ({
-  filter,
-  filterDispatcher,
-  teamOptions,
-  inningsOptions,
-  teamTypeOptions,
-}) => {
+import { teamTypesOptions, teamsOptions, inningsOptions } from "@/data";
+export const TeamSummaryFilter = ({ apiData, filter, filterDispatcher }) => {
   const team = filter["team"];
   const innings = filter["innings"];
   const teamType = filter["teamType"];
@@ -15,23 +10,32 @@ export const TeamSummaryFilter = ({
         type="small"
         selectedOption={teamType}
         setSelectedOption={(teamType) =>
-          filterDispatcher({ type: "teamType", payload: teamType })
+          filterDispatcher({
+            type: "setTeamType",
+            payload: { teamType: teamType, prevData: apiData },
+          })
         }
-        options={teamTypeOptions}
+        options={teamTypesOptions}
       />
       <CustomFilter
         type="small"
         selectedOption={team}
         setSelectedOption={(team) =>
-          filterDispatcher({ type: "team", payload: team })
+          filterDispatcher({
+            type: "setTeam",
+            payload: { team: team, prevData: apiData },
+          })
         }
-        options={teamOptions}
+        options={teamsOptions}
       />
       <CustomFilter
         type="large"
         selectedOption={innings}
         setSelectedOption={(innings) =>
-          filterDispatcher({ type: "innings", payload: innings })
+          filterDispatcher({
+            type: "setInnings",
+            payload: { innings: innings, prevData: apiData },
+          })
         }
         options={inningsOptions}
       />
