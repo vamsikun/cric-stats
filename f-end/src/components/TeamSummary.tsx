@@ -6,6 +6,8 @@ import {
   inningsOptions,
   teamTypesOptions,
   teamSummaryTableEachColStyles,
+  skeletonTableData,
+  skeletonSummaryTableEachColStyles,
 } from "@/data";
 import { SummaryTable } from "@/components/SummaryTable";
 import { modifyScore } from "../utils/modifyScore";
@@ -28,17 +30,20 @@ const filterReducer = (state, action) => {
     case "setTeamType":
       return {
         ...state,
-        teamType: action.payload,
+        teamType: action.payload["teamType"],
+        prevData: action.payload["prevData"],
       };
     case "setTeam":
       return {
         ...state,
-        team: action.payload,
+        team: action.payload["team"],
+        prevData: action.payload["prevData"],
       };
     case "setInnings":
       return {
         ...state,
-        innings: action.payload,
+        innings: action.payload["innings"],
+        prevData: action.payload["prevData"],
       };
   }
 };
@@ -48,6 +53,7 @@ export const TeamSummary = () => {
     teamType: teamTypesOptions[0],
     team: teamsOptions[0],
     innings: inningsOptions[0],
+    prevData: undefined,
   });
 
   let inningsQuery = "";
@@ -56,20 +62,38 @@ export const TeamSummary = () => {
   if (filter["innings"].value != "Both Inns") {
     inningsQuery = `innings=${filter["innings"].apiValue}&`;
   }
-  let apiEndPoint = `http://192.168.9.6:8000/match/teamSummary/?${teamType}${teamQuery}${inningsQuery}`;
+  let apiEndPoint = `http://192.168.232.6:8000/match/teamSummary/?${teamType}${teamQuery}${inningsQuery}`;
   const { data, error, isLoading } = useSWR(apiEndPoint, fetcher);
 
   return (
     <>
-      <TeamSummaryFilter filter={filter} filterDispatcher={filterDispatch} />
+      <TeamSummaryFilter
+        apiData={data}
+        filter={filter}
+        filterDispatcher={filterDispatch}
+      />
       {isLoading ? (
-        <div>Loading...</div>
+        filter["prevData"] == undefined ? (
+          <SummaryTable
+            apiData={skeletonTableData}
+            columnMapIndex={3}
+            summaryTableColStyles={skeletonSummaryTableEachColStyles}
+            spinner={true}
+          />
+        ) : (
+          <SummaryTable
+            apiData={filter["prevData"]}
+            columnMapIndex={2}
+            summaryTableColStyles={teamSummaryTableEachColStyles}
+            spinner={true}
+          />
+        )
       ) : (
         <SummaryTable
-          data={data["data"]}
-          metadata={data["metadata"]}
+          apiData={data}
           columnMapIndex={2}
           summaryTableColStyles={teamSummaryTableEachColStyles}
+          spinner={false}
         />
       )}
     </>

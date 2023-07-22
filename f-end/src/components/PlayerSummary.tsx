@@ -3,7 +3,11 @@ import { PlayerSummaryFilter } from "./PlayerSummaryFilter";
 import { SummaryTable } from "./SummaryTable";
 import { useReducer } from "react";
 import { seasons, playerTypes, battingStats, bowlingStats } from "@/data";
-import { playerSummaryTableEachColStyles } from "../data";
+import {
+  playerSummaryTableEachColStyles,
+  skeletonSummaryTableEachColStyles,
+  skeletonTableData,
+} from "../data";
 import useSWR from "swr";
 import { fetcher } from "@/utils/fetcherForSWR";
 
@@ -11,7 +15,11 @@ import { fetcher } from "@/utils/fetcherForSWR";
 function filterReducer(state, action) {
   switch (action.type) {
     case "setSeason":
-      return { ...state, season: action.payload["season"] };
+      return {
+        ...state,
+        season: action.payload["season"],
+        prevData: action.payload["prevData"],
+      };
     case "setPlayerType":
       if (action.payload["playerType"].apiValue == "bowler") {
         return {
@@ -19,6 +27,7 @@ function filterReducer(state, action) {
           playerType: action.payload["playerType"],
           stats: bowlingStats,
           selectedStat: bowlingStats[0],
+          prevData: action.payload["prevData"],
         };
       } else {
         return {
@@ -26,10 +35,15 @@ function filterReducer(state, action) {
           playerType: action.payload["playerType"],
           stats: battingStats,
           selectedStat: battingStats[0],
+          prevData: action.payload["prevData"],
         };
       }
     case "setSelectedStat":
-      return { ...state, selectedStat: action.payload["stat"] };
+      return {
+        ...state,
+        selectedStat: action.payload["stat"],
+        prevData: action.payload["prevData"],
+      };
     default:
       throw new Error();
   }
@@ -41,23 +55,44 @@ export function PlayerSummary() {
     playerType: playerTypes[0],
     stats: battingStats,
     selectedStat: battingStats[0],
+    prevData: undefined,
   });
 
-  const endPoint = `http://192.168.9.6:8000/${state["playerType"].apiValue}/${state["selectedStat"].apiValue}/?season=${state["season"].apiValue}`;
+  const endPoint = `http://192.168.232.6:8000/${state["playerType"].apiValue}/${state["selectedStat"].apiValue}/?season=${state["season"].apiValue}`;
   const { data, error, isLoading } = useSWR(endPoint, fetcher);
 
   return (
     <>
-      <PlayerSummaryFilter filters={state} filterDispatcher={dispatch} />
+      <PlayerSummaryFilter
+        apiData={data}
+        filters={state}
+        filterDispatcher={dispatch}
+      />
       {isLoading ? (
-        <div>Loading...</div>
+        state["prevData"] == undefined ? (
+          <SummaryTable
+            apiData={skeletonTableData}
+            // this index is based on columnMaps array in data file
+            columnMapIndex={3}
+            summaryTableColStyles={skeletonSummaryTableEachColStyles}
+            spinner={true}
+          />
+        ) : (
+          <SummaryTable
+            apiData={state["prevData"]}
+            // this index is based on columnMaps array in data file
+            columnMapIndex={state["playerType"].apiValue == "bowler" ? 1 : 0}
+            summaryTableColStyles={playerSummaryTableEachColStyles}
+            spinner={true}
+          />
+        )
       ) : (
         <SummaryTable
-          data={data["data"]}
-          metadata={data["metadata"]}
+          apiData={data}
           // this index is based on columnMaps array in data file
           columnMapIndex={state["playerType"].apiValue == "bowler" ? 1 : 0}
           summaryTableColStyles={playerSummaryTableEachColStyles}
+          spinner={false}
         />
       )}
     </>

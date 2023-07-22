@@ -80,4 +80,8 @@
   - [x] added useSWR to both playerSummary and teamSummary
   - **TODO** : in the playerSummary when `useSWR` is used along with `useEffect` on `playerType` dependency, it was giving error after changing the bowling/batting filter four times; check what's happening there..
   - [ ] add types for newly added reducers
-- [ ] create a skeleton table
+- [x] create a skeleton table
+  - [x] add skeleton table for initial loading
+  - [x] modify opacity and add loading ui for table
+  - **TODO** : can we make use of nextjs loading ui for this??
+- [ ] add some space around the table for small sizes

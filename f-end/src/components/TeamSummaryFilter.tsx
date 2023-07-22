@@ -1,6 +1,6 @@
 import { CustomFilter } from "@/components/CustomFilter";
 import { teamTypesOptions, teamsOptions, inningsOptions } from "@/data";
-export const TeamSummaryFilter = ({ filter, filterDispatcher }) => {
+export const TeamSummaryFilter = ({ apiData, filter, filterDispatcher }) => {
   const team = filter["team"];
   const innings = filter["innings"];
   const teamType = filter["teamType"];
@@ -10,7 +10,10 @@ export const TeamSummaryFilter = ({ filter, filterDispatcher }) => {
         type="small"
         selectedOption={teamType}
         setSelectedOption={(teamType) =>
-          filterDispatcher({ type: "setTeamType", payload: teamType })
+          filterDispatcher({
+            type: "setTeamType",
+            payload: { teamType: teamType, prevData: apiData },
+          })
         }
         options={teamTypesOptions}
       />
@@ -18,7 +21,10 @@ export const TeamSummaryFilter = ({ filter, filterDispatcher }) => {
         type="small"
         selectedOption={team}
         setSelectedOption={(team) =>
-          filterDispatcher({ type: "setTeam", payload: team })
+          filterDispatcher({
+            type: "setTeam",
+            payload: { team: team, prevData: apiData },
+          })
         }
         options={teamsOptions}
       />
@@ -26,7 +32,10 @@ export const TeamSummaryFilter = ({ filter, filterDispatcher }) => {
         type="large"
         selectedOption={innings}
         setSelectedOption={(innings) =>
-          filterDispatcher({ type: "setInnings", payload: innings })
+          filterDispatcher({
+            type: "setInnings",
+            payload: { innings: innings, prevData: apiData },
+          })
         }
         options={inningsOptions}
       />

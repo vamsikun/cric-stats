@@ -1,6 +1,6 @@
 import { CustomFilter } from "./CustomFilter";
 import { playerTypes, seasons } from "@/data";
-export const PlayerSummaryFilter = ({ filters, filterDispatcher }) => {
+export const PlayerSummaryFilter = ({ apiData, filters, filterDispatcher }) => {
   return (
     <div className="mt-8 flex gap-2 justify-center items-center ">
       <CustomFilter
@@ -8,7 +8,7 @@ export const PlayerSummaryFilter = ({ filters, filterDispatcher }) => {
         setSelectedOption={(playerType) => {
           filterDispatcher({
             type: "setPlayerType",
-            payload: { playerType: playerType },
+            payload: { playerType: playerType, prevData: apiData },
           });
         }}
         selectedOption={filters["playerType"]}
@@ -19,7 +19,7 @@ export const PlayerSummaryFilter = ({ filters, filterDispatcher }) => {
         setSelectedOption={(season) => {
           filterDispatcher({
             type: "setSeason",
-            payload: { season: season },
+            payload: { season: season, prevData: apiData },
           });
         }}
         selectedOption={filters["season"]}
@@ -30,7 +30,7 @@ export const PlayerSummaryFilter = ({ filters, filterDispatcher }) => {
         setSelectedOption={(setSelectedStat) => {
           filterDispatcher({
             type: "setSelectedStat",
-            payload: { stat: setSelectedStat },
+            payload: { stat: setSelectedStat, prevData: apiData },
           });
         }}
         selectedOption={filters["selectedStat"]}

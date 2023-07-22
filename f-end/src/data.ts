@@ -76,6 +76,19 @@ export const teamTypesOptions: selectOption[] = [
   { id: 2, value: "Opp'n", apiValue: "opp" },
 ];
 
+export const skeletonTableColumnMaps = {
+  col1: "",
+  col2: "",
+  col3: "",
+  col4: "",
+  col5: "",
+  col6: "",
+  col7: "",
+  col8: "",
+  col9: "",
+  col10: "",
+};
+
 export const batterColumnMaps = {
   pos: "POS",
   player: "PLAYER",
@@ -121,6 +134,7 @@ export const columnMaps = [
   batterColumnMaps,
   bowlerColumnMaps,
   teamSummaryColumnMaps,
+  skeletonTableColumnMaps,
 ];
 
 export const playerSummaryTableEachColStyles = {
@@ -181,11 +195,25 @@ export const teamSummaryTableEachColStyles = {
 export const skeletonSummaryTableEachColStyles = {
   headerCols: {
     other:
-      "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4rem] sm:min-w-[4.5rem]",
+      "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4rem] sm:min-w-[4.5rem] h-8",
   },
   cellCols: {
-    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center",
+    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center h-12",
   },
 };
 
-// class = "font-"
+export const skeletonTableData = {
+  metadata: {},
+  data: Array(10).fill({
+    col1: "",
+    col2: "",
+    col3: "",
+    col4: "",
+    col5: "",
+    col6: "",
+    col7: "",
+    col8: "",
+    col9: "",
+    col10: "",
+  }),
+};
