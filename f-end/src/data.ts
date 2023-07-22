@@ -156,7 +156,7 @@ export const playerSummaryTableEachColStyles = {
     // NOTE: for the width of these elements look at the width of the header column
     // these elements min-width is being set there
     "0": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center sticky left-0",
-    "1": "font-semibold text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "1": "font-semibold text-xs sm:text-base py-1.5 sm:py-2 bg-teal-100 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
     other: "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center",
     selectedCol: "bg-teal-200",
   },

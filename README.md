@@ -84,4 +84,5 @@
   - [x] add skeleton table for initial loading
   - [x] modify opacity and add loading ui for table
   - **TODO** : can we make use of nextjs loading ui for this??
-- [ ] add some space around the table for small sizes
+- [x] add some space around the table for small sizes
+  - added padding to the summary table container

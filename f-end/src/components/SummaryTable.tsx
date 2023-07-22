@@ -43,7 +43,7 @@ export function SummaryTable({
     // when we specify height explicitly in the parent container,
     // then if the margin of the child element crosses the border, then the child will go off the borders of the parent container
     // here the height will be depended on the child elements heights, which have been fixed static
-    <div className=" relative mt-6 flex justify-center items-start ">
+    <div className="px-4 sm:px-6 relative mt-6 flex justify-center items-start ">
       {spinner && (
         <div className="opacity-100 z-40 mx-auto -top-6 bottom-0 absolute">
           <svg
