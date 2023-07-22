@@ -43,7 +43,7 @@ export function SummaryTable({
     // when we specify height explicitly in the parent container,
     // then if the margin of the child element crosses the border, then the child will go off the borders of the parent container
     // here the height will be depended on the child elements heights, which have been fixed static
-    <div className="px-4 sm:px-6 relative mt-6 flex justify-center items-start ">
+    <div className="px-4 sm:px-6 relative mt-4 flex justify-center items-start ">
       {spinner && (
         <div className="opacity-100 z-40 mx-auto -top-6 bottom-0 absolute">
           <svg
@@ -70,7 +70,7 @@ export function SummaryTable({
       we will be able to scroll the table */}
       <div
         className={clsx(
-          "transition-all flex flex-col-reverse items-end overflow-auto justify-center text-slate-700",
+          "transition-all flex flex-col-reverse items-end overflow-auto justify-center text-slate-100",
           spinner && "opacity-20 pointer-events-none"
         )}
       >
@@ -80,7 +80,7 @@ export function SummaryTable({
         </div>
         {/* Combination of w-full in the child-item and items-end(flex-col) in the parent container makes the table to be fixed in a constrained space
         which allows for the scrolling of the table. */}
-        <div className="overflow-x-auto w-full h-72 sm:h-96 border-2 rounded-lg ">
+        <div className="overflow-x-auto w-full h-72 sm:h-96 rounded-lg ">
           <table className="table-fixed">
             <thead className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (

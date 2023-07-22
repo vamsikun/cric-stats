@@ -143,22 +143,24 @@ export const playerSummaryTableEachColStyles = {
   // for small screen sizes, wrapping is allowed
   // 0. Position; 1. Player Name
   headerCols: {
-    "0": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[2.5rem] sm:min-w-[3rem] sticky left-0 z-40",
+    "0": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[3rem] sticky left-0 z-40",
     // NOTE: for player name column I am also setting the max-width as the player name lengths can vary a lot so fixing this width
-    "1": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem] z-20 max-w-[7rem] min-w-[7rem] sm:max-w-[11rem] sm:min-w-[11rem] before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "1": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem] z-20 max-w-[7rem] min-w-[7rem] sm:max-w-[11rem] sm:min-w-[11rem] before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
     // to cover the extra width lost because of the pseudo element
-    "2": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4.125rem] sm:min-w-[4.75rem]",
+    "2": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[3rem]",
+    "3": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[3rem]",
+    "4": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.75rem] sm:min-w-[3rem]",
     other:
-      "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4rem] sm:min-w-[4.5rem]",
-    selectedCol: "bg-teal-600",
+      "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[4rem] sm:min-w-[4.5rem]",
+    selectedCol: "bg-slate-700",
   },
   cellCols: {
     // NOTE: for the width of these elements look at the width of the header column
     // these elements min-width is being set there
-    "0": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center sticky left-0",
-    "1": "font-semibold text-xs sm:text-base py-1.5 sm:py-2 bg-teal-100 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
-    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center",
-    selectedCol: "bg-teal-200",
+    "0": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center sticky left-0",
+    "1": "font-semibold text-sm py-1.5 sm:py-2 bg-slate-800 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center",
+    selectedCol: "bg-slate-700",
   },
 };
 
@@ -168,37 +170,35 @@ export const teamSummaryTableEachColStyles = {
   // for small screen sizes, wrapping is allowed
   // 0.Season 1.Number of Matches 2.W/L 3.HS 4.LS
   headerCols: {
-    "0": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[3.25rem] sm:min-w-[3.75rem] sticky left-0 z-40",
+    "0": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700  min-w-[4rem] sm:min-w-[4.5rem] sticky left-0 z-40",
     // NOTE: for player name column I am also setting the max-width as the player name lengths can vary a lot so fixing this width
-    "1": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 pl-2 sticky left-[3.25rem] sm:left-[3.75rem] z-20 min-w-[2.5rem] sm:min-w-[3rem]",
-    "2": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 pl-0 sticky left-[5.75rem] sm:left-[6.75rem] z-20 min-w-[3rem] sm:min-w-[3.5rem] before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "1": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700  sticky left-[4rem] sm:left-[4.5rem] z-20 min-w-[2.5rem] sm:min-w-[3rem]",
+    "2": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 pl-0 sticky left-[6.5rem] sm:left-[7.5rem] z-20 min-w-[3rem] sm:min-w-[3.5rem] before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
     // to cover the extra width lost because of the pseudo element
-    "3": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[6.5rem] sm:min-w-[8.3rem] pl-4 text-center",
-    "4": "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[6.3rem] sm:min-w-[8rem] pl-4 text-center",
+    "3": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[6.5rem] sm:min-w-[8.3rem] pl-4 text-center",
+    "4": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[6.3rem] sm:min-w-[8rem] pl-4 text-center",
     other:
-      "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4rem] sm:min-w-[4.5rem]",
-    selectedCol: "bg-teal-600",
+      "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[4rem] sm:min-w-[4.5rem]",
   },
   cellCols: {
     // NOTE: for the width of these elements look at the width of the header column
     // these elements min-width is being set there
-    "0": "text-sm sm:text-base font-semibold py-1.5 sm:py-2 bg-teal-100 text-center sticky left-0",
-    "1": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 pl-2 text-center sticky left-[3.25rem] sm:left-[3.75rem]  sm:overflow-ellipsis sm:whitespace-nowrap",
-    "2": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 pl-0 text-center sticky left-[5.75rem] sm:left-[6.75rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:-right-0.5 sm:before:-right-1 before:top-0 before:w-0.5 sm:before:w-1 before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
-    "3": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center pl-3",
-    "4": "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center pl-2",
-    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center",
-    selectedCol: "bg-teal-200",
+    "0": "text-sm sm:text-base font-semibold py-1.5 sm:py-2 bg-slate-800 text-center sticky left-0",
+    "1": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800  text-center sticky left-[4rem] sm:left-[4.5rem]  sm:overflow-ellipsis sm:whitespace-nowrap",
+    "2": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 pl-0 text-center sticky left-[6.5rem] sm:left-[7.5rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "3": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center pl-3",
+    "4": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center pl-2",
+    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center",
   },
 };
 
 export const skeletonSummaryTableEachColStyles = {
   headerCols: {
     other:
-      "font-medium text-xs py-1 sm:py-1.5 bg-teal-300 min-w-[4rem] sm:min-w-[4.5rem] h-8",
+      "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[4rem] sm:min-w-[4.5rem] h-8",
   },
   cellCols: {
-    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-teal-100 text-center h-12",
+    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-700 text-center h-12",
   },
 };
 

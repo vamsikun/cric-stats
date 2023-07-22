@@ -29,7 +29,7 @@ export const TeamSummaryFilter = ({ apiData, filter, filterDispatcher }) => {
         options={teamsOptions}
       />
       <CustomFilter
-        type="large"
+        type="medium"
         selectedOption={innings}
         setSelectedOption={(innings) =>
           filterDispatcher({

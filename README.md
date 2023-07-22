@@ -63,7 +63,7 @@
 - [x] reusable CustomFilter and Summary Table
 - [x] add team summary table
 - [x] modify high-score and low-score to readable format
-- [ ] modify the font of filters and double-button, so that they don't take the attention of the real-data
+- [x] modify the font of filters and double-button, so that they don't take the attention of the real-data
 - [x] fix the area for table, so when the content is less, then items below won't jump to the space created by the table
 - [x] normalize the margins for filters, table
   - added only the top-margin to avoid confusion with merge overlaps
@@ -86,3 +86,8 @@
   - **TODO** : can we make use of nextjs loading ui for this??
 - [x] add some space around the table for small sizes
   - added padding to the summary table container
+- [ ] when filter is changed get the scroll position to the initial position
+- [ ] modify colors for dark mode
+  - [x] modify the background color
+  - [x] modify the table color
+  - [ ] have to update the filter color so that it doesn't overlap with the table
