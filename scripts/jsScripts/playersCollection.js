@@ -84,6 +84,33 @@ db.matches.aggregate([
     },
   },
   {
+    $set: {
+      team: {
+        $switch: {
+          branches: [
+            {
+              case: { $eq: ["$team", "Punjab Kings"] },
+              then: "Kings XI Punjab",
+            },
+            {
+              case: { $eq: ["$team", "Rising Pune Supergiant"] },
+              then: "Rising Pune Supergiants",
+            },
+            {
+              case: { $eq: ["$team", "Delhi Daredevils"] },
+              then: "Delhi Capitals",
+            },
+            {
+              case: { $eq: ["$team", "Pune Warriors"] },
+              then: "Pune Warriors India",
+            },
+          ],
+          default: "$team",
+        },
+      },
+    },
+  },
+  {
     $group: {
       _id: { matchID: "$matchID", player: "$player" },
       team: { $addToSet: "$team" },

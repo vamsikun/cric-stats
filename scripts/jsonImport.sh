@@ -14,19 +14,19 @@ CURR_DIR=$(pwd)
 cd $DATA_DIR
 
 # imports each json file to mongo database
-# for file in *.json; do
-# 	mongoimport --db ipl --collection matches --file $file
-# done
+for file in *.json; do
+	mongoimport --db ipl --collection matches --file $file
+done
 
 # back to the home directory
 cd $CURR_DIR
 
 # TODO: modify script to take arguments for the scripts folder
 # execute mongo script
-# mongosh <"./jsScripts/playersCollection.js"
-# mongosh <"./jsScripts/matchesCollection.js"
-# mongosh <"./jsScripts/runsCollection.js"
-# mongosh <"./jsScripts/partnershipCollection.js"
+mongosh <"./jsScripts/playersCollection.js"
+mongosh <"./jsScripts/matchesCollection.js"
+mongosh <"./jsScripts/runsCollection.js"
+mongosh <"./jsScripts/partnershipCollection.js"
 
 # TODO: give args for database, collection and output file
 # export the mongo collection to a csv file
