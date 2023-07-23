@@ -86,7 +86,8 @@
   - **TODO** : can we make use of nextjs loading ui for this??
 - [x] add some space around the table for small sizes
   - added padding to the summary table container
-- [ ] when filter is changed get the scroll position to the initial position
+- [x] when filter is changed get the scroll position to the initial position
+  - have used ref for table and for the selected column, then calculated the amount of distance to scroll
 - [ ] modify colors for dark mode
   - [x] modify the background color
   - [x] modify the table color
@@ -94,3 +95,9 @@
 - [x] modify the column widths for player HS filter
   - no need normalized all widths of the table
 - [ ] provide an option to take the screenshot of the entire table in the mobile mode
+- [ ] 2010 avg batting giving response validation error
+- [x] add type of apiData
+- [ ] hide the options from filter when we click anywhere on the screen
+- [ ] try to increase the height of the table so that we can give some space to the info
+- [ ] align high score column
+- [ ] can we add came till which stage for team performance

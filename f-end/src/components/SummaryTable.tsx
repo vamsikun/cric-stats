@@ -1,18 +1,17 @@
 import { getColumnsForSummaryTable } from "@/utils/getColumnsForSummaryTable";
 import clsx from "clsx";
-import { TSingleData } from "@/utils/getColumnsForSummaryTable";
+import { TApiData } from "@/utils/getColumnsForSummaryTable";
 import {
-  createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { ElementRef, ElementType, useEffect, useRef } from "react";
 
 // type of the input data that comes into the summary table
 
-export type TData = TSingleData[];
 export type TSummaryTableProps = {
-  apiData;
+  apiData: TApiData;
   columnMapIndex: number;
   summaryTableColStyles;
   spinner: boolean;
@@ -24,8 +23,10 @@ export function SummaryTable({
   summaryTableColStyles,
   spinner = false,
 }: TSummaryTableProps) {
-  const data = apiData["data"];
-  const metadata = apiData["metadata"];
+  const selectedColumnRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+  const data = apiData.data;
+  const metadata = apiData.metadata;
   const columns = getColumnsForSummaryTable({
     singleDataPoint: data[0],
     columnMapIndex: columnMapIndex,
@@ -37,6 +38,15 @@ export function SummaryTable({
   });
   const selectedColPosition = metadata["columnPosition"];
   const minRequirement = metadata["havingClause"];
+
+  useEffect(() => {
+    if (tableRef.current && selectedColumnRef.current) {
+      const selectedColumnRect =
+        selectedColumnRef.current.getBoundingClientRect();
+      const moveXBy = selectedColumnRect.left - 250;
+      tableRef.current.scrollBy({ left: moveXBy, behavior: "smooth" });
+    }
+  }, [apiData]);
   return (
     // This flex is necessary other wise the child element's table will occupy the whole width
 
@@ -80,7 +90,11 @@ export function SummaryTable({
         </div>
         {/* Combination of w-full in the child-item and items-end(flex-col) in the parent container makes the table to be fixed in a constrained space
         which allows for the scrolling of the table. */}
-        <div className="overflow-x-auto w-full h-72 sm:h-96 rounded-lg ">
+        {/* Try keeping ref on the parent and child containers it won't work */}
+        <div
+          className="overflow-x-auto w-full h-72 sm:h-96 rounded-lg"
+          ref={tableRef}
+        >
           <table className="table-fixed">
             <thead className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -97,6 +111,9 @@ export function SummaryTable({
                         selectedColPosition == index &&
                           summaryTableColStyles["headerCols"]["selectedCol"]
                       )}
+                      ref={
+                        index == selectedColPosition ? selectedColumnRef : null
+                      }
                     >
                       {!header.isPlaceholder &&
                         flexRender(

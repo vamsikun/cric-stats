@@ -46,6 +46,16 @@ export type TTeamSummaryData = {
 
 export type TSingleData = TBatterData | TBowlerData | TTeamSummaryData;
 
+export type TMetadata = {
+  columnPosition?: string;
+  havingClause?: string;
+};
+
+export type TApiData = {
+  data: TSingleData[];
+  metadata: TMetadata;
+};
+
 export type TGetColumnsProps = {
   singleDataPoint: TBatterData | TBowlerData | TTeamSummaryData;
   columnMapIndex: number;
