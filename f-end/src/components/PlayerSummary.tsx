@@ -10,6 +10,7 @@ import {
 } from "../data";
 import useSWR from "swr";
 import { fetcher } from "@/utils/fetcherForSWR";
+import { TableTitle } from "./TableTitle";
 
 // create a reducer function for multiple states
 function filterReducer(state, action) {
@@ -63,6 +64,7 @@ export function PlayerSummary() {
 
   return (
     <>
+      <TableTitle body={"Top Performers"} />
       <PlayerSummaryFilter
         apiData={data}
         filters={state}

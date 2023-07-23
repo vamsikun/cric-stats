@@ -91,3 +91,6 @@
   - [x] modify the background color
   - [x] modify the table color
   - [ ] have to update the filter color so that it doesn't overlap with the table
+- [x] modify the column widths for player HS filter
+  - no need normalized all widths of the table
+- [ ] provide an option to take the screenshot of the entire table in the mobile mode

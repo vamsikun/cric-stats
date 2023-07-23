@@ -12,6 +12,7 @@ import {
 import { SummaryTable } from "@/components/SummaryTable";
 import { modifyScore } from "../utils/modifyScore";
 import useSWR from "swr";
+import { TableTitle } from "./TableTitle";
 
 function fetcher(apiEndPoint) {
   return fetch(apiEndPoint)
@@ -67,6 +68,7 @@ export const TeamSummary = () => {
 
   return (
     <>
+      <TableTitle body={"Team Performance"} />
       <TeamSummaryFilter
         apiData={data}
         filter={filter}

@@ -89,8 +89,10 @@ export function SummaryTable({
                     <th
                       key={header.id}
                       className={clsx(
-                        index in summaryTableColStyles["headerCols"]
-                          ? summaryTableColStyles["headerCols"][index]
+                        header.column.id in summaryTableColStyles["headerCols"]
+                          ? summaryTableColStyles["headerCols"][
+                              header.column.id
+                            ]
                           : summaryTableColStyles["headerCols"]["other"],
                         selectedColPosition == index &&
                           summaryTableColStyles["headerCols"]["selectedCol"]
@@ -113,13 +115,14 @@ export function SummaryTable({
                     <td
                       key={cell.id}
                       className={clsx(
-                        colIndex in summaryTableColStyles["cellCols"]
-                          ? summaryTableColStyles["cellCols"][colIndex]
+                        cell.column.id in summaryTableColStyles["cellCols"]
+                          ? summaryTableColStyles["cellCols"][cell.column.id]
                           : summaryTableColStyles["cellCols"]["other"],
                         selectedColPosition == colIndex &&
                           summaryTableColStyles["cellCols"]["selectedCol"]
                       )}
                     >
+                      {/* {console.log(cell.column.id)} */}
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

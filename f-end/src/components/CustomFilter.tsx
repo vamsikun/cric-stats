@@ -32,7 +32,7 @@ export const CustomFilter = ({
         className={"text-slate-100 "}
       >
         <Listbox.Button
-          className={`${width} py-1.5 rounded-lg flex justify-between items-center transition-all bg-slate-800`}
+          className={`${width} py-1.5 rounded-lg flex justify-between items-center transition-all bg-slate-800 `}
         >
           <span className="pl-2 sm:pl-4 text-xs sm:text-sm font-semibold truncate">
             {selectedOption.value}
@@ -53,7 +53,7 @@ export const CustomFilter = ({
                 className={({ active, selected }) => {
                   return `relative cursor-pointer py-2 pl-2 sm:pl-4 text-sm sm:text-lg ${
                     active ? "font-semibold" : "text-slate-100"
-                  } ${selected && "font-bold bg-slate-700 rounded-md"}`;
+                  } ${selected && "text-cyan-500 font-semibold rounded-md"}`;
                 }}
                 // TODO: sends the selected value to onChange function??
                 value={option}

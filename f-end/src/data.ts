@@ -118,6 +118,35 @@ export const bowlerColumnMaps = {
   econ: "ECON",
 };
 
+export const playerSummaryTableEachColStyles = {
+  // NOTE: width of the columns is being set here;
+  // these value are picked up in such a way that the width can occupy the max-length content
+  // for small screen sizes, wrapping is allowed
+  // 0. Position; 1. Player Name
+  headerCols: {
+    pos: "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[3rem] sticky left-0 z-40",
+    // NOTE: for player name column I am also setting the max-width as the player name lengths can vary a lot so fixing this width
+    player:
+      "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem] z-20 max-w-[7rem] min-w-[7rem] sm:max-w-[11rem] sm:min-w-[11rem] before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-slate-600 before:to-slate-300",
+    matches:
+      "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[4rem]",
+    innings:
+      "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[4rem]",
+    other:
+      "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[3.5rem] sm:min-w-[4.5rem]",
+    selectedCol: "font-bold text-cyan-300",
+  },
+  cellCols: {
+    // NOTE: for the width of these elements look at the width of the header column
+    // these elements min-width is being set there
+    pos: "text-sm sm:text-base py-0.5 sm:py-1.5 bg-slate-800 text-center sticky left-0",
+    player:
+      "font-semibold text-sm sm:text-base py-0.5 sm:py-1.5 bg-slate-800 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-slate-600 before:to-slate-300",
+    other: "text-sm sm:text-base py-0.5 sm:py-1.5 bg-slate-800 text-center",
+    selectedCol: "font-semibold text-cyan-400",
+  },
+};
+
 export const teamSummaryColumnMaps = {
   season: "SEASON",
   matches: "#",
@@ -137,33 +166,6 @@ export const columnMaps = [
   skeletonTableColumnMaps,
 ];
 
-export const playerSummaryTableEachColStyles = {
-  // NOTE: width of the columns is being set here;
-  // these value are picked up in such a way that the width can occupy the max-length content
-  // for small screen sizes, wrapping is allowed
-  // 0. Position; 1. Player Name
-  headerCols: {
-    "0": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[3rem] sticky left-0 z-40",
-    // NOTE: for player name column I am also setting the max-width as the player name lengths can vary a lot so fixing this width
-    "1": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem] z-20 max-w-[7rem] min-w-[7rem] sm:max-w-[11rem] sm:min-w-[11rem] before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
-    // to cover the extra width lost because of the pseudo element
-    "2": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[3rem]",
-    "3": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.5rem] sm:min-w-[3rem]",
-    "4": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[2.75rem] sm:min-w-[3rem]",
-    other:
-      "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[4rem] sm:min-w-[4.5rem]",
-    selectedCol: "bg-slate-700",
-  },
-  cellCols: {
-    // NOTE: for the width of these elements look at the width of the header column
-    // these elements min-width is being set there
-    "0": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center sticky left-0",
-    "1": "font-semibold text-sm py-1.5 sm:py-2 bg-slate-800 pl-2 text-left sticky left-[2.5rem] sm:left-[3rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
-    other: "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center",
-    selectedCol: "bg-slate-700",
-  },
-};
-
 export const teamSummaryTableEachColStyles = {
   // NOTE: width of the columns is being set here;
   // these value are picked up in such a way that the width can occupy the max-length content
@@ -173,7 +175,7 @@ export const teamSummaryTableEachColStyles = {
     "0": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700  min-w-[4rem] sm:min-w-[4.5rem] sticky left-0 z-40",
     // NOTE: for player name column I am also setting the max-width as the player name lengths can vary a lot so fixing this width
     "1": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700  sticky left-[4rem] sm:left-[4.5rem] z-20 min-w-[2.5rem] sm:min-w-[3rem]",
-    "2": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 pl-0 sticky left-[6.5rem] sm:left-[7.5rem] z-20 min-w-[3rem] sm:min-w-[3.5rem] before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "2": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 pl-0 sticky left-[6.5rem] sm:left-[7.5rem] z-20 min-w-[3rem] sm:min-w-[3.5rem] before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-slate-600 before:to-slate-300",
     // to cover the extra width lost because of the pseudo element
     "3": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[6.5rem] sm:min-w-[8.3rem] pl-4 text-center",
     "4": "font-medium text-xs py-1 sm:py-1.5 bg-slate-700 min-w-[6.3rem] sm:min-w-[8rem] pl-4 text-center",
@@ -185,7 +187,7 @@ export const teamSummaryTableEachColStyles = {
     // these elements min-width is being set there
     "0": "text-sm sm:text-base font-semibold py-1.5 sm:py-2 bg-slate-800 text-center sticky left-0",
     "1": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800  text-center sticky left-[4rem] sm:left-[4.5rem]  sm:overflow-ellipsis sm:whitespace-nowrap",
-    "2": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 pl-0 text-center sticky left-[6.5rem] sm:left-[7.5rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-gray-400 before:to-gray-300",
+    "2": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 pl-0 text-center sticky left-[6.5rem] sm:left-[7.5rem]  sm:overflow-ellipsis sm:whitespace-nowrap before:absolute before:right-0.5 sm:before:right-1 before:top-0 before:w-[1px] before:h-full before:bg-gradient-to-r before:from-slate-600 before:to-slate-300",
     "3": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center pl-3",
     "4": "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center pl-2",
     other: "text-sm sm:text-base py-1.5 sm:py-2 bg-slate-800 text-center",
