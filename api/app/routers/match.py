@@ -15,5 +15,5 @@ async def getTeamSummary(season='2023',team=1,teamType='self', innings=None, cur
     if rd.exists(redisKey):
         return json.loads(rd.get(redisKey))
     sql = getSQLForTeamSummary(season,team,teamType, innings)
-    rd.set(redisKey, json.dumps(jsonable_encoder(executeSQLQuery(sql, cursor, havingClause="DLS,N/R,Overs Reduced Matches not considered*"))))
+    rd.set(redisKey, json.dumps(jsonable_encoder(executeSQLQuery(sql, cursor, havingClause="DLS,N/R,Overs Reduced Matches not considered*"))),ex=3600)
     return json.loads(rd.get(redisKey))
