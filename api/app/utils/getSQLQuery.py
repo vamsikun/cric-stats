@@ -1,22 +1,20 @@
-def executeSQLQuery(query:str, cursor, columnPosition:None|int=None, havingClause:None|str=None):
+def executeSQLQuery(query:str, cursor, columnPosition:None|int=None, havingClause:None|str=None, includePosition:bool=False):
     cursor.execute(query)
     results = cursor.fetchall()
     # TODO: modify this function so that it does only the execution part
-    if columnPosition!=None and havingClause!=None:
+    metadata = {"columnPosition":columnPosition,"havingClause":havingClause}
+    if includePosition:
         columnNames = ["pos"] + [desc[0] for desc in cursor.description]
-        return {"metadata":{"columnPosition":columnPosition,"havingClause":havingClause},"data":[
+        data = [
             dict(zip(columnNames, (idx + 1,) + row))
             for idx, row in enumerate(results)
-        ]}
-    elif havingClause!=None:
+        ]
+    else:
         columnNames = [desc[0] for desc in cursor.description]
-        return {
-            "metadata":{"havingClause":havingClause},
-            "data": [
+        data = [
                 dict(zip(columnNames, row)) for idx,row in enumerate(results)
             ]
-        }
-        
+    return {"metadata":metadata,"data":data}
 
 def getWherePredicate(**kwargs):
     filteredKwargs = []

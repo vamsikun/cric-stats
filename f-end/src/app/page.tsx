@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { PlayerSummary } from "@/components/PlayerSummary";
 import { TeamSummary } from "@/components/TeamSummary";
+import { SearchBar } from "@/components/SearchBar";
 
 export default function Home() {
   return (
@@ -11,6 +12,9 @@ export default function Home() {
       <div>
         <TeamSummary />
       </div>
+      {/* <div>
+        <SearchBar />
+      </div> */}
     </div>
   );
 }

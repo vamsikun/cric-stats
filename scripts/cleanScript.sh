@@ -1,3 +1,4 @@
+#!/bin/bash
 echo "use ('ipl'); db.matches.drop(); exit" | mongosh ipl
 echo "use ('ipl'); db.players.drop();db.eachMatch.drop();db.runs.drop();db.partnerships.drop(); exit" | mongosh ipl
 

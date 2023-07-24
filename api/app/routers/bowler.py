@@ -35,7 +35,7 @@ def generateDynamicRoute(bowlerKey:str):
         if rd.exists(redisKey):
             return json.loads(rd.get(redisKey))
         sqlQuery = generateSQLQuery(season, team, innings, opposition, havingClause)
-        rd.set(redisKey, json.dumps(jsonable_encoder((executeSQLQuery(sqlQuery, cursor, columnPosition, havingClauseMappings[havingClause])))))
+        rd.set(redisKey, json.dumps(jsonable_encoder((executeSQLQuery(sqlQuery, cursor, columnPosition, havingClauseMappings[havingClause], includePosition=True)))))
         return json.loads(rd.get(redisKey))
     
 bowlerMapKeys = list(bowlerApiMappings.keys())
