@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = {version = "*", extras = ["all"]}
+sqlalchemy = "*"
+psycopg2 = "*"
+redis = "*"
+
+[dev-packages]
+ipython = "*"
+black = "*"
+neovim = "*"
+mypy = "*"
+
+[requires]
+python_version = "3.10"

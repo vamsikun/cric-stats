@@ -1,30 +1,51 @@
-from typing import Annotated
-from getSQLScripts.batter.batterSQLHelper import (
-    defaultSelectConfig,
-    selectTeamDetails
-)
-from utils.getSQLQuery import getWherePredicate
+from getSQLScripts.batter.batterSQLHelper import batStats
+from sqlalchemy import (Integer, String, case, desc, func, null, nulls_last,
+                        select)
 
-def getSQLForBatterBestAverage(
-    season: Annotated[str | None, "season"] = None,
-    team: Annotated[str | None, "team"] = None,
-    innings: Annotated[int | None, "innings"] = None,
-    opposition: Annotated[str | None, "opposition"] = None,
-    havingClause: Annotated[str, "havingClause"]=""
-):
-    """
-    returns the sql query for players
-    with highest average having more than 100 runs
-    """
-    # NOTE: don't worry much about the case of the sql keywords as we are using psycopg2 which is case insensitive
 
-    wherePredicate = getWherePredicate(season=season, team=team, innings=innings, opposition=opposition)
-    sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],
-                                                 joinPredicate=selectTeamDetails['joinStatement'],
-                                                 wherePredicate=wherePredicate,
-                                                 groupByPredicate="player",
-                                                 havingPredicate=havingClause,
-                                                 orderByPredicate="avg DESC"
-                                                 )
-
-    return sql
+def getSQLForBatterBestAverage(season, minRuns=100, limit=10):
+    selectStmt = select(
+        func.row_number()
+        .over(
+            order_by=nulls_last(
+                desc(
+                    func.round(
+                        func.sum(batStats.c.runs)
+                        / func.nullif(func.sum(batStats.c.player_out), 0),
+                        2,
+                    )
+                )
+            )
+        )
+        .label("pos"),
+        batStats.c.player,
+        func.count().label("matches"),
+        func.sum(batStats.c.played_in_match).label("innings"),
+        func.sum(batStats.c.runs).label("runs"),
+        func.max(
+            func.cast(
+                func.cast(func.coalesce(batStats.c.runs, 0), String)
+                + case((batStats.c.player_out == 1, "0"), else_="1"),
+                Integer,
+            )
+        ).label("hs"),
+        func.round(
+            func.sum(batStats.c.runs)
+            * 100
+            / func.nullif(func.sum(batStats.c.balls_faced), 0),
+            0,
+        ).label("sr"),
+        func.round(
+            func.sum(batStats.c.runs) / func.nullif(func.sum(batStats.c.player_out), 0),
+            2,
+        ).label("avg"),
+        func.sum(batStats.c.fours).label("fours"),
+        func.sum(batStats.c.sixes).label("sixes"),
+    )
+    if season is not None:
+        selectStmt = selectStmt.where(batStats.c.season == season)
+    selectStmt = selectStmt.group_by(batStats.c.player)
+    selectStmt = selectStmt.having(func.sum(batStats.c.runs) >= minRuns)
+    selectStmt = selectStmt.order_by(nulls_last(desc("avg")))
+    selectStmt = selectStmt.limit(limit)
+    return selectStmt

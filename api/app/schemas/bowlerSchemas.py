@@ -3,6 +3,7 @@ from typing import Annotated
 
 # order of the columns in response data depends on these models
 
+
 class MostWickets(BaseModel):
     # here I am not using camelcase as psql is case sensitive on columns, so it was creating some issues when pydantic checks the column names
     pos: Annotated[int, "position"]

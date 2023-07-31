@@ -1,7 +1,8 @@
 from utils.getSQLQuery import getWherePredicate
 
+
 def getSQLForTeamSummaryUnion():
-    sql = '''
+    sql = """
     select season,
         team1 as team,
         count(*) as matches,
@@ -141,52 +142,57 @@ def getSQLForTeamSummaryUnion():
     FROM matches
     GROUP BY season,
     team2
-    '''
+    """
     return sql
 
-def getSQLForTeamSummary(season:str,team:int,teamType:str, innings:int|None):
+
+def getSQLForTeamSummary(season: str, team: int, teamType: str, innings: int | None):
     wherePredicate = getWherePredicate(team=team, innings=innings)
     sqlForUnion = getSQLForTeamSummaryUnion()
-                        
-    if innings==None:
+
+    if innings == None:
         defaultCols = " season as season, sum(matches) as matches,  "
-        appendToExtraCols="" 
-        if teamType=='opp':
-            defaultCols+=" cast(sum(losses) as text) || '/' || cast(sum(wins) as text) as w_l, "
-            appendToExtraCols='opp_'
+        appendToExtraCols = ""
+        if teamType == "opp":
+            defaultCols += (
+                " cast(sum(losses) as text) || '/' || cast(sum(wins) as text) as w_l, "
+            )
+            appendToExtraCols = "opp_"
         else:
-            defaultCols+=" cast(sum(wins) as text) || '/' || cast(sum(losses) as text) as w_l, "
-        extraCols = f''' max({appendToExtraCols}high_score) as high_score,
+            defaultCols += (
+                " cast(sum(wins) as text) || '/' || cast(sum(losses) as text) as w_l, "
+            )
+        extraCols = f""" max({appendToExtraCols}high_score) as high_score,
                             min({appendToExtraCols}low_score) as low_score,
                             sum({appendToExtraCols}wickets) as wickets,
                             sum({appendToExtraCols}fours) as fours,
                             sum({appendToExtraCols}sixes) as sixes,
-                            ROUND(CAST(sum({appendToExtraCols}runs)/sum({appendToExtraCols}legal_deliveries_faced)::float as numeric)*6,3) as run_rate '''
-        defaultCols+=extraCols
-        groupByPredicate = " GROUP BY season" 
-    
+                            ROUND(CAST(sum({appendToExtraCols}runs)/sum({appendToExtraCols}legal_deliveries_faced)::float as numeric)*6,3) as run_rate """
+        defaultCols += extraCols
+        groupByPredicate = " GROUP BY season"
+
     else:
         defaultCols = " season as season, matches, "
-        appendToExtraCols = "" 
-        if teamType=='opp':
-            defaultCols+=" cast(losses as text) || '/' || cast(wins as text) as w_l, "
-            appendToExtraCols="opp_" 
+        appendToExtraCols = ""
+        if teamType == "opp":
+            defaultCols += " cast(losses as text) || '/' || cast(wins as text) as w_l, "
+            appendToExtraCols = "opp_"
         else:
-            defaultCols+=" cast(wins as text) || '/' || cast(losses as text) as w_l, "
-            
-        extraCols = f'''  {appendToExtraCols}high_score as high_score,
+            defaultCols += " cast(wins as text) || '/' || cast(losses as text) as w_l, "
+
+        extraCols = f"""  {appendToExtraCols}high_score as high_score,
                             {appendToExtraCols}low_score as low_score,
                             {appendToExtraCols}wickets as wickets,
                             {appendToExtraCols}fours as fours,
                             {appendToExtraCols}sixes as sixes,
-                            ROUND(CAST({appendToExtraCols}runs/{appendToExtraCols}legal_deliveries_faced::float as NUMERIC)*6,3) as run_rate '''
-        defaultCols+=extraCols
-        groupByPredicate = "" 
-    
-    s =f'''select {defaultCols}
+                            ROUND(CAST({appendToExtraCols}runs/{appendToExtraCols}legal_deliveries_faced::float as NUMERIC)*6,3) as run_rate """
+        defaultCols += extraCols
+        groupByPredicate = ""
+
+    s = f"""select {defaultCols}
             FROM ({sqlForUnion}) AS t
             WHERE {wherePredicate}
             {groupByPredicate}
             ORDER BY season DESC
-        ''' 
+        """
     return s

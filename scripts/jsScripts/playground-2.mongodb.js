@@ -150,3 +150,93 @@ db.matches.aggregate([
 ]);
 
 // NOTE: using explain the query is taking around 220-250ms to execute
+
+db.collection.aggregate([
+  {
+    $facet: {
+      salesSum: [
+        {
+          // filters on date
+          $match: {
+            date: {
+              $gte: "2023-07-28",
+              $lte: "2023-07-29",
+            },
+          },
+        },
+        {
+          // groups on ad_id and gets sum of sales
+          $group: {
+            _id: "$ad_id",
+            sales: {
+              $sum: "$sales",
+            },
+          },
+        },
+        {
+          // select specific cols
+          $project: {
+            _id: 0,
+            ad_id: "$_id",
+            sales: 1,
+          },
+        },
+      ],
+      recentStatus: [
+        {
+          // group on ad_id, get maxDate
+          $group: {
+            _id: "$ad_id",
+            maxDate: {
+              $max: "$date",
+            },
+            // pushes all related data which have ad_id values as the same as grouped value
+            // have a look at this for better understanding
+            // https://stackoverflow.com/questions/76789574/using-lookup-with-group-in-mongodb
+            items: {
+              $push: "$$ROOT",
+            },
+          },
+        },
+        {
+          $unwind: "$items",
+        },
+        {
+          // filter items based on maxDate
+          $match: {
+            $expr: {
+              $eq: ["$maxDate", "$items.date"],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            ad_id: "$_id",
+            status: "$items.status",
+          },
+        },
+      ],
+    },
+  },
+  {
+    $unwind: "$salesSum",
+  },
+  {
+    $unwind: "$recentStatus",
+  },
+  {
+    $match: {
+      $expr: {
+        $eq: ["$salesSum.ad_id", "$recentStatus.ad_id"],
+      },
+    },
+  },
+  {
+    $project: {
+      ad_id: "$salesSum.ad_id",
+      sales: "$salesSum.sales",
+      status: "$recentStatus.status",
+    },
+  },
+]);

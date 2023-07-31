@@ -100,4 +100,8 @@
 - [ ] hide the options from filter when we click anywhere on the screen
 - [ ] try to increase the height of the table so that we can give some space to the info
 - [ ] align high score column
-- [ ] can we add came till which stage for team performance
+- [ ] can we add till which stage a team came for team performance
+- [ ] went from raw SQL to sqlalchemy
+    - [x] convert batter stats
+    - [x] convert bowler stats
+    - [ ] convert team performance

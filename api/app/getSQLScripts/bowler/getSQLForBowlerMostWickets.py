@@ -1,22 +1,54 @@
-from typing import Annotated
-from getSQLScripts.bowler.bowlerSQLHelper import (
-    defaultSelectConfig,
-    selectTeamDetails
-)
-from utils.getSQLQuery import getWherePredicate
+from getSQLScripts.bowler.bowlerSQLHelper import bowlerStatsTable
+from sqlalchemy import (Integer, Numeric, String, cast, desc, func, nulls_last,
+                        select)
 
-def getSQLForBowlerMostWickets(
-    season: Annotated[str | None, "season"] = None,
-    team: Annotated[str | None, "team"] = None,
-    innings: Annotated[int | None, "innings"] = None,
-    opposition: Annotated[str | None, "opposition"] = None,
-    havingClause: Annotated[str, "havingClause"]=""
-):
-    wherePredicate = getWherePredicate(season=season, team=team, innings=innings, opposition=opposition)
-    sql = defaultSelectConfig.getSelectStatement(extraCols=selectTeamDetails['selectStatement'],
-                                                 joinPredicate=selectTeamDetails['joinStatement'],
-                                                 wherePredicate=wherePredicate,
-                                                 groupByPredicate="player",
-                                                 havingPredicate=havingClause,
-                                                 orderByPredicate="wickets DESC")
-    return sql
+
+def getSQLForBowlerMostWickets(season, limit=10):
+    selectStmt = select(
+        func.row_number()
+        .over(order_by=nulls_last(desc(func.sum(bowlerStatsTable.c.wickets))))
+        .label("pos"),
+        bowlerStatsTable.c.player,
+        func.count().label("matches"),
+        func.sum(bowlerStatsTable.c.bowled_in_match).label("innings"),
+        func.sum(bowlerStatsTable.c.wickets).label("wickets"),
+        func.round(
+            (
+                func.sum(bowlerStatsTable.c.dot_balls)
+                / func.sum(bowlerStatsTable.c.legal_deliveries)
+            )
+            * 100,
+            2,
+        ).label("dots_percentage"),
+        cast(
+            cast(
+                cast(func.sum(bowlerStatsTable.c.legal_deliveries) / 6, Integer), String
+            )
+            + "."
+            + cast(func.sum(bowlerStatsTable.c.legal_deliveries) % 6, String),
+            Numeric,
+        ).label("overs"),
+        func.round(
+            func.sum(bowlerStatsTable.c.runs_conceded)
+            * 6
+            / func.sum(bowlerStatsTable.c.legal_deliveries),
+            2,
+        ).label("econ"),
+        func.round(
+            func.sum(bowlerStatsTable.c.legal_deliveries)
+            / func.sum(bowlerStatsTable.c.wickets),
+            2,
+        ).label("sr"),
+        func.round(
+            func.sum(bowlerStatsTable.c.runs_conceded)
+            / func.sum(bowlerStatsTable.c.wickets),
+            2,
+        ).label("avg"),
+        func.sum(bowlerStatsTable.c.runs_conceded).label("runs"),
+    )
+    if season is not None:
+        selectStmt = selectStmt.where(bowlerStatsTable.c.season == season)
+    selectStmt = selectStmt.group_by(bowlerStatsTable.c.player)
+    selectStmt = selectStmt.order_by(nulls_last(desc("wickets")))
+    selectStmt = selectStmt.limit(limit)
+    return selectStmt

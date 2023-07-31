@@ -1,29 +1,51 @@
-from typing import Annotated
-from getSQLScripts.batter.batterSQLHelper import (
-    SelectStatementConfig,
-)
-from utils.getSQLQuery import getWherePredicate
+from getSQLScripts.batter.batterSQLHelper import batStats, teamsTable
+from sqlalchemy import (Integer, String, case, desc, distinct, func,
+                        nulls_last, select)
 
-def getSQLForBatterBestHighScore(
-    season: Annotated[str | None, "season"] = None,
-    team: Annotated[str | None, "team"] = None,
-    innings: Annotated[int | None, "innings"] = None,
-    opposition: Annotated[str | None, "opposition"] = None,
-    havingClause: Annotated[str, "havingClause"]=""
-):
-    """
-    This function returns the sql query for the players with most runs
-    """
-    
-    wherePredicate = getWherePredicate(season=season, team=team, innings=innings, opposition=opposition)
-    groupByPredicate = "match_id,player"
-    hsStatementConfig = SelectStatementConfig(player=True, hs=True, sr=True, fours=True, sixes=True)    
-    extraCols = "STRING_AGG(DISTINCT t1.team_shortcut, ',') as team,STRING_AGG(DISTINCT t2.team_shortcut,',') as opposition,"
-    joinPredicate = """LEFT JOIN teams as t1 on batter_stats_each_match.team=t1.team_id LEFT JOIN teams as t2 on batter_stats_each_match.opposition=t2.team_id """
-    sqlStatement = hsStatementConfig.getSelectStatement(extraCols=extraCols,
-                                                        joinPredicate=joinPredicate,
-                                                        wherePredicate=wherePredicate,
-                                                        groupByPredicate=groupByPredicate,
-                                                        havingPredicate=havingClause,
-                                                        orderByPredicate="hs DESC")
-    return sqlStatement
+
+def getSQLForBatterBestHighScore(season, limit=10):
+    t1, t2 = teamsTable.alias(), teamsTable.alias()
+    selectStmt = select(
+        func.row_number()
+        .over(
+            order_by=nulls_last(
+                desc(
+                    func.max(
+                        func.cast(
+                            func.cast(func.coalesce(batStats.c.runs, 0), String)
+                            + case((batStats.c.player_out == 1, "0"), else_="1"),
+                            Integer,
+                        )
+                    )
+                )
+            )
+        )
+        .label("pos"),
+        batStats.c.player,
+        func.max(
+            func.cast(
+                func.cast(func.coalesce(batStats.c.runs, 0), String)
+                + case((batStats.c.player_out == 1, "0"), else_="1"),
+                Integer,
+            )
+        ).label("hs"),
+        func.round(
+            func.sum(batStats.c.runs)
+            * 100
+            / func.nullif(func.sum(batStats.c.balls_faced), 0),
+            0,
+        ).label("sr"),
+        func.sum(batStats.c.fours).label("fours"),
+        func.sum(batStats.c.sixes).label("sixes"),
+        func.string_agg(distinct(t1.c.team_shortcut), ",").label("team"),
+        func.string_agg(distinct(t2.c.team_shortcut), ",").label("opposition"),
+    )
+    selectStmt = selectStmt.join_from(batStats, t1, batStats.c.team == t1.c.team_id)
+    selectStmt = selectStmt.join_from(
+        batStats, t2, batStats.c.opposition == t2.c.team_id
+    )
+    selectStmt = selectStmt.where(batStats.c.season == season)
+    selectStmt = selectStmt.group_by(batStats.c.player, batStats.c.match_id)
+    selectStmt = selectStmt.order_by(desc("hs"))
+    selectStmt = selectStmt.limit(limit)
+    return selectStmt
