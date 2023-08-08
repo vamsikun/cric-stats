@@ -8,7 +8,7 @@ from routers.player import playerRouter
 app = FastAPI()
 
 origins = [
-    "http://192.168.232.6:3000",
+    "http://192.168.184.6:3000",
     "http://localhost:3000",
     "http://localhost"
     # Add more origins as needed
