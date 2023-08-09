@@ -33,8 +33,8 @@ def generateDynamicRoute(bowlerKey: str):
     ):
         # TODO: understand how the json.dumps, json.loads and jsonable_encoder works
         redisKey = f"bowler_{bowlerKey}_{season}"
-        # if rd.exists(redisKey):
-        #     return json.loads(rd.get(redisKey))
+        if rd.exists(redisKey):
+            return json.loads(rd.get(redisKey))
         sqlQuery = generateSQLQuery(season)
         rd.set(
             redisKey,

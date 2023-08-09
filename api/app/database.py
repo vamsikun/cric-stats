@@ -5,7 +5,7 @@ import redis
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import sessionmaker
 
-rd = redis.Redis()
+rd = redis.Redis.from_url(os.getenv("REDIS_URL"))
 engine = create_engine(os.getenv("DB_CONNECTION_URL"))
 ormMetaData = MetaData()
 ormMetaData.reflect(bind=engine)
