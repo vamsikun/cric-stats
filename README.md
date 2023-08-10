@@ -114,3 +114,4 @@
 - [x] provide endpoint in .env.local for NextJS
     - using NEXT_PUBLIC_ prefix for env variables that can be used on client side such as useSWR
 - [ ] deploy nextjs
+- [ ] clear all the type errors and remove the ignore type errors from next.config.js
