@@ -76,7 +76,7 @@
   - modify dockerfile and create a separate script for running daemons
   - issues with nested dictionaries
   - **TODO** : optimize json.loads, json.dumps, json_encoder
-- [ ] add client-side caching in nextjs using useSWR
+- [x] add client-side caching in nextjs using useSWR
   - [x] added useSWR to both playerSummary and teamSummary
   - **TODO** : in the playerSummary when `useSWR` is used along with `useEffect` on `playerType` dependency, it was giving error after changing the bowling/batting filter four times; check what's happening there..
   - [ ] add types for newly added reducers
@@ -105,3 +105,12 @@
     - [x] convert batter stats
     - [x] convert bowler stats
     - [ ] convert team performance
+- [x] add redis server from render
+- [ ] deploy fastapi to digitalocean (COSTS 5$ per month)
+    - have tried with render, but that server ujson till 5.7.0 but we need 5.8.0; IT'S FREE
+    - [x] deploy
+    - [ ] changing the name of endpoint
+    - [ ] understand the ports in Procfile
+- [x] provide endpoint in .env.local for NextJS
+    - using NEXT_PUBLIC_ prefix for env variables that can be used on client side such as useSWR
+- [ ] deploy nextjs

@@ -63,7 +63,7 @@ export const TeamSummary = () => {
   if (filter["innings"].value != "Both Inns") {
     inningsQuery = `innings=${filter["innings"].apiValue}&`;
   }
-  let apiEndPoint = `http://192.168.232.6:8000/match/teamSummary/?${teamType}${teamQuery}${inningsQuery}`;
+  let apiEndPoint = `${process.env.NEXT_PUBLIC_DO_API_URL}/match/teamSummary/?${teamType}${teamQuery}${inningsQuery}`;
   const { data, error, isLoading } = useSWR(apiEndPoint, fetcher);
 
   return (

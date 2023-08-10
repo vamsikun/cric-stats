@@ -59,7 +59,8 @@ export function PlayerSummary() {
     prevData: undefined,
   });
 
-  const endPoint = `http://192.168.232.6:8000/${state["playerType"].apiValue}/${state["selectedStat"].apiValue}/?season=${state["season"].apiValue}`;
+  const endPoint = `${process.env.NEXT_PUBLIC_DO_API_URL}/${state["playerType"].apiValue}/${state["selectedStat"].apiValue}?season=${state["season"].apiValue}`;
+  console.log(endPoint);
   const { data, error, isLoading } = useSWR(endPoint, fetcher);
 
   return (
@@ -70,7 +71,7 @@ export function PlayerSummary() {
         filters={state}
         filterDispatcher={dispatch}
       />
-      {isLoading ? (
+      { data==undefined ? (
         state["prevData"] == undefined ? (
           <SummaryTable
             apiData={skeletonTableData}

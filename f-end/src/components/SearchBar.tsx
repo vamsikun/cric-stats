@@ -8,7 +8,7 @@ export function SearchBar() {
   const [players, setPlayers] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    fetch("http://192.168.232.6:8000/player/")
+    fetch(`${process.env.NEXT_PUBLIC_DO_API_URL}/player/`)
       .then((res) => {
         return res.json();
       })
