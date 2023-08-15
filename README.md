@@ -1,3 +1,5 @@
+##  [Live App](https://nextjs-cric-stats.vercel.app)
+---
 # TODO
 
 - [x] create table using tanstack
