@@ -103,10 +103,10 @@
 - [ ] try to increase the height of the table so that we can give some space to the info
 - [ ] align high score column
 - [ ] can we add till which stage a team came for team performance
-- [ ] went from raw SQL to sqlalchemy
+- [x] went from raw SQL to sqlalchemy
     - [x] convert batter stats
     - [x] convert bowler stats
-    - [ ] convert team performance
+    - [x] convert team performance
 - [x] add redis server from render
 - [ ] deploy fastapi to digitalocean (COSTS 5$ per month)
     - have tried with render, but that server ujson till 5.7.0 but we need 5.8.0; IT'S FREE
@@ -115,5 +115,5 @@
     - [ ] understand the ports in Procfile
 - [x] provide endpoint in .env.local for NextJS
     - using NEXT_PUBLIC_ prefix for env variables that can be used on client side such as useSWR
-- [ ] deploy nextjs
+- [x] deploy nextjs
 - [ ] clear all the type errors and remove the ignore type errors from next.config.js

@@ -59,8 +59,7 @@ export function PlayerSummary() {
     prevData: undefined,
   });
 
-  const endPoint = `https://sea-turtle-app-elqvq.ondigitalocean.app/${state["playerType"].apiValue}/${state["selectedStat"].apiValue}?season=${state["season"].apiValue}`;
-  console.log(endPoint);
+  const endPoint = `${process.env.NEXT_PUBLIC_DO_API_URL}/${state["playerType"].apiValue}/${state["selectedStat"].apiValue}?season=${state["season"].apiValue}`;
   const { data, error, isLoading } = useSWR(endPoint, fetcher);
 
   return (

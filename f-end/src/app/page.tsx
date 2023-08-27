@@ -9,9 +9,9 @@ export default function Home() {
       <div>
         <PlayerSummary />
       </div>
-      {/*<div>
+      <div>
         <TeamSummary />
-      </div>*/}
+      </div>
       {/* <div>
         <SearchBar />
       </div> */}
